@@ -211,3 +211,20 @@ type MissionState struct {
 type Medal struct {
 	MedalCnt uint64
 }
+
+type BattleField struct {
+	Nightwatches []*BattleInfo
+	MoneyHunter  []*BattleInfo
+}
+
+type BattleInfo struct {
+	QQ       uint64
+	Nick     string
+	State    uint64 // 0:normal, 1:failed, 2:exited
+	FailTime uint64
+	Money    uint64
+	Exp      uint64
+	JoinTime uint64
+	ExitTime uint64
+	Speed    uint64
+}
