@@ -97,6 +97,9 @@ func (b *Bot) work(fromQQ uint64, msg string) string {
 		if len(w.Name) == 0 {
 			return "你没有工作。"
 		}
+		if w.Name == "值夜者小队" || w.Name == "赏金猎人" {
+			return b.exitBattleField(fromQQ)
+		}
 		today := uint64(time.Now().Unix() / (3600 * 24))
 		time := today - w.Date
 		m := uint64(0)
@@ -116,11 +119,19 @@ func (b *Bot) work(fromQQ uint64, msg string) string {
 		return fmt.Sprintf("\n你工作了%d天，内容为:%s，收获%d金镑，%d经验", time, w.Name, m, e)
 	}
 
-	for _, v := range workList {
+	for i, v := range workList {
 		if strs[1] == v.Name {
 			today := uint64(time.Now().Unix() / (3600 * 24))
 			v.Date = today
 			b.setPersonValue("Work", fromQQ, v)
+			if i == 0 || i == 1 {
+				str, ret := b.joinBattleField(fromQQ, i)
+				if ret {
+					return "你开始了工作：" + v.Name + str
+				} else {
+					return str
+				}
+			}
 			return "你开始了工作：" + v.Name
 		}
 	}

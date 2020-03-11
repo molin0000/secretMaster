@@ -218,13 +218,15 @@ type BattleField struct {
 }
 
 type BattleInfo struct {
-	QQ       uint64
-	Nick     string
-	State    uint64 // 0:normal, 1:failed, 2:exited
-	FailTime uint64
-	Money    uint64
-	Exp      uint64
-	JoinTime uint64
-	ExitTime uint64
-	Speed    uint64
+	QQ         uint64
+	Nick       string
+	State      uint64 // 0:normal, 1:failed, 2:exited
+	FailTime   uint64
+	Money      uint64
+	Exp        uint64
+	UpdateTime uint64
+	ExitTime   uint64
+	Speed      uint64
+	WinCnt     uint64
+	FailCnt    uint64
 }
