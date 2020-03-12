@@ -12,6 +12,7 @@ type CalcGame struct {
 	StartTime uint64
 	Money     uint64
 	Success   bool
+	Speed     uint64
 }
 
 func NewCalcGame() *CalcGame {
@@ -39,10 +40,11 @@ func (c *CalcGame) GiveResult(result uint64) (msg string, finish bool) {
 	ret := c.Result == result
 	timeNow := time.Now().Unix()
 	info := ""
-	if timeNow-int64(c.StartTime) > 10 {
+	if timeNow-int64(c.StartTime) > 20 {
 		fmt.Println(timeNow, c.StartTime)
 		return info + "很遗憾，你超时了。没有通过考试。你朋友对你的表现十分失望。", true
 	}
+	c.Speed = uint64(timeNow - int64(c.StartTime))
 	if ret {
 		c.Level++
 		info += "\n恭喜你，答对了！" + fmt.Sprintf("监考老师递给你%d金镑奖金！", c.Level*20)

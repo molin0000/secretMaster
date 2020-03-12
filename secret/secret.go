@@ -404,6 +404,18 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.SetSilentTime(fromQQ, msg)
 	}
 
+	if strings.Contains(msg, "阵营") {
+		return b.getBattleField()
+	}
+
+	if strings.Contains(msg, "挑战") {
+		return b.pk(fromQQ, msg)
+	}
+
+	if strings.Contains(msg, "战绩") {
+		return b.getBattleInfo(fromQQ)
+	}
+
 	return ""
 }
 

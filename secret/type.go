@@ -221,8 +221,12 @@ type Medal struct {
 }
 
 type BattleField struct {
-	Nightwatches []*BattleInfo
-	MoneyHunter  []*BattleInfo
+	Nightwatches       []*BattleInfo
+	MoneyHunter        []*BattleInfo
+	NightwatchWinCnt   uint64
+	NightwatchLoseCnt  uint64
+	MoneyHunterWinCnt  uint64
+	MoneyHunterLoseCnt uint64
 }
 
 type BattleInfo struct {
@@ -237,6 +241,7 @@ type BattleInfo struct {
 	Speed      uint64
 	WinCnt     uint64
 	FailCnt    uint64
+	FieldType  uint64
 }
 
 type SilenceState struct {

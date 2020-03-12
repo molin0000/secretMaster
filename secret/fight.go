@@ -3,6 +3,8 @@ package secret
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -10,7 +12,7 @@ func (b *Bot) getBattleField() string {
 	b.updateBattleField()
 
 	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
-	info := "\n==================\n值夜者小队阵营："
+	info := fmt.Sprintf("\n==================\n值夜者小队：(胜：%d，负：%d)", bf.NightwatchWinCnt, bf.NightwatchLoseCnt)
 
 	for i, v := range bf.Nightwatches {
 		state := ""
@@ -22,7 +24,7 @@ func (b *Bot) getBattleField() string {
 		info += fmt.Sprintf("\n%d) %s (%s) 金镑%d, 经验%d", i, v.Nick, state, v.Money, v.Exp)
 	}
 
-	info += "\n==================\n赏金猎人阵营："
+	info += fmt.Sprintf("\n==================\n赏金猎人：(胜：%d，负：%d)", bf.MoneyHunterWinCnt, bf.MoneyHunterLoseCnt)
 	for i, v := range bf.MoneyHunter {
 		state := ""
 		if v.State == 0 {
@@ -52,6 +54,11 @@ func (b *Bot) updateBattleField() {
 		bf.Nightwatches[i].UpdateTime = timeNow
 		bf.Nightwatches[i].Money += duration * workList[0].MoneyAdd * 10000 / 3600 // Zoom in 10000 times to calc
 		bf.Nightwatches[i].Exp += duration * workList[0].ExpAdd * 10000 / 3600
+		if v.State == 1 {
+			if timeNow-v.FailTime > 3600 {
+				bf.Nightwatches[i].State = 0
+			}
+		}
 		b.setPersonValue("BattleInfo", v.QQ, bf.Nightwatches[i])
 	}
 
@@ -67,21 +74,27 @@ func (b *Bot) updateBattleField() {
 		bf.MoneyHunter[i].UpdateTime = timeNow
 		bf.MoneyHunter[i].Money += duration * workList[0].MoneyAdd * 10000 / 3600 // Zoom in 10000 times to calc
 		bf.MoneyHunter[i].Exp += duration * workList[0].ExpAdd * 10000 / 3600
+		if v.State == 1 {
+			if timeNow-v.FailTime > 3600 {
+				bf.MoneyHunter[i].State = 0
+			}
+		}
 		b.setPersonValue("BattleInfo", v.QQ, bf.MoneyHunter[i])
 	}
 
 	b.setGroupValue("BattleField", bf)
 }
 
-func (b *Bot) joinBattleField(fromQQ uint64, fieldType int) (string, bool) {
+func (b *Bot) joinBattleField(fromQQ uint64, fieldType int64) (string, bool) {
 	p := b.getPersonFromDb(fromQQ)
 
-	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{fromQQ, p.Name, 0, 0, 0, 0, uint64(time.Now().Unix()), 0, 15, 0, 0}).(*BattleInfo)
+	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{fromQQ, p.Name, 0, 0, 0, 0, uint64(time.Now().Unix()), 0, 15, 0, 0, uint64(fieldType)}).(*BattleInfo)
 	if bi.ExitTime != 0 {
 		if uint64(time.Now().Unix()/3600/24)-bi.ExitTime == 0 {
 			return "今天加入阵营次数已经用尽，请明天再试。", false
 		}
 	}
+	bi.FieldType = uint64(fieldType)
 
 	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
 	if fieldType == 0 {
@@ -96,8 +109,8 @@ func (b *Bot) joinBattleField(fromQQ uint64, fieldType int) (string, bool) {
 
 func (b *Bot) getBattleInfo(fromQQ uint64) string {
 	p := b.getPersonFromDb(fromQQ)
-	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{fromQQ, p.Name, 0, 0, 0, 0, uint64(time.Now().Unix()), 0, 15, 0, 0}).(*BattleInfo)
-	return fmt.Sprintf("\n===============\n个人战绩: 胜%d次，败%d次\n当前收入：%d金镑, %d经验\n===============",
+	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{fromQQ, p.Name, 0, 0, 0, 0, uint64(time.Now().Unix()), 0, 15, 0, 0, 0}).(*BattleInfo)
+	return fmt.Sprintf("\n===============\n个人战绩: 胜%d次，负%d次\n当前收入：%d金镑, %d经验\n===============",
 		bi.WinCnt, bi.FailCnt, bi.Money/10000, bi.Exp/10000)
 }
 
@@ -131,7 +144,7 @@ func (b *Bot) exitBattleField(fromQQ uint64) string {
 	}
 	b.setGroupValue("BattleField", bf)
 
-	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{fromQQ, b.CurrentNick, 0, 0, 0, 0, uint64(time.Now().Unix()), 0, 15, 0, 0}).(*BattleInfo)
+	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{fromQQ, b.CurrentNick, 0, 0, 0, 0, uint64(time.Now().Unix()), 0, 15, 0, 0, 0}).(*BattleInfo)
 	info := fmt.Sprintf("你成功停止了这份危险的工作，从战场上退了下来，获得%d金镑，%d经验", bi.Money/10000, bi.Exp/10000)
 	b.setMoney(fromQQ, int(bi.Money/10000))
 	b.setExp(fromQQ, int(bi.Exp/10000))
@@ -144,28 +157,86 @@ func (b *Bot) exitBattleField(fromQQ uint64) string {
 }
 
 func (b *Bot) pk(fromQQ uint64, msg string) string {
+	strs := strings.Split(msg, ";")
+	if len(strs) != 2 {
+		return fmt.Sprintf("指令格式错误:%+v", strs)
+	}
 
-	return `============================
+	aim, err := strconv.Atoi(strs[1])
+	if err != nil {
+		return fmt.Sprintf("指令格式错误:%+v", strs)
+	}
+
+	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{}).(*BattleInfo)
+	if bi.QQ == 0 {
+		return "请先加入阵营"
+	}
+
+	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
+
+	if bi.FieldType == 0 && aim >= len(bf.MoneyHunter) {
+		return fmt.Sprintf("找不到这个人:%+v", strs)
+	}
+
+	if bi.FieldType == 1 && aim >= len(bf.Nightwatches) {
+		return fmt.Sprintf("找不到这个人:%+v", strs)
+	}
+
+	aimInfo := &BattleInfo{}
+	if bi.FieldType == 0 {
+		aimInfo = bf.MoneyHunter[aim]
+	} else {
+		aimInfo = bf.Nightwatches[aim]
+	}
+
+	if aimInfo.State == 1 {
+		return "对不起，对方正在休整之中，不能接受挑战。"
+	}
+
+	aimQQ := aimInfo.QQ
+
+	exp, skill, item, rp, speed, total := b.getBattleScore(fromQQ)
+	exp1, skill1, item1, rp1, speed1, total1 := b.getBattleScore(aimQQ)
+	resultStr := "平局。收获："
+	moneyNum := int64(0)
+	expNum := int64(0)
+
+	if total > total1 {
+		resultStr = "战斗胜利！!收获："
+		moneyNum, expNum = b.battleFailed(aimQQ)
+		b.battleSuccess(fromQQ, moneyNum, expNum)
+	}
+
+	if total < total1 {
+		resultStr = "战斗失败...损失："
+		moneyNum, expNum = b.battleFailed(fromQQ)
+		b.battleSuccess(aimQQ, moneyNum, expNum)
+	}
+
+	info := fmt.Sprintf(`============================
 战斗结算：经验/技能/装备/人品/答题
-空想之喵：15/5/15/10/5 总计：50
-敌人XXX：3/10/12/15/5 总计：45
-战斗胜利！！收获：100金镑，20经验
-============================`
+%s：%d/%d/%d/%d/%d 总计：%d
+%s：%d/%d/%d/%d/%d 总计：%d
+%s%d金镑，%d经验
+============================`,
+		bi.Nick, exp, skill, item, rp, speed, total,
+		aimInfo.Nick, exp1, skill1, item1, rp1, speed1, total1, resultStr, moneyNum, expNum)
+
+	return info
 }
 
-func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, total int) {
-	rp = rand.Intn(10)
-	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{fromQQ, b.CurrentNick, 0, 0, 0, 0, uint64(time.Now().Unix()), 0, 15, 0, 0}).(*BattleInfo)
-	speed = int(bi.Speed)
+func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, total int64) {
+	rp = int64(rand.Intn(10))
+	speed = b.getPlayerSpeed(fromQQ)
 	p := b.getPersonFromDb(fromQQ)
-	exp = int(p.ChatCount) / 1000
+	exp = int64(p.ChatCount) / 1000
 	if exp > 30 || exp < 0 {
 		exp = 30
 	}
 
 	skillTree := b.getPersonValue("SkillTree", fromQQ, &SkillTree{}).(*SkillTree)
 	church := b.getPersonValue("Church", fromQQ, &ChurchInfo{}).(*ChurchInfo)
-	skill = len(skillTree.Skills)*3 + len(church.Skills)*3
+	skill = int64(len(skillTree.Skills)*3 + len(church.Skills)*3)
 	if skill > 20 || skill < 0 {
 		skill = 20
 	}
@@ -193,6 +264,79 @@ func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, total 
 	return
 }
 
-func (b *Bot) getPlayerSpeed(fromQQ uint64) {
+func (b *Bot) getPlayerSpeed(fromQQ uint64) int64 {
+	ms := b.getPersonValue("Calc", fromQQ, &CalcState{false, nil}).(*CalcState)
+	if ms.Calc == nil {
+		return 0
+	}
 
+	return int64(ms.Calc.Speed)
+}
+
+func (b *Bot) battleFailed(fromQQ uint64) (money, exp int64) {
+	b.updateBattleField()
+	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{}).(*BattleInfo)
+	money = int64(bi.Money) / 2
+	bi.Money = bi.Money / 2
+	exp = int64(bi.Exp) / 2
+	bi.Exp = bi.Exp / 2
+	bi.FailCnt++
+	bi.State = 1
+	bi.FailTime = uint64(time.Now().Unix())
+	b.setPersonValue("BattleInfo", fromQQ, bi)
+
+	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
+	if bi.FieldType == 0 {
+		for i, v := range bf.Nightwatches {
+			if v.QQ == fromQQ {
+				bf.Nightwatches[i] = bi
+				break
+			}
+		}
+		bf.MoneyHunterWinCnt++
+		bf.NightwatchLoseCnt++
+	} else {
+		for i, v := range bf.Nightwatches {
+			if v.QQ == fromQQ {
+				bf.Nightwatches[i] = bi
+				break
+			}
+		}
+		bf.NightwatchWinCnt++
+		bf.MoneyHunterLoseCnt++
+	}
+	b.setGroupValue("BattleField", bf)
+	b.updateBattleField()
+	return
+}
+
+func (b *Bot) battleSuccess(fromQQ uint64, money, exp int64) {
+	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{}).(*BattleInfo)
+	bi.Money += uint64(money)
+	bi.Exp += uint64(exp)
+	bi.WinCnt++
+	b.setPersonValue("BattleInfo", fromQQ, bi)
+
+	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
+	if bi.FieldType == 0 {
+		for i, v := range bf.Nightwatches {
+			if v.QQ == fromQQ {
+				bf.Nightwatches[i] = bi
+				break
+			}
+		}
+		bf.NightwatchWinCnt++
+		bf.MoneyHunterLoseCnt++
+	} else {
+		for i, v := range bf.Nightwatches {
+			if v.QQ == fromQQ {
+				bf.Nightwatches[i] = bi
+				break
+			}
+		}
+		bf.MoneyHunterWinCnt++
+		bf.NightwatchLoseCnt++
+	}
+	b.setGroupValue("BattleField", bf)
+	b.updateBattleField()
 }
