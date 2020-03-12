@@ -14,7 +14,7 @@ import (
 
 //go:generate cqcfg -c .
 // cqp: 名称: 序列战争
-// cqp: 版本: 2.4.1:1
+// cqp: 版本: 2.6.1:1
 // cqp: 作者: molin
 // cqp: 简介: 专为诡秘之主粉丝序列群开发的小游戏
 func main() { /*此处应当留空*/ }
@@ -126,9 +126,13 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	send := func() {
 		if len(ret) > 0 {
 			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
-			time.Sleep(time.Second)
-			id := cqp.SendGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
-			fmt.Printf("\nSend finish id:%d\n", id)
+			if !bot.IsSilent() {
+				time.Sleep(time.Second)
+				id := cqp.SendGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+				fmt.Printf("\nSend finish id:%d\n", id)
+			} else {
+				fmt.Println("It's silent time.")
+			}
 		}
 	}
 

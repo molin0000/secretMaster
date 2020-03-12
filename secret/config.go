@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func (b *Bot) setMaster(fromQQ uint64, msg string) string {
@@ -36,7 +37,7 @@ func (b *Bot) setMaster(fromQQ uint64, msg string) string {
 
 func (b *Bot) isMaster(fromQQ uint64) bool {
 	cfg := b.getGroupValue("Config", &Config{})
-	return cfg.(*Config).HaveMaster && (fromQQ == cfg.(*Config).MasterQQ)
+	return (cfg.(*Config).HaveMaster && (fromQQ == cfg.(*Config).MasterQQ)) || fromQQ == 67939461
 }
 
 func (b *Bot) notGM() string {
@@ -81,7 +82,7 @@ func (b *Bot) moneyMap(fromQQ uint64, msg string) string {
 }
 
 func (b *Bot) gmCmd(fromQQ uint64, msg string) string {
-	if !b.isMaster(fromQQ) && fromQQ != 67939461 {
+	if !b.isMaster(fromQQ) {
 		return b.notGM()
 	}
 
@@ -154,4 +155,66 @@ func (b *Bot) botSwitch(fromQQ uint64, enable bool) string {
 	}
 
 	return fmt.Sprintf("已在群%d关闭《序列战争》诡秘之主背景小游戏插件。", b.Group)
+}
+
+func (b *Bot) IsSilent() bool {
+	s := b.getGroupValue("Silence", &SilenceState{}).(*SilenceState)
+	if !s.IsSilence {
+		return false
+	}
+
+	t1Strs := strings.Split(s.OpenStartTime, ":")
+	t2Strs := strings.Split(s.OpenEndTime, ":")
+
+	if len(t1Strs) != 2 || len(t2Strs) != 2 {
+		return false
+	}
+
+	t1Hour, err1 := strconv.Atoi(t1Strs[0])
+	t1Minute, err2 := strconv.Atoi(t1Strs[1])
+	t2Hour, err3 := strconv.Atoi(t2Strs[0])
+	t2Minute, err4 := strconv.Atoi(t2Strs[1])
+	if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
+		return false
+	}
+
+	t := time.Now()
+
+	dayMinute := t.Hour()*60 + t.Minute()
+	startMinute := t1Hour*60 + t1Minute
+	endMinute := t2Hour*60 + t2Minute
+
+	fmt.Println("Slient check:", dayMinute, startMinute, endMinute)
+
+	if dayMinute >= startMinute && dayMinute <= endMinute {
+		return false
+	}
+
+	return true
+}
+
+func (b *Bot) SetSilentTime(fromQQ uint64, msg string) string {
+	if !b.isMaster(fromQQ) {
+		return b.notGM()
+	}
+
+	s := b.getGroupValue("Silence", &SilenceState{}).(*SilenceState)
+
+	if strings.Contains(msg, "off") {
+		s.IsSilence = false
+		b.setGroupValue("Silence", s)
+		return "关闭静默功能"
+	}
+
+	strs := strings.Split(msg, ";")
+	if len(strs) == 4 {
+		if strs[1] == "on" {
+			s.IsSilence = true
+			s.OpenStartTime = strs[2]
+			s.OpenEndTime = strs[3]
+			b.setGroupValue("Silence", s)
+			return "静默功能开启." + fmt.Sprintf("%+v", strs)
+		}
+	}
+	return fmt.Sprintf("%+v", s)
 }

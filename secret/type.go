@@ -1,6 +1,9 @@
 package secret
 
-import "github.com/molin0000/secretMaster/mission"
+import (
+	"github.com/molin0000/secretMaster/calculator"
+	"github.com/molin0000/secretMaster/mission"
+)
 
 type Person struct {
 	Group       uint64
@@ -208,6 +211,11 @@ type MissionState struct {
 	Ms        *mission.MissionGame
 }
 
+type CalcState struct {
+	IsPlaying bool
+	Calc      *calculator.CalcGame
+}
+
 type Medal struct {
 	MedalCnt uint64
 }
@@ -229,4 +237,10 @@ type BattleInfo struct {
 	Speed      uint64
 	WinCnt     uint64
 	FailCnt    uint64
+}
+
+type SilenceState struct {
+	IsSilence     bool
+	OpenStartTime string
+	OpenEndTime   string
 }

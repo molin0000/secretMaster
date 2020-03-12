@@ -40,7 +40,11 @@ func (b *Bot) Run(msg string, fromQQ uint64, nick string) string {
 	b.CurrentNick = nick
 
 	ret := b.checkMission(fromQQ, msg)
+	if len(ret) > 0 {
+		return ret
+	}
 
+	ret = b.checkCalc(fromQQ, msg)
 	if len(ret) > 0 {
 		return ret
 	}
@@ -51,7 +55,11 @@ func (b *Bot) Run(msg string, fromQQ uint64, nick string) string {
 func (b *Bot) RunPrivate(msg string, fromQQ uint64, nick string) string {
 	b.CurrentNick = nick
 	ret := b.checkMission(fromQQ, msg)
+	if len(ret) > 0 {
+		return ret
+	}
 
+	ret = b.checkCalc(fromQQ, msg)
 	if len(ret) > 0 {
 		return ret
 	}
@@ -381,12 +389,21 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.lottery(fromQQ)
 	}
 
+	if strings.Contains(msg, "竞赛") {
+		return b.startCalc(fromQQ, msg)
+	}
+
 	if strings.Contains(msg, "副本") {
 		if strings.Contains(msg, "列表") {
 			return b.showMissions()
 		}
 		return b.startMission(fromQQ, msg)
 	}
+
+	if strings.Contains(msg, "silent") {
+		return b.SetSilentTime(fromQQ, msg)
+	}
+
 	return ""
 }
 
