@@ -21,7 +21,7 @@ func (b *Bot) getBattleField() string {
 		} else {
 			state = "休整"
 		}
-		info += fmt.Sprintf("\n%d) %s (%s) 金镑%d, 经验%d", i, v.Nick, state, v.Money, v.Exp)
+		info += fmt.Sprintf("\n%d) %s (%s) 金镑%d, 经验%d", i, v.Nick, state, v.Money/10000, v.Exp/10000)
 	}
 
 	info += fmt.Sprintf("\n==================\n赏金猎人：(胜：%d，负：%d)", bf.MoneyHunterWinCnt, bf.MoneyHunterLoseCnt)
@@ -32,15 +32,17 @@ func (b *Bot) getBattleField() string {
 		} else {
 			state = "休整"
 		}
-		info += fmt.Sprintf("\n%d) %s (%s) 金镑%d, 经验%d", i, v.Nick, state, v.Money, v.Exp)
+		info += fmt.Sprintf("\n%d) %s (%s) 金镑%d, 经验%d", i, v.Nick, state, v.Money/10000, v.Exp/10000)
 	}
 	info += "\n=================="
 
-	return ""
+	return info
 }
 
 func (b *Bot) updateBattleField() {
+	fmt.Println("updateBattleField")
 	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
+	fmt.Printf("%+v", bf)
 	timeNow := uint64(time.Now().Unix())
 	for i, v := range bf.Nightwatches {
 		duration := timeNow - v.UpdateTime
@@ -172,6 +174,10 @@ func (b *Bot) pk(fromQQ uint64, msg string) string {
 		return "请先加入阵营"
 	}
 
+	if bi.State == 1 {
+		return "对不起，你正在休整之中，不能挑战别人。"
+	}
+
 	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
 
 	if bi.FieldType == 0 && aim >= len(bf.MoneyHunter) {
@@ -220,7 +226,7 @@ func (b *Bot) pk(fromQQ uint64, msg string) string {
 %s%d金镑，%d经验
 ============================`,
 		bi.Nick, exp, skill, item, rp, speed, total,
-		aimInfo.Nick, exp1, skill1, item1, rp1, speed1, total1, resultStr, moneyNum, expNum)
+		aimInfo.Nick, exp1, skill1, item1, rp1, speed1, total1, resultStr, moneyNum/10000, expNum/10000)
 
 	return info
 }
@@ -269,8 +275,10 @@ func (b *Bot) getPlayerSpeed(fromQQ uint64) int64 {
 	if ms.Calc == nil {
 		return 0
 	}
-
-	return int64(ms.Calc.Speed)
+	if ms.Calc.Speed > 20 {
+		ms.Calc.Speed = 20
+	}
+	return int64(20 - ms.Calc.Speed)
 }
 
 func (b *Bot) battleFailed(fromQQ uint64) (money, exp int64) {
@@ -296,9 +304,9 @@ func (b *Bot) battleFailed(fromQQ uint64) (money, exp int64) {
 		bf.MoneyHunterWinCnt++
 		bf.NightwatchLoseCnt++
 	} else {
-		for i, v := range bf.Nightwatches {
+		for i, v := range bf.MoneyHunter {
 			if v.QQ == fromQQ {
-				bf.Nightwatches[i] = bi
+				bf.MoneyHunter[i] = bi
 				break
 			}
 		}
@@ -328,9 +336,9 @@ func (b *Bot) battleSuccess(fromQQ uint64, money, exp int64) {
 		bf.NightwatchWinCnt++
 		bf.MoneyHunterLoseCnt++
 	} else {
-		for i, v := range bf.Nightwatches {
+		for i, v := range bf.MoneyHunter {
 			if v.QQ == fromQQ {
-				bf.Nightwatches[i] = bi
+				bf.MoneyHunter[i] = bi
 				break
 			}
 		}

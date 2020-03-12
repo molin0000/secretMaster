@@ -101,6 +101,38 @@ func (b *Bot) buyMace(fromQQ uint64) string {
 	return "你精心挑选了一份外表精致的至高权杖，把它买回家。"
 }
 
+func (b *Bot) buyItem(fromQQ uint64, item string, price uint64) string {
+	if b.getMoney(fromQQ) < price {
+		return "你盯着商品报价，攥紧了空荡荡的钱包，穷的掩面而去。"
+	}
+
+	bag := b.getPersonValue("Bag", fromQQ, &Bag{})
+	find := false
+	for i := 0; i < len(bag.(*Bag).Items); i++ {
+		if bag.(*Bag).Items[i] != nil && bag.(*Bag).Items[i].Name == item {
+			find = true
+			bag.(*Bag).Items[i].Count++
+			break
+		}
+
+		if bag.(*Bag).Items[i] == nil {
+			if len(bag.(*Bag).Items) > 1 {
+				bag.(*Bag).Items[i] = bag.(*Bag).Items[len(bag.(*Bag).Items)-1]
+				bag.(*Bag).Items = bag.(*Bag).Items[:len(bag.(*Bag).Items)-1]
+			} else {
+				bag.(*Bag).Items = nil
+			}
+		}
+	}
+
+	if !find {
+		bag.(*Bag).Items = append(bag.(*Bag).Items, &Item{item, 1})
+	}
+	b.setPersonValue("Bag", fromQQ, bag)
+	b.setMoney(fromQQ, -1*int(price))
+	return "你精心挑选了一份外表精致的" + item + "，把它买回家。"
+}
+
 func (b *Bot) useItem(fromQQ uint64, name string) bool {
 	bag := b.getPersonValue("Bag", fromQQ, &Bag{}).(*Bag)
 	if len(bag.Items) == 0 {

@@ -229,6 +229,8 @@ func (b *Bot) searchMenu(msg string, fromQQ uint64, menu *Menu) string {
 }
 
 func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
+	fmt.Println("发现指令触发")
+
 	msg = strings.ReplaceAll(msg, "；", ";")
 
 	if strings.Contains(msg, "序列战争关") {
@@ -337,6 +339,26 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.buyMace(fromQQ)
 	}
 
+	if strings.Contains(msg, "左轮手枪") {
+		return b.buyItem(fromQQ, "左轮手枪", 200)
+	}
+
+	if strings.Contains(msg, "精致礼帽") {
+		return b.buyItem(fromQQ, "精致礼帽", 100)
+	}
+
+	if strings.Contains(msg, "勇者护盾") {
+		return b.buyItem(fromQQ, "勇者护盾", 200)
+	}
+
+	if strings.Contains(msg, "旅行者靴子") {
+		return b.buyItem(fromQQ, "旅行者靴子", 200)
+	}
+
+	if strings.Contains(msg, "旅行者手链") {
+		return b.buyItem(fromQQ, "旅行者手链", 200)
+	}
+
 	if strings.Contains(msg, "技能") {
 		return b.getSkill(fromQQ)
 	}
@@ -405,6 +427,7 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 	}
 
 	if strings.Contains(msg, "阵营") {
+		fmt.Println("阵营触发")
 		return b.getBattleField()
 	}
 

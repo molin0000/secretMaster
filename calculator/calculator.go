@@ -22,7 +22,7 @@ func NewCalcGame() *CalcGame {
 func (c *CalcGame) Start() string {
 
 	info := "\n你去替朋友参加知识教会的入门考试，他说考过了奖金全归你，考不过奖金归他。"
-	info += "\n要求每一题在10秒钟内作答，但是监考老师慢悠悠的发卷就耗去了不少时间，留给你的时间已经不多了。"
+	info += "\n要求每一题在20秒钟内作答，但是监考老师慢悠悠的发卷就耗去了不少时间，留给你的时间已经不多了。"
 	info += c.ShowQuestion(c.Level)
 
 	return info
@@ -55,6 +55,6 @@ func (c *CalcGame) GiveResult(result uint64) (msg string, finish bool) {
 		info += c.ShowQuestion(c.Level)
 		return info, false
 	} else {
-		return "很遗憾，你打错了，没有通过考试。你朋友对你的表现十分失望", true
+		return "很遗憾，你答错了，没有通过考试。你朋友对你的表现十分失望", true
 	}
 }

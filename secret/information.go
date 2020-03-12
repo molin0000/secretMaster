@@ -49,6 +49,11 @@ func (b *Bot) deletePerson(fromQQ uint64) string {
 	getDb().Delete(b.personKey("Water", fromQQ), nil)
 	getDb().Delete(b.personKey("Adventure", fromQQ), nil)
 	getDb().Delete(b.personKey("Work", fromQQ), nil)
+	getDb().Delete(b.personKey("Calc", fromQQ), nil)
+	getDb().Delete(b.personKey("Mission", fromQQ), nil)
+
+	b.exitBattleField(fromQQ)
+	getDb().Delete(b.personKey("BattleInfo", fromQQ), nil)
 
 	churchs := b.getGroupValue("Churchs", &Churchs{}).(*Churchs)
 	for i, c := range churchs.ChurchList {
@@ -81,6 +86,19 @@ func (b *Bot) deletePerson(fromQQ uint64) string {
 	}
 
 	// --remove person in
+	p = &Person{
+		Group:       b.Group,
+		QQ:          fromQQ,
+		Name:        b.CurrentNick,
+		JoinTime:    uint64(time.Now().Unix()),
+		LastChat:    uint64(time.Now().Unix()),
+		LevelDown:   uint64(time.Now().Unix()),
+		SecretID:    99,
+		SecretLevel: 99,
+		ChatCount:   1,
+	}
+
+	b.setPersonToDb(fromQQ, p)
 
 	return "人物删除成功"
 }
