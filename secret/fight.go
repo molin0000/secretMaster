@@ -2,6 +2,7 @@ package secret
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 )
 
@@ -150,4 +151,48 @@ func (b *Bot) pk(fromQQ uint64, msg string) string {
 敌人XXX：3/10/12/15/5 总计：45
 战斗胜利！！收获：100金镑，20经验
 ============================`
+}
+
+func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, total int) {
+	rp = rand.Intn(10)
+	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{fromQQ, b.CurrentNick, 0, 0, 0, 0, uint64(time.Now().Unix()), 0, 15, 0, 0}).(*BattleInfo)
+	speed = int(bi.Speed)
+	p := b.getPersonFromDb(fromQQ)
+	exp = int(p.ChatCount) / 1000
+	if exp > 30 || exp < 0 {
+		exp = 30
+	}
+
+	skillTree := b.getPersonValue("SkillTree", fromQQ, &SkillTree{}).(*SkillTree)
+	church := b.getPersonValue("Church", fromQQ, &ChurchInfo{}).(*ChurchInfo)
+	skill = len(skillTree.Skills)*3 + len(church.Skills)*3
+	if skill > 20 || skill < 0 {
+		skill = 20
+	}
+
+	bag := b.getPersonValue("Bag", fromQQ, &Bag{}).(*Bag)
+	for _, v := range bag.Items {
+		if v.Name == "左轮手枪" {
+			item += 4
+		}
+		if v.Name == "精致礼帽" {
+			item += 4
+		}
+		if v.Name == "勇者护盾" {
+			item += 4
+		}
+		if v.Name == "旅行者靴子" {
+			item += 4
+		}
+		if v.Name == "旅行者手链" {
+			item += 4
+		}
+	}
+
+	total = exp + skill + item + rp + speed
+	return
+}
+
+func (b *Bot) getPlayerSpeed(fromQQ uint64) {
+
 }
