@@ -142,8 +142,9 @@ func (b *Bot) gmCmd(fromQQ uint64, msg string) string {
 		}
 		return fmt.Sprintf("%d 所有技能升%d级", n2, n1)
 	case "medal":
-		if fromQQ != 67939461 {
-			return "只有作者可以颁发勋章🎖"
+		cfg := GetGlobalValue("Supermaster", &Config{}).(*Config)
+		if fromQQ != cfg.MasterQQ {
+			return "只有机器人主人可以颁发勋章🎖"
 		}
 
 		b.setMedal(n2, n1)
