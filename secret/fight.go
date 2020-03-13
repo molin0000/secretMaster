@@ -305,8 +305,6 @@ func (b *Bot) battleFailed(fromQQ uint64) (money, exp int64) {
 				break
 			}
 		}
-		bf.MoneyHunterWinCnt++
-		bf.NightwatchLoseCnt++
 	} else {
 		for i, v := range bf.MoneyHunter {
 			if v.QQ == fromQQ {
@@ -314,8 +312,6 @@ func (b *Bot) battleFailed(fromQQ uint64) (money, exp int64) {
 				break
 			}
 		}
-		bf.NightwatchWinCnt++
-		bf.MoneyHunterLoseCnt++
 	}
 	b.setGroupValue("BattleField", bf)
 	b.updateBattleField()
