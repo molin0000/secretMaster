@@ -45,6 +45,8 @@ func (b *Bot) deletePerson(fromQQ uint64) string {
 	getDb().Delete(b.personKey("Pray", fromQQ), nil)
 	getDb().Delete(b.personKey("Bank", fromQQ), nil)
 	getDb().Delete(b.personKey("Person", fromQQ), nil)
+	m := b.getMoney(fromQQ)
+	b.setMoney(fromQQ, -1*int(m))
 	getDb().Delete(b.personKey("Money", fromQQ), nil)
 	getDb().Delete(b.personKey("Water", fromQQ), nil)
 	getDb().Delete(b.personKey("Adventure", fromQQ), nil)

@@ -319,6 +319,10 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.setMaster(fromQQ, msg)
 	}
 
+	if strings.Contains(msg, ".supermaster") {
+		return b.setSuperMaster(fromQQ, msg)
+	}
+
 	if strings.Contains(msg, "道具") {
 		return b.getItems(fromQQ)
 	}

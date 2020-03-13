@@ -15,7 +15,7 @@ func calcInterest(bank *Bank) *Bank {
 		bank.Amount = uint64(float64(bank.Amount) * math.Pow(1.03, float64(today-bank.Date)))
 		bank.Date = today
 	}
-
+	fmt.Printf("%+v", bank)
 	return bank
 }
 

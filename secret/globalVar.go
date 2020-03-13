@@ -264,6 +264,7 @@ var menus = Menu{
 	"支持私聊查询，私聊格式为 指令@群号 详细游戏指南请访问：https://github.com/molin0000/secretMaster/blob/master/playGuide.md`",
 	[]Menu{
 		{7, "设置", "回复 设置 可查看插件高级设置。", "", []Menu{
+			{70, ".supermaster", "设置机器人主人，全局，唯一，用法同.master。启动插件后请务必第一时间配置。", "", nil},
 			{71, ".master", "查看和设置管理员，设置本群的GM，格式为：.master;QQ号码，必须先设置管理员，才能使用其它设置指令, 查看指令.master。", "", nil},
 			{72, "序列战争开", "在本群开启序列战争插件。", "", nil},
 			{73, "序列战争关", "在本群关闭序列战争插件。", "", nil},
@@ -363,4 +364,4 @@ var fishList = []Fish{
 
 var missionPath = "data/app/me.cqp.molin.secretMaster/mission"
 
-var version = &Version{"序列战争", "v2.7.4", "2020-03-13"}
+var version = &Version{"序列战争", "v2.7.5", "2020-03-13"}

@@ -35,9 +35,32 @@ func (b *Bot) setMaster(fromQQ uint64, msg string) string {
 	return fmt.Sprintf("成功设置%d为插件master", masterQQ)
 }
 
+func (b *Bot) setSuperMaster(fromQQ uint64, msg string) string {
+	cfg := GetGlobalValue("Supermaster", &Config{}).(*Config)
+
+	if cfg.HaveMaster && fromQQ != cfg.MasterQQ {
+		return "supermaster只能配置1次，然后只有supermaster可以修改"
+	}
+
+	strs := strings.Split(msg, ";")
+	if len(strs) != 2 {
+		return fmt.Sprintf("当前supermaster:%+v", cfg)
+	}
+
+	masterQQ, _ := strconv.ParseUint(strs[1], 10, 64)
+	cfg.MasterQQ = masterQQ
+	cfg.HaveMaster = true
+	if masterQQ == 0 {
+		cfg.HaveMaster = false
+	}
+	SetGlobalValue("Supermaster", cfg)
+	return fmt.Sprintf("成功设置%d为插件supermaster", masterQQ)
+}
+
 func (b *Bot) isMaster(fromQQ uint64) bool {
-	cfg := b.getGroupValue("Config", &Config{})
-	return (cfg.(*Config).HaveMaster && (fromQQ == cfg.(*Config).MasterQQ)) || fromQQ == 67939461
+	cfg := b.getGroupValue("Config", &Config{}).(*Config)
+	cfgSuper := GetGlobalValue("Supermaster", &Config{}).(*Config)
+	return (cfg.HaveMaster && (fromQQ == cfg.MasterQQ)) || (fromQQ == cfgSuper.MasterQQ)
 }
 
 func (b *Bot) notGM() string {
@@ -139,6 +162,15 @@ func (b *Bot) gmCmd(fromQQ uint64, msg string) string {
 			return fmt.Sprintf("%d way to: %d", n2, n1)
 		}
 		return "数值异常"
+	case "bank":
+		p := b.getPersonValue("Bank", n2, &Bank{}).(*Bank)
+		if n1 >= 0 {
+			p.Date += uint64(n1)
+		} else {
+			p.Date -= uint64(-1 * n1)
+		}
+		b.setPersonValue("Bank", n2, p)
+		return fmt.Sprintf("%d bank date to: %d, %+v", n2, n1, p)
 	default:
 		return "参数解析错误"
 	}
