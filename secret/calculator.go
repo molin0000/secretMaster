@@ -32,7 +32,7 @@ func (b *Bot) checkCalc(fromQQ uint64, msg string) string {
 	if finish {
 		b.setMoney(fromQQ, int(int64(ms.Calc.Money)))
 		ms.IsPlaying = false
-		ms.Calc = nil
+		// ms.Calc = nil
 	}
 
 	b.setPersonValue("Calc", fromQQ, ms)

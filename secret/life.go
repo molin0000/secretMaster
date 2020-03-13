@@ -124,14 +124,16 @@ func (b *Bot) work(fromQQ uint64, msg string) string {
 		if strs[1] == v.Name {
 			today := uint64(time.Now().Unix() / (3600 * 24))
 			v.Date = today
-			b.setPersonValue("Work", fromQQ, v)
 			if i == 0 || i == 1 {
 				str, ret := b.joinBattleField(fromQQ, int64(i))
 				if ret {
+					b.setPersonValue("Work", fromQQ, v)
 					return "你开始了工作：" + v.Name + str
 				} else {
 					return str
 				}
+			} else {
+
 			}
 			return "你开始了工作：" + v.Name
 		}

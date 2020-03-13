@@ -272,9 +272,12 @@ func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, total 
 
 func (b *Bot) getPlayerSpeed(fromQQ uint64) int64 {
 	ms := b.getPersonValue("Calc", fromQQ, &CalcState{false, nil}).(*CalcState)
+	fmt.Printf("speed:%+v", ms)
+
 	if ms.Calc == nil {
 		return 0
 	}
+
 	if ms.Calc.Speed > 20 {
 		ms.Calc.Speed = 20
 	}
