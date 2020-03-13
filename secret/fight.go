@@ -219,7 +219,8 @@ func (b *Bot) pk(fromQQ uint64, msg string) string {
 		b.battleSuccess(aimQQ, moneyNum, expNum)
 	}
 
-	info := fmt.Sprintf(`============================
+	info := fmt.Sprintf(`
+============================
 战斗结算：经验/技能/装备/人品/答题
 %s：%d/%d/%d/%d/%d 总计：%d
 %s：%d/%d/%d/%d/%d 总计：%d
