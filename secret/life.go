@@ -98,6 +98,7 @@ func (b *Bot) work(fromQQ uint64, msg string) string {
 			return "你没有工作。"
 		}
 		if w.Name == "值夜者小队" || w.Name == "赏金猎人" {
+			b.removePersonValue("Work", fromQQ)
 			return b.exitBattleField(fromQQ)
 		}
 		today := uint64(time.Now().Unix() / (3600 * 24))
