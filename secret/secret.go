@@ -407,7 +407,7 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.fishing(fromQQ)
 	}
 
-	if strings.Contains(msg, "彩票") {
+	if strings.Contains(msg, "许愿") {
 		return b.lottery(fromQQ)
 	}
 

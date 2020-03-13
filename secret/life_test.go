@@ -65,7 +65,7 @@ func TestLottery(t *testing.T) {
 
 	b.setMoney(fromQQ, 1200)
 	for i := 0; i < 1000; i++ {
-		fmt.Println(b.Run("[CQ:at,qq=3334] 彩票", fromQQ, "mm"))
+		fmt.Println(b.Run("[CQ:at,qq=3334] 许愿", fromQQ, "mm"))
 	}
 
 	fmt.Println(b.Run("[CQ:at,qq=3334] 属性", fromQQ, "mm"))

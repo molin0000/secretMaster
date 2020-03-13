@@ -179,14 +179,14 @@ func (b *Bot) fishing(fromQQ uint64) string {
 
 func (b *Bot) lottery(fromQQ uint64) string {
 	if b.getMoney(fromQQ) < 2 {
-		return "你身无分文，彩票也买不起了。"
+		return "你身无分文，许愿不投币怎么行。"
 	}
 	b.setMoney(fromQQ, -2)
 
 	if rand.Intn(500) == 0 {
 		b.setMoney(fromQQ, 1000)
-		return "天啊！！你中了大奖！1000金镑！！"
+		return "天啊！！女神保佑！你的屋顶上有东西落下来了！1000金镑！！"
 	}
 
-	return "很遗憾，你没有中奖。"
+	return "很遗憾，你的许愿没有回应。"
 }
