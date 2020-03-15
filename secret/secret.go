@@ -443,6 +443,10 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.getBattleInfo(fromQQ)
 	}
 
+	if strings.Contains(msg, "红包") {
+		return b.redPack(fromQQ, msg)
+	}
+
 	return ""
 }
 

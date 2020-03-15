@@ -190,3 +190,29 @@ func (b *Bot) lottery(fromQQ uint64) string {
 
 	return "很遗憾，你的许愿没有回应。"
 }
+
+func (b *Bot) redPack(fromQQ uint64, msg string) string {
+	strs := strings.Split(msg, ";")
+	if len(strs) != 3 {
+		return "指令格式错误，应为：红包;金额;QQ"
+	}
+
+	n1, err1 := strconv.Atoi(strs[1])
+	if n1 <= 0 || err1 != nil {
+		return "金额数值异常"
+	}
+	n2, err2 := strconv.ParseUint(strs[2], 10, 64)
+	if err2 != nil {
+		return "QQ数值异常"
+	}
+
+	m := b.getMoney(fromQQ)
+	if m < uint64(n1) {
+		return "对不起，你的钱不够呢"
+	}
+
+	b.setMoney(fromQQ, -1*n1)
+
+	b.setMoney(n2, n1)
+	return fmt.Sprintf("你成功向%d发送了%d金镑的红包", n2, n1)
+}
