@@ -279,7 +279,7 @@ func (b *Bot) getPlayerSpeed(fromQQ uint64) int64 {
 		return 0
 	}
 
-	if ms.Calc.Speed > 20 {
+	if ms.Calc.Speed > 20 || ms.Calc.Speed == 0 {
 		ms.Calc.Speed = 20
 	}
 	return int64(20 - ms.Calc.Speed)

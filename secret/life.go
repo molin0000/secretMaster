@@ -133,7 +133,7 @@ func (b *Bot) work(fromQQ uint64, msg string) string {
 					return str
 				}
 			} else {
-
+				b.setPersonValue("Work", fromQQ, v)
 			}
 			return "你开始了工作：" + v.Name
 		}
