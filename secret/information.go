@@ -25,6 +25,17 @@ func (b *Bot) setRespectName(msg string, fromQQ uint64) string {
 }
 
 func (b *Bot) deletePerson(fromQQ uint64) string {
+
+	k := b.getPersonValue("KillSelf", fromQQ, &KillSelf{}).(*KillSelf)
+	if k.DayCnt >= 3 && k.Days == uint64(time.Now().Day()) {
+		return "你今天已经自杀太多次了。"
+	}
+
+	if k.Days != uint64(time.Now().Day()) {
+		k.DayCnt = 0
+		k.Days = uint64(time.Now().Day())
+	}
+
 	p := b.getPersonFromDb(fromQQ)
 
 	if b.getGodFromDb(p.SecretID) == p.QQ {
@@ -101,6 +112,9 @@ func (b *Bot) deletePerson(fromQQ uint64) string {
 	}
 
 	b.setPersonToDb(fromQQ, p)
+
+	k.DayCnt++
+	b.setPersonValue("KillSelf", fromQQ, k)
 
 	return "人物删除成功"
 }

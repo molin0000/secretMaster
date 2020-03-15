@@ -249,3 +249,8 @@ type SilenceState struct {
 	OpenStartTime string
 	OpenEndTime   string
 }
+
+type KillSelf struct {
+	DayCnt uint64
+	Days   uint64
+}
