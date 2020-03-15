@@ -96,6 +96,7 @@ func (b *Bot) joinBattleField(fromQQ uint64, fieldType int64) (string, bool) {
 			return "今天加入阵营次数已经用尽，请明天再试。", false
 		}
 	}
+	bi.State = 0
 	bi.FieldType = uint64(fieldType)
 
 	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
