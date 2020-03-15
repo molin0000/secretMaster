@@ -170,7 +170,7 @@ func (b *Bot) joinChurch(fromQQ uint64, msg string) string {
 	churchs := b.getGroupValue("Churchs", &Churchs{}).(*Churchs)
 	for i, c := range churchs.ChurchList {
 		if c != nil && c.Name == strs[1] {
-			if c.Members >= c.MaxMember {
+			if c.Members >= b.getMoney(c.CreatorQQ)/200 {
 				return "\n对不起，满员了。"
 			}
 
