@@ -70,9 +70,10 @@ type RespectName struct {
 }
 
 type ExternProperty struct {
-	Luck  uint64
-	Magic uint64
-	Days  uint64
+	Luck     uint64
+	Magic    uint64
+	Days     uint64
+	BaseLuck uint64
 }
 
 type AdventureEvent struct {

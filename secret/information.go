@@ -299,15 +299,15 @@ func (b *Bot) setMagic(fromQQ uint64, v int) {
 func (b *Bot) setLuck(fromQQ uint64, v int) {
 	e := b.getExternFromDb(fromQQ)
 	if v >= 0 {
-		e.Luck += uint64(v)
-		if e.Luck > 20 {
-			e.Luck = 20
+		e.BaseLuck += uint64(v)
+		if e.BaseLuck > 20 {
+			e.BaseLuck = 20
 		}
 	} else {
-		if e.Luck > uint64(-1*v) {
-			e.Luck -= uint64(-1 * v)
+		if e.BaseLuck > uint64(-1*v) {
+			e.BaseLuck -= uint64(-1 * v)
 		} else {
-			e.Luck = 0
+			e.BaseLuck = 0
 		}
 	}
 	b.setExternToDb(fromQQ, e)

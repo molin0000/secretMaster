@@ -222,7 +222,7 @@ func (b *Bot) getExternFromDb(fromQQ uint64) *ExternProperty {
 		v.Magic = uint64(200 + b.getAdditionMagic(fromQQ))
 	}
 
-	v.Luck = b.getAdditionLucky(fromQQ)
+	v.Luck = v.BaseLuck + b.getAdditionLucky(fromQQ)
 
 	return &v
 }

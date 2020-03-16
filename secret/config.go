@@ -152,6 +152,9 @@ func (b *Bot) gmCmd(fromQQ uint64, msg string) string {
 		return fmt.Sprintf("%d 勋章🎖%d", n2, n1)
 	case "level":
 		p := b.getPersonFromDb(n2)
+		if p.SecretID > 22 {
+			return "请先选途径"
+		}
 		p.SecretLevel = uint64(n1)
 		b.setPersonToDb(n2, p)
 		return fmt.Sprintf("%d level to: %d", n2, n1)
