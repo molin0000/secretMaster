@@ -192,6 +192,11 @@ func (b *Bot) lottery(fromQQ uint64) string {
 }
 
 func (b *Bot) redPack(fromQQ uint64, msg string) string {
+	p := b.getPersonFromDb(fromQQ)
+	if p.SecretLevel < 2 || p.SecretLevel > 9 {
+		return "序列7以下不可发红包"
+	}
+
 	strs := strings.Split(msg, ";")
 	if len(strs) != 3 {
 		return "指令格式错误，应为：红包;金额;QQ"
@@ -201,6 +206,11 @@ func (b *Bot) redPack(fromQQ uint64, msg string) string {
 	if n1 <= 0 || err1 != nil {
 		return "金额数值异常"
 	}
+
+	if n1 > int(100*math.Pow(2, float64(p.SecretLevel))) {
+		return "单次金额超出限制：" + fmt.Sprintf("%d", uint64(100*math.Pow(2, float64(p.SecretLevel))))
+	}
+
 	n2, err2 := strconv.ParseUint(strs[2], 10, 64)
 	if err2 != nil {
 		return "QQ数值异常"
