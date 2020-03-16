@@ -47,10 +47,10 @@ func (c *CalcGame) GiveResult(result uint64) (msg string, finish bool) {
 	}
 	if ret {
 		c.Level++
-		info += "\n恭喜你，答对了！" + fmt.Sprintf("监考老师递给你%d金镑奖金！", c.Level*20)
+		info += "\n恭喜你，答对了！" + fmt.Sprintf("监考老师递给你%d金镑奖金！", c.Level*25)
 		if c.Level >= 3 {
-			c.Money += 120
-			return info + "\n你全部答对了，获得了共计120金镑的奖金，你的朋友以为荣！", true
+			c.Money += 150
+			return info + "\n你全部答对了，获得了共计150金镑的奖金，你的朋友以为荣！", true
 		}
 		info += c.ShowQuestion(c.Level)
 		return info, false

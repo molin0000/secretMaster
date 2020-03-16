@@ -42,11 +42,11 @@ func (b *Bot) checkCalc(fromQQ uint64, msg string) string {
 
 func (b *Bot) startCalc(fromQQ uint64, msg string) string {
 	magic := b.getMagic(fromQQ)
-	if magic < 10 {
+	if magic < 25 {
 		return "灵性不足"
 	}
 
-	b.setMagic(fromQQ, -10)
+	b.setMagic(fromQQ, -25)
 
 	mg := calculator.NewCalcGame()
 	info := mg.Start()
