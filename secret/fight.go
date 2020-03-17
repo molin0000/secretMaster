@@ -97,6 +97,8 @@ func (b *Bot) joinBattleField(fromQQ uint64, fieldType int64) (string, bool) {
 		}
 	}
 	bi.State = 0
+	bi.Money = 0
+	bi.Exp = 0
 	bi.FieldType = uint64(fieldType)
 
 	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
