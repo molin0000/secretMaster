@@ -173,7 +173,7 @@ func (b *Bot) pk(fromQQ uint64, msg string) string {
 	}
 
 	bi := b.getPersonValue("BattleInfo", fromQQ, &BattleInfo{}).(*BattleInfo)
-	if bi.QQ == 0 {
+	if bi.QQ == 0 || bi.State == 2 {
 		return "请先加入阵营"
 	}
 
