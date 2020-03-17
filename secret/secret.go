@@ -36,6 +36,10 @@ func (b *Bot) Run(msg string, fromQQ uint64, nick string) string {
 	if !b.talkToMe(msg) {
 		return ""
 	}
+	gp := b.getGroupValue("GroupMap", &GroupMap{}).(*GroupMap)
+	if gp.Mapped {
+		b.Group = gp.MapToGroup
+	}
 
 	b.CurrentNick = nick
 
@@ -53,6 +57,11 @@ func (b *Bot) Run(msg string, fromQQ uint64, nick string) string {
 }
 
 func (b *Bot) RunPrivate(msg string, fromQQ uint64, nick string) string {
+	gp := b.getGroupValue("GroupMap", &GroupMap{}).(*GroupMap)
+	if gp.Mapped {
+		b.Group = gp.MapToGroup
+	}
+
 	b.CurrentNick = nick
 	ret := b.checkMission(fromQQ, msg)
 	if len(ret) > 0 {
@@ -106,6 +115,11 @@ func (b *Bot) UpdateFromOldVersion(fromQQ uint64) string {
 func (b *Bot) Update(fromQQ uint64, nick string) string {
 	if !b.getSwitch() {
 		return ""
+	}
+
+	gp := b.getGroupValue("GroupMap", &GroupMap{}).(*GroupMap)
+	if gp.Mapped {
+		b.Group = gp.MapToGroup
 	}
 
 	key := b.personKey("Person", fromQQ)
@@ -445,6 +459,10 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 
 	if strings.Contains(msg, "红包") {
 		return b.redPack(fromQQ, msg)
+	}
+
+	if strings.Contains(msg, "map") {
+		return b.groupMap(fromQQ, msg)
 	}
 
 	return ""

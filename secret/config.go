@@ -254,3 +254,27 @@ func (b *Bot) SetSilentTime(fromQQ uint64, msg string) string {
 	}
 	return fmt.Sprintf("%+v", s)
 }
+
+func (b *Bot) groupMap(fromQQ uint64, msg string) string {
+	if !b.isMaster(fromQQ) {
+		return b.notGM()
+	}
+
+	gp := b.getGroupValue("GroupMap", &GroupMap{}).(*GroupMap)
+	strs := strings.Split(msg, ";")
+	if len(strs) != 3 {
+		return fmt.Sprintf("当前群数据映射参数：%+v", gp)
+	}
+
+	g1, err1 := strconv.ParseUint(strs[1], 10, 64)
+	g2, err2 := strconv.ParseUint(strs[2], 10, 64)
+	if err1 != nil || err2 != nil {
+		return "数字格式异常"
+	}
+
+	gp.Mapped = true
+	gp.MapFromGroup = g1
+	gp.MapToGroup = g2
+	b.setGroupValue("GroupMap", gp)
+	return "映射成功"
+}

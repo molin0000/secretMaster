@@ -255,3 +255,9 @@ type KillSelf struct {
 	DayCnt uint64
 	Days   uint64
 }
+
+type GroupMap struct {
+	Mapped       bool
+	MapFromGroup uint64
+	MapToGroup   uint64
+}
