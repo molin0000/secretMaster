@@ -122,3 +122,5 @@ var foodList = []Food{
 	{"饭团（大）", 30, 12},
 	{"黑麦面包", 10, 4},
 }
+
+var PetFilePath = "data/app/me.cqp.molin.secretMaster/pets.xlsx"

@@ -29,11 +29,12 @@ type SecretInfo struct {
 }
 
 type Bot struct {
-	QQ      uint64
-	Group   uint64
-	Name    string
-	Rank    []uint64
-	Private bool
+	QQ        uint64
+	Group     uint64
+	Name      string
+	Rank      []uint64
+	RankNames []string
+	Private   bool
 
 	CurrentNick string
 

@@ -15,6 +15,7 @@ type PetStore struct {
 	SpiritPets      []*Pet
 	StorePets       []*Pet
 	StoreUpdateTime uint64
+	PetFilePath     string
 }
 
 type Pet struct {
@@ -54,7 +55,9 @@ type Food struct {
 }
 
 func NewPetStore() *PetStore {
-	return &PetStore{}
+	ps := &PetStore{}
+	ps.LoadPets(PetFilePath)
+	return ps
 }
 
 func atoi(msg string) uint64 {
@@ -152,6 +155,7 @@ func (ps *PetStore) GetStorePets() string {
 	info := fmt.Sprintf("\n欢迎光临，宠物货架每4小时自动刷新，刷新剩余：%d秒", 3600*updateHour-d)
 
 	if needFresh {
+		ps.LoadPets(PetFilePath)
 		ps.StorePets = make([]*Pet, 0)
 		for i := 0; i < petCnt; i++ {
 			n := rand.Intn(len(ps.RealPets))
