@@ -31,9 +31,19 @@ func TestPet(t *testing.T) {
 	fmt.Println(ps.LevelUp(pet))
 	fmt.Println(ps.LevelUp(pet))
 
-	for i := 0; i < 3000; i++ {
+	for i := 0; i < 30; i++ {
 		pet.Exp += uint64(rand.Intn(1000))
 		fmt.Println(ps.LevelUp(pet))
 		fmt.Println(ps.State(pet))
 	}
+
+	cnt := 0
+	for i := 0; i < 300; i++ {
+		pet, msg = ps.Summon()
+		fmt.Println(msg)
+		if pet != nil {
+			cnt++
+		}
+	}
+	fmt.Println(cnt)
 }

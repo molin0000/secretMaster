@@ -100,6 +100,7 @@ func (ps *PetStore) LoadPets(path string) {
 		if i == 0 {
 			continue
 		}
+
 		pet := &Pet{
 			Class:             row[0],
 			Price:             atoi(row[1]),
@@ -242,6 +243,10 @@ func (ps *PetStore) State(pet *Pet) string {
 }
 
 func (ps *PetStore) LevelExp(level uint64) uint64 {
+	if level > 100 {
+		level100 := uint64(100) + uint64(math.Pow(float64(1.2), float64(100))) + 100*100
+		return level100 + uint64(100) + uint64(math.Pow(float64(1.2), float64(level%101))) + level%101*100
+	}
 	//exp = 100+1.2^level + level*100
 	return uint64(100) + uint64(math.Pow(float64(1.2), float64(level))) + level*100
 }
@@ -252,7 +257,7 @@ func (ps *PetStore) LevelUp(pet *Pet) string {
 	}
 
 	pet.Level++
-	if pet.Level%20 == 0 {
+	if pet.Level%20 == 0 && pet.Level <= 100 {
 		pet.Star++
 	}
 
@@ -268,4 +273,35 @@ func (ps *PetStore) LevelUp(pet *Pet) string {
 	pet.Speed += s
 	pet.LevelState = ""
 	return "宠物升级成功!" + fmt.Sprintf("生命+%d, 攻击+%d, 防御+%d, 敏捷+%d", h, a, d, s)
+}
+
+func (ps *PetStore) Summon() (*Pet, string) {
+	baseNum := uint64(100000)
+	totalNum := uint64(0)
+
+	for i, p := range ps.SpiritPets {
+		totalNum += uint64(float64(baseNum) / float64(p.Price))
+		if p.HP == 0 || p.Attack == 0 {
+			fmt.Println("err", i)
+		}
+	}
+
+	fmt.Println(totalNum)
+	scope := totalNum * 5
+	r := uint64(rand.Intn(int(scope)))
+	fmt.Println("R:", r)
+
+	if r > totalNum {
+		return nil, "你没找到宠物，还在灵界迷路，历尽千辛万苦，终于找到归途。"
+	}
+
+	totalNum = 0
+	for i, p := range ps.SpiritPets {
+		totalNum += uint64(float64(baseNum) / float64(p.Price))
+		if int(r)-int(totalNum) <= 0 {
+			return ps.SpiritPets[i], "你找到了宠物！" + ps.State(ps.SpiritPets[i])
+		}
+	}
+
+	return nil, "你没找到宠物，还在灵界迷路，历尽千辛万苦，终于找到归途。"
 }
