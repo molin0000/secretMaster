@@ -2,6 +2,7 @@ package pet
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"strconv"
 	"time"
@@ -214,6 +215,10 @@ func (ps *PetStore) State(pet *Pet) string {
 		adv = pet.AdventureState
 	}
 
+	if pet.Exp > ps.LevelExp(pet.Level) {
+		pet.LevelState = "(可晋级)"
+	}
+
 	info += fmt.Sprintf(`
 =========
 昵称：%s
@@ -236,6 +241,31 @@ func (ps *PetStore) State(pet *Pet) string {
 	return info
 }
 
-func (ps *PetStore) Beautiful() {
+func (ps *PetStore) LevelExp(level uint64) uint64 {
+	//exp = 100+1.2^level + level*100
+	return uint64(100) + uint64(math.Pow(float64(1.2), float64(level))) + level*100
+}
 
+func (ps *PetStore) LevelUp(pet *Pet) string {
+	if pet.Exp < ps.LevelExp(pet.Level) {
+		return "你的宠物未达到升级标准"
+	}
+
+	pet.Level++
+	if pet.Level%20 == 0 {
+		pet.Star++
+	}
+
+	h := pet.Level*10 + uint64(rand.Intn(10))
+	pet.HP += h
+	pet.HPNow = pet.HP
+	a := pet.Level + uint64(rand.Intn(5))
+	d := pet.Level + uint64(rand.Intn(5))
+	s := pet.Level + uint64(rand.Intn(5))
+
+	pet.Attack += a
+	pet.Defense += d
+	pet.Speed += s
+	pet.LevelState = ""
+	return "宠物升级成功!" + fmt.Sprintf("生命+%d, 攻击+%d, 防御+%d, 敏捷+%d", h, a, d, s)
 }

@@ -2,6 +2,7 @@ package pet
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 )
 
@@ -24,4 +25,15 @@ func TestPet(t *testing.T) {
 
 	fmt.Println(ps.GetStorePets())
 
+	fmt.Println(ps.LevelUp(pet))
+	fmt.Println(ps.LevelUp(pet))
+	fmt.Println(ps.LevelUp(pet))
+	fmt.Println(ps.LevelUp(pet))
+	fmt.Println(ps.LevelUp(pet))
+
+	for i := 0; i < 3000; i++ {
+		pet.Exp += uint64(rand.Intn(1000))
+		fmt.Println(ps.LevelUp(pet))
+		fmt.Println(ps.State(pet))
+	}
 }
