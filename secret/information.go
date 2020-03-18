@@ -186,7 +186,7 @@ func (b *Bot) getProperty(fromQQ uint64) string {
 		int64(b.getExp(fromQQ)), int64(b.getMoney(fromQQ)),
 		int64(b.getLuck(fromQQ)),
 		int64(b.getMagic(fromQQ)),
-		startTime, fight[myFightIndex], sReLive,
+		startTime, FightLevel[myFightIndex], sReLive,
 		cc.Name,
 		workStr,
 		b.getRNameFromDb(fromQQ),
