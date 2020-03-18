@@ -305,7 +305,7 @@ func (ps *PetStore) Summon() (*Pet, string) {
 	for i, p := range ps.SpiritPets {
 		totalNum += uint64(float64(baseNum) / float64(p.Price))
 		if int(r)-int(totalNum) <= 0 {
-			return ps.SpiritPets[i], "你找到了宠物！" + ps.State(ps.SpiritPets[i])
+			return ps.SpiritPets[i], "你找到了宠物！" + ps.State(ps.SpiritPets[i], nil)
 		}
 	}
 
@@ -313,11 +313,47 @@ func (ps *PetStore) Summon() (*Pet, string) {
 }
 
 func (ps *PetStore) StartAdv(pet *Pet) string {
-	return ""
+	if pet.AdvStartTime != 0 {
+		return fmt.Sprintf("\n你的宠物%s已经在努力的探险了。", pet.Nick)
+	}
+
+	if pet.WeakStartTime != 0 {
+		return fmt.Sprintf("\n%s: 主人，我都快死了，还探什么险啊", pet.Nick)
+	}
+
+	pet.AdvStartTime = uint64(time.Now().Unix())
+	pet.AdvUpdateTime = uint64(time.Now().Unix())
+	pet.HPNow = pet.HP
+	pet.WeakStartTime = 0
+	return fmt.Sprintf("\n%s走上了探险的旅途，它一脸坚毅，充满了决心。", pet.Nick)
 }
 
-func (ps *PetStore) StopAdv(pet *Pet) string {
-	return ""
+func (ps *PetStore) StopAdv(pet *Pet, list []string) (ret string, die bool) {
+	info := pet.AdventureLog
+	if pet.AdvStartTime == 0 {
+		return info + fmt.Sprintf("\n%s: 主人，我在家呢，不用召回。", pet.Nick), false
+	}
+
+	ps.checkPetState(pet, list)
+
+	pet.AdvStartTime = 0
+
+	nowTime := uint64(time.Now().Unix())
+	if pet.WeakStartTime != 0 && ((nowTime - pet.WeakStartTime) < 3600*24*3) {
+		pet.WeakStartTime = 0
+		pet.HPNow = pet.HP
+		return info + fmt.Sprintf("\n%s: 主人，你终于来救我了，差一点就挂了，呜呜呜", pet.Nick), false
+	}
+
+	if pet.WeakStartTime != 0 {
+		return info + fmt.Sprintf("\n%s走的很安详，你为它收敛了尸骨，并立了一个墓碑。", pet.Nick), true
+	}
+
+	pet.AdvStartTime = 0
+	pet.WeakStartTime = 0
+	pet.HPNow = pet.HP
+	pet.AdvUpdateTime = 0
+	return info + "\n成功召回！", false
 }
 
 func (ps *PetStore) pk(pet *Pet, enemyType int) string {
@@ -331,17 +367,47 @@ func (ps *PetStore) pk(pet *Pet, enemyType int) string {
 	enemy := *enemyList[rand.Intn(len(enemyList))]
 
 	info := "\n"
-	r := rand.Intn(7) - 3
+	r := rand.Intn(7) - 5
 	if pet.Level < 4 && r < 0 {
 		r = 0
 	}
 	enemy.Level = pet.Level + uint64(r)
 	info += fmt.Sprintf("%s在探险的途中遭遇了%s(lv%d)\n", pet.Nick, enemy.Nick, enemy.Level)
+	xp := rand.Int63n(int64(ps.LevelExp(pet.Level)))
+	win := false
+	if uint64(xp) < pet.Exp/2 {
+		win = true
+	} else {
+		win = false
+	}
 
+	if win {
+		e := pet.Level/2 + uint64(5+rand.Intn(int(pet.Level)/2))
+		m := uint64(5 + rand.Intn(int(pet.Level)/2))
+		h := uint64(rand.Intn(int(pet.Attack)))
+		if pet.HPNow > h {
+			info += fmt.Sprintf("%s战胜了%s(lv%d), HP:-%d，获得：%d经验，%d金镑", pet.Nick, enemy.Nick, enemy.Level, h, e, m)
+			pet.Exp += e
+			pet.Money += m
+			pet.HPNow -= h
+		} else {
+			pet.HPNow = 1
+			info += fmt.Sprintf("你失败了，进入濒死状态。HP:-%d", h)
+			pet.WeakStartTime = uint64(time.Now().Unix())
+		}
+	} else {
+		pet.HPNow = 1
+		info += "你失败了，进入濒死状态。"
+		pet.WeakStartTime = uint64(time.Now().Unix())
+	}
 	return info
 }
 
 func (ps *PetStore) getEvent(pet *Pet, list []string) string {
+	if pet.WeakStartTime != 0 {
+		return ""
+	}
+	pet.EventCnt++
 	charm := pet.Charm
 	if charm > 50 {
 		charm = 50

@@ -21,7 +21,9 @@ func TestPet(t *testing.T) {
 	pet, msg := ps.Buy(10000, "六翼石像鬼")
 	fmt.Println(msg)
 
-	fmt.Println(ps.State(pet))
+	var list = []string{"AAA", "BBB", "CCC"}
+
+	fmt.Println(ps.State(pet, list))
 
 	fmt.Println(ps.GetStorePets())
 
@@ -34,11 +36,12 @@ func TestPet(t *testing.T) {
 	for i := 0; i < 30; i++ {
 		pet.Exp += uint64(rand.Intn(1000))
 		fmt.Println(ps.LevelUp(pet))
-		fmt.Println(ps.State(pet))
+		fmt.Println(ps.State(pet, list))
 	}
 
 	cnt := 0
-	for i := 0; i < 300; i++ {
+	pet0 := pet
+	for i := 0; i < 30; i++ {
 		pet, msg = ps.Summon()
 		fmt.Println(msg)
 		if pet != nil {
@@ -46,4 +49,32 @@ func TestPet(t *testing.T) {
 		}
 	}
 	fmt.Println(cnt)
+
+	pet = pet0
+
+	pet.Charm = 10
+
+	fmt.Println(ps.StartAdv(pet))
+	fmt.Println(ps.StartAdv(pet))
+
+	fmt.Println(ps.State(pet, list))
+
+	fmt.Println(ps.StopAdv(pet, list))
+
+	fmt.Println(ps.StartAdv(pet))
+	pet.AdvStartTime -= 3600 * 24
+	pet.AdvUpdateTime -= 3600 * 24
+	fmt.Println(ps.State(pet, list))
+
+	fmt.Println(ps.StopAdv(pet, list))
+
+	fmt.Println(ps.State(pet, list))
+
+	fmt.Println(ps.StartAdv(pet))
+	pet.AdvStartTime -= 3600 * 24
+	pet.AdvUpdateTime -= 3600 * 24
+	fmt.Println(ps.State(pet, list))
+	pet.WeakStartTime -= 4 * 24 * 3600
+	fmt.Println(ps.StopAdv(pet, list))
+
 }
