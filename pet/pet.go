@@ -202,7 +202,7 @@ func (ps *PetStore) ChangeNick(nick string, pet *Pet) string {
 	return "改名成功：" + nick
 }
 
-func (ps *PetStore) State(pet *Pet) string {
+func (ps *PetStore) State(pet *Pet, list []string) string {
 	info := ""
 	stars := ""
 
@@ -220,10 +220,7 @@ func (ps *PetStore) State(pet *Pet) string {
 		}
 	}
 
-	adv := "未探险"
-	if len(pet.AdventureState) > 0 {
-		adv = pet.AdventureState
-	}
+	adv := ps.checkPetState(pet, list)
 
 	if pet.Exp > ps.LevelExp(pet.Level) {
 		pet.LevelState = "(可晋级)"
@@ -323,6 +320,103 @@ func (ps *PetStore) StopAdv(pet *Pet) string {
 	return ""
 }
 
-func (ps *PetStore) checkPetState(pet *Pet) string {
-	return ""
+func (ps *PetStore) pk(pet *Pet, enemyType int) string {
+	var enemyList []*Pet
+	if enemyType == 0 {
+		enemyList = ps.RealPets
+	} else {
+		enemyList = ps.SpiritPets
+	}
+
+	enemy := *enemyList[rand.Intn(len(enemyList))]
+
+	info := "\n"
+	r := rand.Intn(7) - 3
+	if pet.Level < 4 && r < 0 {
+		r = 0
+	}
+	enemy.Level = pet.Level + uint64(r)
+	info += fmt.Sprintf("%s在探险的途中遭遇了%s(lv%d)\n", pet.Nick, enemy.Nick, enemy.Level)
+
+	return info
+}
+
+func (ps *PetStore) getEvent(pet *Pet, list []string) string {
+	charm := pet.Charm
+	if charm > 50 {
+		charm = 50
+	}
+	info := "\n"
+	max := 75 + charm
+	r := uint64(rand.Intn(int(max)))
+	man := list[rand.Intn(len(list))]
+	food := foodList[rand.Intn(len(foodList))]
+	if r < charm {
+		info += fmt.Sprintf("%s在路上偶遇了%s，%s摸了摸%s的头并投喂了%s。（经验：%d, 金镑：%d）", pet.Nick, man, man, pet.Nick, food.Name, food.Exp, food.Money)
+		if food.Exp >= 0 {
+			pet.Exp += uint64(food.Exp)
+		} else {
+			if pet.Exp > uint64(-1*food.Exp) {
+				pet.Exp -= uint64(-1 * food.Exp)
+			} else {
+				pet.Exp = 0
+			}
+		}
+		if food.Money >= 0 {
+			pet.Money += uint64(food.Money)
+		} else {
+			if pet.Money > uint64(-1*food.Money) {
+				pet.Money -= uint64(-1 * food.Money)
+			} else {
+				pet.Money = 0
+			}
+		}
+		return info
+	}
+
+	if r < charm+25 {
+		info += fmt.Sprintf("%s在探险的路上迷失了方向，历尽千辛万苦才找到了回家的路", pet.Nick)
+		return info
+	}
+
+	if r < charm+50 {
+		return ps.pk(pet, 0)
+	}
+
+	if r <= charm+75 {
+		return ps.pk(pet, 1)
+	}
+	return info + "遭遇了bug"
+}
+
+func (ps *PetStore) checkPetState(pet *Pet, list []string) string {
+	//几种状态，迷路25%，投喂?%，现世pk25%，灵界pk25%
+	if pet.AdvStartTime == 0 {
+		return "未探险"
+	}
+
+	nowTime := uint64(time.Now().Unix())
+	if pet.WeakStartTime != 0 && ((nowTime - pet.WeakStartTime) < 3600*24*3) {
+		return "濒死"
+	}
+
+	if pet.WeakStartTime != 0 {
+		return "死亡"
+	}
+
+	for {
+		rTime := uint64(rand.Intn(60 * 10))
+		if nowTime-pet.AdvUpdateTime > (60*10 + rTime) {
+			pet.AdvUpdateTime += (60*10 + rTime)
+			pet.AdventureLog += ps.getEvent(pet, list)
+		} else {
+			break
+		}
+	}
+
+	if pet.WeakStartTime != 0 {
+		return "濒死"
+	}
+
+	return "探险中"
 }
