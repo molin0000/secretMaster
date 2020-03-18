@@ -39,9 +39,18 @@ type Pet struct {
 	Exp               uint64
 	HPNow             uint64
 	AdventureState    string
+	AdvStartTime      uint64
+	WeakStartTime     uint64
+	AdvUpdateTime     uint64
 	EventCnt          uint64
 	AdventureLog      string
 	LevelState        string
+}
+
+type Food struct {
+	Name  string
+	Exp   int
+	Money int
 }
 
 func NewPetStore() *PetStore {
@@ -304,4 +313,16 @@ func (ps *PetStore) Summon() (*Pet, string) {
 	}
 
 	return nil, "你没找到宠物，还在灵界迷路，历尽千辛万苦，终于找到归途。"
+}
+
+func (ps *PetStore) StartAdv(pet *Pet) string {
+	return ""
+}
+
+func (ps *PetStore) StopAdv(pet *Pet) string {
+	return ""
+}
+
+func (ps *PetStore) checkPetState(pet *Pet) string {
+	return ""
 }
