@@ -79,6 +79,7 @@ func (b *Bot) petBuy(fromQQ uint64, msg string) string {
 		return ret
 	}
 	b.savePet(fromQQ, pet)
+	b.setMoney(fromQQ, -1*int(pet.Price))
 	return ret
 }
 
@@ -109,8 +110,23 @@ func (b *Bot) petSummon(fromQQ uint64) string {
 func (b *Bot) petLevelUp(fromQQ uint64) string {
 	ps := b.getPetStore()
 	pet := b.getPet(fromQQ)
+	level := pet.Level
+	exp0 := ps.LevelExp(level)
+	exp1 := ps.LevelExp(level + 1)
+	if b.getExp(fromQQ) < uint64(exp1-exp0) {
+		return "你的经验不足，无法驾驭更高等级的宠物"
+	}
+
+	if b.getMoney(fromQQ) < 100*(level+1) {
+		return "你的金镑不足，无法供养更高等级的宠物"
+	}
+
 	ret := ps.LevelUp(pet)
-	b.savePet(fromQQ, pet)
+	if strings.Contains(ret, "成功") {
+		b.savePet(fromQQ, pet)
+		b.setExp(fromQQ, -1*int(exp1-exp0))
+		b.setMoney(fromQQ, -100*int(level+1))
+	}
 	return ret
 }
 
