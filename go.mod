@@ -5,6 +5,7 @@ go 1.13
 require github.com/Tnze/CoolQ-Golang-SDK v1.2.0
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/syndtr/goleveldb v1.0.0
 	golang.org/x/text v0.3.2

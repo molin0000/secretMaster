@@ -465,6 +465,49 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.groupMap(fromQQ, msg)
 	}
 
+	if strings.Contains(msg, "宠物状态") {
+		return b.petState(fromQQ)
+	}
+
+	if strings.Contains(msg, "宠物改名") {
+		return b.petRename(fromQQ, msg)
+	}
+
+	if strings.Contains(msg, "宠物货架") {
+		return b.petStore()
+	}
+
+	if strings.Contains(msg, "宠物领养") {
+		return b.petBuy(fromQQ, msg)
+	}
+
+	if strings.Contains(msg, "灵界法阵") {
+		return b.petSummon(fromQQ)
+	}
+
+	if strings.Contains(msg, "宠物晋级") {
+		return b.petLevelUp(fromQQ)
+	}
+
+	if strings.Contains(msg, "宠物放生") {
+		return b.petSell(fromQQ)
+	}
+
+	if strings.Contains(msg, "宠物融合") {
+		return b.petEat(fromQQ)
+	}
+
+	if strings.Contains(msg, "宠物历练") {
+		return b.petAdventure(fromQQ)
+	}
+
+	if strings.Contains(msg, "宠物召回") {
+		return b.petGoHome(fromQQ)
+	}
+
+	if strings.Contains(msg, "宠物美妆") {
+		return b.petBeauty(fromQQ)
+	}
 	return ""
 }
 

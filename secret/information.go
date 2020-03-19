@@ -186,7 +186,7 @@ func (b *Bot) getProperty(fromQQ uint64) string {
 		int64(b.getExp(fromQQ)), int64(b.getMoney(fromQQ)),
 		int64(b.getLuck(fromQQ)),
 		int64(b.getMagic(fromQQ)),
-		startTime, fight[myFightIndex], sReLive,
+		startTime, FightLevel[myFightIndex], sReLive,
 		cc.Name,
 		workStr,
 		b.getRNameFromDb(fromQQ),
@@ -216,11 +216,12 @@ func (b *Bot) getRank(fromQQ uint64) string {
 	sort.Sort(Persons(persons))
 
 	b.Rank = make([]uint64, 0)
-
+	b.RankNames = make([]string, 0)
 	for i := 0; i < len(persons); i++ {
 		v := persons[i]
 		retValue = fmt.Sprintf("%s\n第%d名：%s，经验：%d", retValue, i+1, v.Name, v.ChatCount)
 		b.Rank = append(b.Rank, v.QQ)
+		b.RankNames = append(b.RankNames, v.Name)
 		cnt++
 		if cnt > 30 {
 			break
