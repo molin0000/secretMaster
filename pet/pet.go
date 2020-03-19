@@ -329,6 +329,8 @@ func (ps *PetStore) StartAdv(pet *Pet) string {
 	pet.AdvUpdateTime = uint64(time.Now().Unix())
 	pet.HPNow = pet.HP
 	pet.WeakStartTime = 0
+	pet.EventCnt = 0
+	pet.AdventureLog = ""
 	return fmt.Sprintf("\n%s走上了探险的旅途，它一脸坚毅，充满了决心。", pet.Nick)
 }
 
