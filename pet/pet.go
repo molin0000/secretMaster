@@ -474,7 +474,7 @@ func (ps *PetStore) getEvent(pet *Pet, list []string) string {
 func (ps *PetStore) checkPetState(pet *Pet, list []string) string {
 	//几种状态，迷路25%，投喂?%，现世pk25%，灵界pk25%
 	if pet.AdvStartTime == 0 {
-		return "未探险"
+		return "未历练"
 	}
 
 	nowTime := uint64(time.Now().Unix())
@@ -500,5 +500,5 @@ func (ps *PetStore) checkPetState(pet *Pet, list []string) string {
 		return "濒死"
 	}
 
-	return "探险中"
+	return "历练中"
 }
