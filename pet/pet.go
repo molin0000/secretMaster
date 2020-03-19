@@ -54,9 +54,17 @@ type Food struct {
 	Money int
 }
 
+var realPets []*Pet
+var spiritPets []*Pet
+
+func init() {
+	LoadPets(PetFilePath)
+}
+
 func NewPetStore() *PetStore {
 	ps := &PetStore{}
-	ps.LoadPets(PetFilePath)
+	ps.RealPets = realPets
+	ps.SpiritPets = spiritPets
 	return ps
 }
 
@@ -65,7 +73,7 @@ func atoi(msg string) uint64 {
 	return uint64(n)
 }
 
-func (ps *PetStore) LoadPets(path string) {
+func LoadPets(path string) {
 	f, err := excelize.OpenFile(path)
 	if err != nil {
 		fmt.Println(err)
@@ -103,7 +111,7 @@ func (ps *PetStore) LoadPets(path string) {
 		fmt.Printf("RealPet:%+v\n", *pet)
 		realPets = append(realPets, pet)
 	}
-	ps.RealPets = realPets
+	realPets = realPets
 
 	// Get all the rows in the Sheet2.
 	rows = f.GetRows("灵界宠物")
@@ -138,7 +146,7 @@ func (ps *PetStore) LoadPets(path string) {
 		fmt.Printf("SpiritPet:%+v\n", *pet)
 		spiritPets = append(spiritPets, pet)
 	}
-	ps.SpiritPets = spiritPets
+	spiritPets = spiritPets
 }
 
 func (ps *PetStore) GetStorePets() string {
@@ -155,7 +163,6 @@ func (ps *PetStore) GetStorePets() string {
 	info := fmt.Sprintf("\n欢迎光临，宠物货架每4小时自动刷新，刷新剩余：%d秒", 3600*updateHour-d)
 
 	if needFresh {
-		ps.LoadPets(PetFilePath)
 		ps.StorePets = make([]*Pet, 0)
 		for i := 0; i < petCnt; i++ {
 			n := rand.Intn(len(ps.RealPets))
@@ -390,8 +397,8 @@ func (ps *PetStore) pk(pet *Pet, enemyType int) string {
 	}
 
 	if win {
-		e := pet.Level/2 + uint64(5+rand.Intn(int(pet.Level)/2))
-		m := uint64(5 + rand.Intn(int(pet.Level)/2))
+		e := pet.Level/2 + uint64(5+rand.Intn(int(pet.Level)/2+1))
+		m := uint64(5 + rand.Intn(int(pet.Level)/2+1))
 		h := uint64(rand.Intn(int(pet.Attack)))
 		if pet.HPNow > h {
 			info += fmt.Sprintf("%s战胜了%s(lv%d), HP:-%d，获得：%d经验，%d金镑", pet.Nick, enemy.Nick, enemy.Level, h, e, m)

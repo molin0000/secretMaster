@@ -8,7 +8,7 @@ import (
 
 func TestPet(t *testing.T) {
 	ps := NewPetStore()
-	ps.LoadPets("/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/pets.xlsx")
+	// ps.LoadPets("/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/pets.xlsx")
 	fmt.Println(ps.GetStorePets())
 
 	fmt.Println(ps.Buy(1000, "布偶猫"))
@@ -78,3 +78,7 @@ func TestPet(t *testing.T) {
 	fmt.Println(ps.StopAdv(pet, list))
 
 }
+
+// func TestIntn(t *testing.T) {
+// 	fmt.Println(rand.Intn(1 / 2))
+// }
