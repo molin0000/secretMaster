@@ -80,6 +80,7 @@ func (b *Bot) petBuy(fromQQ uint64, msg string) string {
 	}
 	b.savePet(fromQQ, pet)
 	b.setMoney(fromQQ, -1*int(pet.Price))
+	b.savePetStore(ps)
 	return ret
 }
 
