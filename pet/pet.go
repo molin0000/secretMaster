@@ -54,8 +54,8 @@ type Food struct {
 	Money int
 }
 
-var realPets []*Pet
-var spiritPets []*Pet
+var _realPets []*Pet
+var _spiritPets []*Pet
 
 func init() {
 	LoadPets(PetFilePath)
@@ -63,8 +63,8 @@ func init() {
 
 func NewPetStore() *PetStore {
 	ps := &PetStore{}
-	ps.RealPets = realPets
-	ps.SpiritPets = spiritPets
+	ps.RealPets = _realPets
+	ps.SpiritPets = _spiritPets
 	return ps
 }
 
@@ -111,7 +111,7 @@ func LoadPets(path string) {
 		fmt.Printf("RealPet:%+v\n", *pet)
 		realPets = append(realPets, pet)
 	}
-	realPets = realPets
+	_realPets = realPets
 
 	// Get all the rows in the Sheet2.
 	rows = f.GetRows("灵界宠物")
@@ -146,10 +146,22 @@ func LoadPets(path string) {
 		fmt.Printf("SpiritPet:%+v\n", *pet)
 		spiritPets = append(spiritPets, pet)
 	}
-	spiritPets = spiritPets
+	_spiritPets = spiritPets
 }
 
 func (ps *PetStore) GetStorePets() string {
+	fmt.Println("GetStorePets", len(ps.RealPets), len(ps.SpiritPets))
+	if len(ps.RealPets) == 0 {
+		if len(_realPets) == 0 {
+			LoadPets(PetFilePath)
+		}
+		ps.RealPets = _realPets
+	}
+
+	if len(ps.SpiritPets) == 0 {
+		ps.SpiritPets = _spiritPets
+	}
+
 	nowTime := uint64(time.Now().Unix())
 	updateHour := uint64(4)
 	petCnt := 4
@@ -164,6 +176,8 @@ func (ps *PetStore) GetStorePets() string {
 
 	if needFresh {
 		ps.StorePets = make([]*Pet, 0)
+		fmt.Println("GetStorePets2", len(ps.RealPets), len(ps.SpiritPets))
+
 		for i := 0; i < petCnt; i++ {
 			n := rand.Intn(len(ps.RealPets))
 			ps.StorePets = append(ps.StorePets, ps.RealPets[n])
