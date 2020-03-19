@@ -247,7 +247,7 @@ func (ps *PetStore) State(pet *Pet, list []string) string {
 探险：%s(事件：%d)
 ========`,
 		pet.Nick, pet.Class, stars, pet.Level, FightLevel[myFightIndex]+sReLive,
-		pet.Exp, pet.LevelState, pet.Money, pet.HPNow, pet.Attack, pet.Defense, pet.Speed, pet.Charm, pet.Skill, adv, pet.EventCnt,
+		pet.Exp, pet.LevelState, pet.Money, pet.HP, pet.Attack, pet.Defense, pet.Speed, pet.Charm, pet.Skill, adv, pet.EventCnt,
 	)
 	return info
 }
@@ -357,6 +357,8 @@ func (ps *PetStore) StopAdv(pet *Pet, list []string) (ret string, die bool) {
 	pet.WeakStartTime = 0
 	pet.HPNow = pet.HP
 	pet.AdvUpdateTime = 0
+	pet.EventCnt = 0
+	pet.AdventureLog = ""
 	return info + "\n成功召回！", false
 }
 
