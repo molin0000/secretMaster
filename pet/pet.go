@@ -379,7 +379,7 @@ func (ps *PetStore) pk(pet *Pet, enemyType int) string {
 	info += fmt.Sprintf("%s在探险的途中遭遇了%s(lv%d)\n", pet.Nick, enemy.Nick, enemy.Level)
 	xp := rand.Int63n(int64(ps.LevelExp(pet.Level)))
 	win := false
-	if uint64(xp) < pet.Exp/2 {
+	if uint64(xp) < pet.Exp/2 || pet.Level < 10 {
 		win = true
 	} else {
 		win = false
@@ -412,7 +412,7 @@ func (ps *PetStore) getEvent(pet *Pet, list []string) string {
 		return ""
 	}
 	pet.EventCnt++
-	charm := pet.Charm
+	charm := pet.Charm + 5
 	if charm > 50 {
 		charm = 50
 	}
@@ -445,7 +445,8 @@ func (ps *PetStore) getEvent(pet *Pet, list []string) string {
 	}
 
 	if r < charm+25 {
-		info += fmt.Sprintf("%s在探险的路上迷失了方向，历尽千辛万苦才找到了回家的路", pet.Nick)
+		info += fmt.Sprintf("%s在探险的路上迷失了方向，历尽千辛万苦才找到了回家的路。（经验: +5)", pet.Nick)
+		pet.Exp += 5
 		return info
 	}
 
