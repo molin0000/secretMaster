@@ -27,7 +27,7 @@ func getGroupInfo(group int64, noCach bool) (detail *cqp.GroupDetail) {
 
 func getGroupList() string {
 	groups := secret.GetGroups()
-	fmt.Println(groups)
+	fmt.Println("getGroupList", groups)
 	ret := "\n"
 	for i, v := range groups {
 		detail := getGroupInfo(int64(v), false)
