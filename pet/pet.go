@@ -259,7 +259,7 @@ func (ps *PetStore) State(pet *Pet, list []string) string {
 等级：lv%d(%s)
 经验：%d%s
 金镑：%d
-生命：%d
+生命：%d/%d
 攻击：%d
 防御: %d
 闪避：%d
@@ -268,7 +268,7 @@ func (ps *PetStore) State(pet *Pet, list []string) string {
 历练：%s(事件：%d)
 ========`,
 		pet.Nick, pet.Class, stars, pet.Level, FightLevel[myFightIndex]+sReLive,
-		pet.Exp, pet.LevelState, pet.Money, pet.HP, pet.Attack, pet.Defense, pet.Speed, pet.Charm, pet.Skill, adv, pet.EventCnt,
+		pet.Exp, pet.LevelState, pet.Money, pet.HPNow, pet.HP, pet.Attack, pet.Defense, pet.Speed, pet.Charm, pet.Skill, adv, pet.EventCnt,
 	)
 	return info
 }

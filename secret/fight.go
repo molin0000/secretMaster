@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/molin0000/secretMaster/pet"
 )
 
 func (b *Bot) getBattleField() string {
@@ -204,8 +206,8 @@ func (b *Bot) pk(fromQQ uint64, msg string) string {
 
 	aimQQ := aimInfo.QQ
 
-	exp, skill, item, rp, speed, total := b.getBattleScore(fromQQ)
-	exp1, skill1, item1, rp1, speed1, total1 := b.getBattleScore(aimQQ)
+	exp, skill, item, rp, speed, pt, total := b.getBattleScore(fromQQ)
+	exp1, skill1, item1, rp1, speed1, pt1, total1 := b.getBattleScore(aimQQ)
 	resultStr := "平局。收获："
 	moneyNum := int64(0)
 	expNum := int64(0)
@@ -224,18 +226,18 @@ func (b *Bot) pk(fromQQ uint64, msg string) string {
 
 	info := fmt.Sprintf(`
 ============================
-战斗结算：经验/技能/装备/人品/答题
-%s：%d/%d/%d/%d/%d 总计：%d
-%s：%d/%d/%d/%d/%d 总计：%d
+战斗结算：经验/技能/装备/人品/答题/宠物
+%s：%d/%d/%d/%d/%d/%d 总计：%d
+%s：%d/%d/%d/%d/%d/%d 总计：%d
 %s%d金镑，%d经验
 ============================`,
-		bi.Nick, exp, skill, item, rp, speed, total,
-		aimInfo.Nick, exp1, skill1, item1, rp1, speed1, total1, resultStr, moneyNum/10000, expNum/10000)
+		bi.Nick, exp, skill, item, rp, speed, pt, total,
+		aimInfo.Nick, exp1, skill1, item1, rp1, speed1, pt1, total1, resultStr, moneyNum/10000, expNum/10000)
 
 	return info
 }
 
-func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, total int64) {
+func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, pt, total int64) {
 	rp = int64(rand.Intn(10))
 	speed = b.getPlayerSpeed(fromQQ)
 	p := b.getPersonFromDb(fromQQ)
@@ -270,7 +272,10 @@ func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, total 
 		}
 	}
 
-	total = exp + skill + item + rp + speed
+	ptv := b.getPersonValue("Pet", fromQQ, &pet.Pet{}).(*pet.Pet)
+	pt = int64(ptv.Level) / 2
+
+	total = exp + skill + item + rp + speed + pt
 	return
 }
 
