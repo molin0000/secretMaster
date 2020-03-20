@@ -262,3 +262,7 @@ type GroupMap struct {
 	MapFromGroup uint64
 	MapToGroup   uint64
 }
+
+type ReplyDelay struct {
+	DelayMs uint64
+}

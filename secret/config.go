@@ -278,3 +278,26 @@ func (b *Bot) groupMap(fromQQ uint64, msg string) string {
 	b.setGroupValue("GroupMap", gp)
 	return "映射成功"
 }
+
+func (b *Bot) setDelay(fromQQ uint64, msg string) string {
+	if !b.isMaster(fromQQ) {
+		return b.notGM()
+	}
+
+	gp := GetGlobalValue("ReplyDelay", &ReplyDelay{300}).(*ReplyDelay)
+	strs := strings.Split(msg, ";")
+	if len(strs) != 2 {
+		return fmt.Sprintf("当前群数据映射参数：%+v", gp)
+	}
+
+	g1, err1 := strconv.ParseUint(strs[1], 10, 64)
+	if err1 != nil {
+		return "数字格式异常"
+	}
+
+	gp.DelayMs = g1
+
+	SetGlobalValue("ReplyDelay", gp)
+
+	return "回复延迟配置成功"
+}

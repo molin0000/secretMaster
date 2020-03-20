@@ -508,6 +508,10 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 	if strings.Contains(msg, "宠物美妆") {
 		return b.petBeauty(fromQQ)
 	}
+
+	if strings.Contains(msg, "delay") {
+		return b.setDelay(fromQQ, msg)
+	}
 	return ""
 }
 

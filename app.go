@@ -45,7 +45,8 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 	send := func() {
 		if len(ret) > 0 {
 			fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
-			time.Sleep(time.Millisecond * 300)
+			gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+			time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 			id := cqp.SendPrivateMsg(fromQQ, ret)
 			fmt.Printf("\nSend finish id:%d\n", id)
 		}
@@ -127,7 +128,8 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 		if len(ret) > 0 {
 			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
 			if !bot.IsSilent() {
-				time.Sleep(time.Millisecond * 300)
+				gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+				time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 				id := cqp.SendGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
 				fmt.Printf("\nSend finish id:%d\n", id)
 			} else {
@@ -183,7 +185,8 @@ func broadcast(fromQQ uint64, msg string) {
 	groups := secret.GetGroups()
 	for _, v := range groups {
 		fmt.Println("Ready to send:", v, strs[1])
-		time.Sleep(time.Millisecond * 300)
+		gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+		time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 		cqp.SendGroupMsg(int64(v), strs[1])
 		fmt.Println("Send finish:", v)
 	}
