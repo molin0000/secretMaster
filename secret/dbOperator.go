@@ -90,19 +90,6 @@ func (b *Bot) setPersonToDb(fromQQ uint64, p *Person) {
 	b.setPersonValue("Person", fromQQ, p)
 }
 
-func (b *Bot) getWaterRuleFromDb(fromQQ uint64) *WaterRule {
-	w := b.getPersonValue("Water", fromQQ, &WaterRule{Group: b.Group, QQ: fromQQ, DayCnt: 1, Days: uint64(time.Now().Unix() / (3600 * 24))}).(*WaterRule)
-	if w.Days != uint64(time.Now().Unix()/(3600*24)) {
-		w.DayCnt = 0
-		w.Days = uint64(time.Now().Unix() / (3600 * 24))
-	}
-	return w
-}
-
-func (b *Bot) setWaterRuleToDb(fromQQ uint64, w *WaterRule) {
-	b.setPersonValue("Water", fromQQ, w)
-}
-
 func (b *Bot) getMoneyFromDb(fromQQ uint64, chatCnt uint64) *Money {
 	bind := b.getMoneyBind()
 	if bind.HasUpdate && fileExists(bind.IniPath) {
@@ -221,8 +208,6 @@ func (b *Bot) getExternFromDb(fromQQ uint64) *ExternProperty {
 		v.Days = uint64(time.Now().Unix() / (3600 * 24))
 		v.Magic = uint64(200 + b.getAdditionMagic(fromQQ))
 	}
-
-	v.Luck = v.BaseLuck + b.getAdditionLucky(fromQQ)
 
 	return &v
 }

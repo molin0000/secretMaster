@@ -190,10 +190,19 @@ func (b *Bot) joinChurch(fromQQ uint64, msg string) string {
 	return "\n你没有找到这个教会的据点，你确定有这个教会？"
 }
 
-func (b *Bot) exitChurch(fromQQ uint64) string {
+func (b *Bot) exitChurch(fromQQ uint64, msg string) string {
 	cc := b.getPersonValue("Church", fromQQ, &ChurchInfo{}).(*ChurchInfo)
 	if len(cc.Name) == 0 {
 		return "\n你并未加入教会/组织，无需退出。"
+	}
+
+	strs := strings.Split(msg, ";")
+	if len(strs) != 2 {
+		return "\n退出指令格式为：退出;教会名"
+	}
+
+	if cc.Name != strs[1] {
+		return "\n你的教会名称输入错了。"
 	}
 
 	getDb().Delete(b.personKey("Church", fromQQ), nil)
@@ -254,8 +263,7 @@ func (b *Bot) pray(fromQQ uint64) string {
 	if find {
 		b.setPersonValue("Church", fromQQ, cc)
 		b.setExp(cc.CreatorQQ, 10)
-		b.setMagic(fromQQ, int(b.getAdditionInfo(fromQQ, "灵性协调", 50)))
-		b.setLuck(fromQQ, int(b.getAdditionInfo(fromQQ, "幸运光环", 1)))
+		b.setMagic(fromQQ, int(b.getChurchAdditionInfo(fromQQ, "灵性协调", 50)))
 		return "你摆出精心准备的灵性材料，双手合十，认真祈祷……一阵清风拂过，你感觉自己似乎变强了。"
 	}
 
@@ -263,6 +271,10 @@ func (b *Bot) pray(fromQQ uint64) string {
 }
 
 func (b *Bot) getAdditionInfo(fromQQ uint64, skill string, baseCount uint64) uint64 {
+	return b.getPersonalAdditionInfo(fromQQ, skill, baseCount) + b.getChurchAdditionInfo(fromQQ, skill, baseCount)
+}
+
+func (b *Bot) getPersonalAdditionInfo(fromQQ uint64, skill string, baseCount uint64) uint64 {
 	addition := uint64(0)
 	tree := b.getPersonValue("SkillTree", fromQQ, &SkillTree{}).(*SkillTree)
 	if len(tree.Skills) > 0 {
@@ -274,6 +286,11 @@ func (b *Bot) getAdditionInfo(fromQQ uint64, skill string, baseCount uint64) uin
 		}
 	}
 
+	return addition
+}
+
+func (b *Bot) getChurchAdditionInfo(fromQQ uint64, skill string, baseCount uint64) uint64 {
+	addition := uint64(0)
 	today := uint64(time.Now().Unix() / (3600 * 24))
 	pray := b.getPersonValue("Pray", fromQQ, &PrayState{}).(*PrayState)
 
@@ -304,5 +321,6 @@ func (b *Bot) getAdditionAdventure(fromQQ uint64) uint64 {
 }
 
 func (b *Bot) getAdditionLucky(fromQQ uint64) uint64 {
-	return b.getAdditionInfo(fromQQ, "幸运光环", 1)
+	v := b.getAdditionInfo(fromQQ, "幸运光环", 1)
+	return v
 }

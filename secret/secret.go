@@ -155,14 +155,10 @@ func (b *Bot) Update(fromQQ uint64, nick string) string {
 			v.Name = nick
 		}
 
-		// ret = b.levelUpdate(v)
+		magic := b.getMagic(fromQQ)
 
-		w := b.getWaterRuleFromDb(fromQQ)
-		m := b.getMoneyFromDb(fromQQ, 0)
-		e := b.getExternFromDb(fromQQ)
-
-		if e.Magic > 0 {
-			e.Magic--
+		if magic > 0 {
+			b.setMagic(fromQQ, -1)
 		}
 
 		normalHumanStop := false
@@ -170,10 +166,9 @@ func (b *Bot) Update(fromQQ uint64, nick string) string {
 			normalHumanStop = true
 		}
 
-		if b.reachMaxCount(fromQQ, w, e) && !normalHumanStop {
+		if int64(magic) > 0 && !normalHumanStop {
 			v.ChatCount++
-			w.DayCnt++
-			m.Money++
+			b.setMoney(fromQQ, 1)
 			if v.ChatCount%100 == 0 {
 				ret += "\n恭喜！你的战力评价升级了！"
 			}
@@ -182,16 +177,9 @@ func (b *Bot) Update(fromQQ uint64, nick string) string {
 		v.LastChat = uint64(time.Now().Unix())
 		v.LevelDown = uint64(time.Now().Unix())
 		b.setPersonToDb(fromQQ, v)
-		b.setWaterRuleToDb(fromQQ, w)
-		b.setMoneyToDb(fromQQ, m)
-		b.setExternToDb(fromQQ, e)
 	}
 
 	return ret
-}
-
-func (b *Bot) reachMaxCount(fromQQ uint64, w *WaterRule, e *ExternProperty) bool {
-	return e.Magic > 0
 }
 
 func (b *Bot) printMenu(menu *Menu) string {
@@ -406,7 +394,7 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 	}
 
 	if strings.Contains(msg, "退出") {
-		return b.exitChurch(fromQQ)
+		return b.exitChurch(fromQQ, msg)
 	}
 
 	if strings.Contains(msg, "祈祷") {
@@ -511,6 +499,10 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 
 	if strings.Contains(msg, "delay") {
 		return b.setDelay(fromQQ, msg)
+	}
+
+	if strings.Contains(msg, "数值修复") {
+		return b.fixNumber(fromQQ)
 	}
 	return ""
 }

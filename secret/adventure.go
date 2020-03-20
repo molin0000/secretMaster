@@ -28,11 +28,11 @@ func (b *Bot) adventure(fromQQ uint64, limit bool) string {
 	rand.Seed(time.Now().UnixNano())
 
 	luck := b.getLuck(fromQQ)
-	if luck > 20 {
-		luck = 20
+	if luck >= 19 {
+		luck = 5
 	}
 
-	i := int(luck*5) + rand.Intn(100-int(luck*5)+1)
+	i := int(luck*5) + rand.Intn(100-int(luck*5))
 	info := ""
 	m := 0
 	e := 0

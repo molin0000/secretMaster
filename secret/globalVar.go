@@ -272,11 +272,12 @@ var menus = Menu{
 			{75, "查看映射", "查看货币映射参数。", "", nil},
 			{76, "货币升级", "货币映射后，使用此命令使映射生效。", "", nil},
 			{77, "货币降级", "取消货币映射，还原为插件内部金镑使用。", "", nil},
-			{78, "GM", "GM指令格式为：GM;exp;100;QQ号 目前支持exp,money,magic,god,luck数值支持加和减。", "", nil},
+			{78, "GM", "GM指令格式为：GM;exp;100;QQ号 目前支持exp,money,magic,god数值支持加和减，luck支持设定。", "", nil},
 			{79, "版本", "查询当前插件版本号。", "", nil},
 			{80, "silent", "设置当前QQ群的静默时间段，启用静默格式为: silent;on;20:00;21:00 或者关闭静默 silent;off", "", nil},
 			{81, "map", "QQ群数据映射，让A群使用B群的数据库。格式：map;AGroupQQ;BGroupQQ", "", nil},
 			{82, "delay", "机器人回复延迟，大的延迟可以减少被封号几率，格式：delay;300  (默认延迟300毫秒）", "", nil},
+			{83, "数值修复", "修复群内异常的幸运数值，将GM加的幸运归零。", "", nil},
 		}},
 		{1, "资料", "回复 资料 可显示与人物信息相关的指令。", "", []Menu{
 			{11, "属性", "回复 属性 可查询当前人物的属性信息。", "", nil},
@@ -380,4 +381,4 @@ var fishList = []Fish{
 
 var missionPath = "data/app/me.cqp.molin.secretMaster/mission"
 
-var version = &Version{"序列战争", "v3.0.6", "2020-03-19"}
+var version = &Version{"序列战争", "v3.0.7", "2020-03-20"}

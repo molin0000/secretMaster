@@ -5,6 +5,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/molin0000/secretMaster/rlp"
+	"github.com/syndtr/goleveldb/leveldb/util"
 )
 
 func (b *Bot) setMaster(fromQQ uint64, msg string) string {
@@ -300,4 +303,24 @@ func (b *Bot) setDelay(fromQQ uint64, msg string) string {
 	SetGlobalValue("ReplyDelay", gp)
 
 	return "回复延迟配置成功"
+}
+
+func (b *Bot) fixNumber(fromQQ uint64) string {
+	if !b.isMaster(fromQQ) {
+		return b.notGM()
+	}
+
+	iter := getDb().NewIterator(util.BytesPrefix(b.getKeyPrefix()), nil)
+	for iter.Next() {
+		verify := iter.Value()
+		var v Person
+		rlp.DecodeBytes(verify, &v)
+		b.setLuck(v.QQ, 0)
+	}
+	iter.Release()
+	err := iter.Error()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return "数值修复完成，GM附加幸运全部归零了。"
 }
