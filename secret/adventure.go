@@ -14,8 +14,8 @@ func (b *Bot) adventure(fromQQ uint64, limit bool) string {
 
 	money := b.getMoney(fromQQ)
 	if !limit {
-		if money > 100 {
-			b.setMoney(fromQQ, -100)
+		if money > 50 {
+			b.setMoney(fromQQ, -50)
 		} else {
 			return "钱包空空，买不起了哦"
 		}
