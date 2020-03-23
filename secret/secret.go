@@ -53,6 +53,11 @@ func (b *Bot) Run(msg string, fromQQ uint64, nick string) string {
 		return ret
 	}
 
+	ret = b.checkCompetion(fromQQ, msg)
+	if len(ret) > 0 {
+		return ret
+	}
+
 	return b.searchMenu(msg, fromQQ, &menus)
 }
 
@@ -69,6 +74,11 @@ func (b *Bot) RunPrivate(msg string, fromQQ uint64, nick string) string {
 	}
 
 	ret = b.checkCalc(fromQQ, msg)
+	if len(ret) > 0 {
+		return ret
+	}
+
+	ret = b.checkCompetion(fromQQ, msg)
 	if len(ret) > 0 {
 		return ret
 	}
@@ -417,8 +427,12 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.lottery(fromQQ)
 	}
 
-	if strings.Contains(msg, "竞赛") {
+	if strings.Contains(msg, "速算") {
 		return b.startCalc(fromQQ, msg)
+	}
+
+	if strings.Contains(msg, "学识") {
+		return b.startCompetition(fromQQ)
 	}
 
 	if strings.Contains(msg, "副本") {

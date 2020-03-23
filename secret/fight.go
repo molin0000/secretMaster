@@ -290,7 +290,16 @@ func (b *Bot) getPlayerSpeed(fromQQ uint64) int64 {
 	if ms.Calc.Speed > 20 || ms.Calc.Speed == 0 {
 		ms.Calc.Speed = 20
 	}
-	return int64(20 - ms.Calc.Speed)
+
+	s1 := int64(20-ms.Calc.Speed) / 2
+	s2 := uint64(0)
+
+	qs := b.getPersonValue("Competition", fromQQ, &CompetitionState{}).(*CompetitionState)
+	max := b.getGroupValue("MaxVictory", &MaxVictory{}).(*MaxVictory)
+
+	s2 = qs.MaxVictoryCnt * 10 / max.VictoryCnt
+
+	return s1 + int64(s2)
 }
 
 func (b *Bot) battleFailed(fromQQ uint64) (money, exp int64) {

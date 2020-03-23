@@ -2,6 +2,7 @@ package secret
 
 import (
 	"github.com/molin0000/secretMaster/calculator"
+	"github.com/molin0000/secretMaster/competition"
 	"github.com/molin0000/secretMaster/mission"
 )
 
@@ -216,6 +217,19 @@ type MissionState struct {
 type CalcState struct {
 	IsPlaying bool
 	Calc      *calculator.CalcGame
+}
+
+type CompetitionState struct {
+	IsPlaying     bool
+	Q             *competition.Question
+	StartTime     uint64
+	VictoryCnt    uint64
+	MaxVictoryCnt uint64
+}
+
+type MaxVictory struct {
+	VictoryCnt uint64
+	Name       string
 }
 
 type Medal struct {

@@ -427,7 +427,7 @@ func (ps *PetStore) pk(pet *Pet, enemyType int) string {
 	info += fmt.Sprintf("%s在探险的途中遭遇了%s(lv%d)\n", pet.Nick, enemy.Nick, enemy.Level)
 	xp := rand.Int63n(int64(ps.LevelExp(pet.Level)))
 	win := false
-	if uint64(xp) < pet.Exp/4 || pet.Level < 10 {
+	if uint64(xp) < uint64(float64(pet.Exp)/1.25) || pet.Level < 10 {
 		win = true
 	} else {
 		win = false
