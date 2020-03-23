@@ -74,6 +74,14 @@ func atoi(msg string) uint64 {
 }
 
 func LoadPets(path string) {
+	fmt.Println("加载宠物表格...")
+	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
+		if err := recover(); err != nil {
+			fmt.Println("加载宠物表格...失败")
+			fmt.Println(err)
+		}
+	}()
+
 	f, err := excelize.OpenFile(path)
 	if err != nil {
 		fmt.Println(err)
@@ -108,7 +116,6 @@ func LoadPets(path string) {
 			Exp:               0,
 			HPNow:             atoi(row[5]),
 		}
-		fmt.Printf("RealPet:%+v\n", *pet)
 		realPets = append(realPets, pet)
 	}
 	_realPets = realPets
@@ -143,10 +150,26 @@ func LoadPets(path string) {
 			Exp:               0,
 			HPNow:             atoi(row[5]),
 		}
-		fmt.Printf("SpiritPet:%+v\n", *pet)
 		spiritPets = append(spiritPets, pet)
 	}
 	_spiritPets = spiritPets
+
+	// Get all the rows in the Sheet3.
+	rows = f.GetRows("宠物投食")
+
+	for i, row := range rows {
+		if i == 0 {
+			continue
+		}
+		food := Food{
+			Name:  row[0],
+			Exp:   int(atoi(row[1])),
+			Money: int(atoi(row[2])),
+		}
+
+		foodList = append(foodList, food)
+	}
+	fmt.Printf("已加载:%d现世宠物，%d灵界宠物，%d宠物投食\n", len(realPets), len(spiritPets), len(foodList))
 }
 
 func (ps *PetStore) GetStorePets() string {
@@ -404,7 +427,7 @@ func (ps *PetStore) pk(pet *Pet, enemyType int) string {
 	info += fmt.Sprintf("%s在探险的途中遭遇了%s(lv%d)\n", pet.Nick, enemy.Nick, enemy.Level)
 	xp := rand.Int63n(int64(ps.LevelExp(pet.Level)))
 	win := false
-	if uint64(xp) < pet.Exp/2 || pet.Level < 10 {
+	if uint64(xp) < pet.Exp/4 || pet.Level < 10 {
 		win = true
 	} else {
 		win = false
