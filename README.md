@@ -7,6 +7,14 @@
 
 [《⭐️序列战争 - 玩家指南⭐️》](./playGuide.md)
 
+插件附加文件使用说明：
+
+`competition.xlsx`和`pets.xlsx`放到 `coolq/data/app/me.cqp.molin.secretMaster/` 目录下
+
+所有的副本json文件放到 `coolq/data/app/me.cqp.molin.secretMaster/mission/` 目录下
+
+如果指令无响应，可先删除这些附加文件再试。
+
 ## 更新记录
 
 2020年3月20日 调高了宠物被投喂的概率，宠物迷路也有经验收入，提高10级以下的宠物pk的胜率。v3.0.2
