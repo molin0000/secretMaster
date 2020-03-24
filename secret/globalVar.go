@@ -382,6 +382,10 @@ var fishList = []Fish{
 	{13, "奥布尼斯海怪", 1, 1000},
 }
 
+var careerSkills []*CareerSkill
+
+var careerSkillPath = "data/app/me.cqp.molin.secretMaster/skills.xlsx"
+
 var missionPath = "data/app/me.cqp.molin.secretMaster/mission"
 
-var version = &Version{"序列战争", "v3.1.2", "2020-03-24"}
+var version = &Version{"序列战争", "v3.1.3", "2020-03-24"}

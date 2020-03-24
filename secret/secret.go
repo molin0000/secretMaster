@@ -6,11 +6,55 @@ import (
 	"strings"
 	"time"
 
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
 var botMap map[uint64]*Bot
+
+func init() {
+	fmt.Println("加载技能表格...")
+	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
+		if err := recover(); err != nil {
+			fmt.Println("加载技能表格...失败")
+			fmt.Println(err)
+		}
+	}()
+
+	if !fileExists(careerSkillPath) {
+		fmt.Println("文件不存在")
+	}
+
+	f, err := excelize.OpenFile(careerSkillPath)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// Get all the rows in the Sheet1.
+	rows := f.GetRows("技能列表")
+	for i, row := range rows {
+		if i == 0 {
+			continue
+		}
+
+		cs := &CareerSkill{
+			Name:  row[3],
+			Times: atoi(row[4]),
+			Type:  row[5],
+			Desc:  row[6],
+		}
+
+		careerSkills = append(careerSkills, cs)
+	}
+
+	fmt.Printf("共加载技能：%d\n", len(careerSkills))
+}
+
+func atoi(msg string) uint64 {
+	n, _ := strconv.Atoi(msg)
+	return uint64(n)
+}
 
 func NewSecretBot(qq, group uint64, groupNick string, private bool, api interface{}) *Bot {
 	setCqpCall(api.(CqpCall))

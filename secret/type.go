@@ -280,3 +280,10 @@ type GroupMap struct {
 type ReplyDelay struct {
 	DelayMs uint64
 }
+
+type CareerSkill struct {
+	Name  string
+	Times uint64
+	Type  string
+	Desc  string
+}

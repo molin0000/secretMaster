@@ -342,14 +342,24 @@ func (b *Bot) getGod() string {
 }
 
 func (b *Bot) getSkill(fromQQ uint64) string {
-	tree := b.getPersonValue("SkillTree", fromQQ, &SkillTree{}).(*SkillTree)
-	if len(tree.Skills) == 0 {
-		return "\n你没有任何技能，努力吧少年(少女)。\n"
+	p := b.getPersonFromDb(fromQQ)
+	if p.SecretID > 22 {
+		return "\n普通人没有任何技能，努力吧少年(少女)。\n"
 	}
+
+	tree := b.getPersonValue("SkillTree", fromQQ, &SkillTree{}).(*SkillTree)
+	// if len(tree.Skills) == 0 {
+	// 	return "\n你没有任何技能，努力吧少年(少女)。\n"
+	// }
 
 	info := "\n"
 	for i := 0; i < len(tree.Skills); i++ {
 		info += fmt.Sprintf("%s lv%d; ", tree.Skills[i].Name, tree.Skills[i].Level)
+	}
+	info += "\n途径技能(封印中)：\n"
+	if uint64(len(careerSkills)) > p.SecretID {
+		cs := careerSkills[p.SecretID]
+		info += fmt.Sprintf("%s(%s): %s", cs.Name, cs.Type, cs.Desc)
 	}
 	return info
 }

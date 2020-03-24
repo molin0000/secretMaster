@@ -40,13 +40,11 @@ func init() {
 	fmt.Println("加载竞赛表格...")
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println("加载宠物表格...失败")
+			fmt.Println("加载竞赛表格...失败")
 			fmt.Println(err)
 		}
 	}()
 
-	str, _ := os.Getwd()
-	fmt.Println("current Path:", str)
 	if !fileExists(competitionPath) {
 		fmt.Println("文件不存在")
 	}
