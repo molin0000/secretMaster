@@ -71,6 +71,11 @@ func (b *Bot) promotion(fromQQ uint64) string {
 	}
 
 	if p.SecretLevel == 9 {
+		god := b.getGodFromDb(p.SecretID)
+		if god == 0 {
+			god = fromQQ
+			b.setGodToDb(p.SecretID, &god)
+		}
 		return "\n前方已经没有道路，您已是序列之尊神。"
 	}
 
@@ -123,6 +128,11 @@ func (b *Bot) promotion(fromQQ uint64) string {
 		god := b.getGodFromDb(p.SecretID)
 		if p.SecretLevel == 7 && god != 0 && god != fromQQ {
 			return info + "恭喜！你成功晋升为天使。灵性缓缓收束时你忽然感觉到从遥远的星空投来了某种不可名状的冰冷注视，神灵让人战栗的威压宛若实质。你选择的途径已经存在真神，而祂已经注意到了你……" + b.allSkillLevelUp(fromQQ)
+		}
+
+		if (god == 0 || god == fromQQ) && p.SecretLevel == 9 {
+			god = fromQQ
+			b.setGodToDb(p.SecretID, &god)
 		}
 		return info + "在撑过一阵可怕的幻象之后，你晋升成功了。" + b.allSkillLevelUp(fromQQ)
 	}
@@ -206,7 +216,7 @@ func canConvert(v1, v2 uint64) bool {
 	if v1 == v2 {
 		return false
 	}
-	
+
 	for _, a := range secretGroup {
 		if contains(a, v1) && contains(a, v2) {
 			return true
