@@ -261,7 +261,7 @@ var menus = Menu{
 	0,
 	"帮助",
 	"回复 帮助 可显示帮助信息。",
-	"支持私聊查询，私聊格式为 指令@群号 详细游戏指南请访问：https://github.com/molin0000/secretMaster/blob/master/playGuide.md`",
+	"支持私聊查询，私聊格式为 指令@群号 详细游戏指南请访问secretmaster点cn",
 	[]Menu{
 		{7, "设置", "回复 设置 可查看插件高级设置。", "", []Menu{
 			{70, ".supermaster", "设置机器人主人，全局，唯一，用法同.master。启动插件后请务必第一时间配置。", "", nil},
