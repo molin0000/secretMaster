@@ -19,9 +19,10 @@ func (b *Bot) adventure(fromQQ uint64, limit bool) string {
 		} else {
 			return "钱包空空，买不起了哦"
 		}
+	} else {
+		a.DayCnt++
 	}
 
-	a.DayCnt++
 	a.Days = uint64(time.Now().Unix() / (3600 * 24))
 	b.setAdvToDb(fromQQ, a)
 

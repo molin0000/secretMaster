@@ -135,7 +135,7 @@ func (b *Bot) petSell(fromQQ uint64) string {
 	p := b.getPet(fromQQ)
 	info := fmt.Sprintf("你释放了你的宠物%s, 它送给你%d金镑。", p.Nick, p.Money)
 	b.savePet(fromQQ, &pet.Pet{})
-	b.setMoney(fromQQ, int(p.Money/2))
+	b.setMoney(fromQQ, int(p.Money))
 	return info
 }
 
@@ -143,7 +143,7 @@ func (b *Bot) petEat(fromQQ uint64) string {
 	p := b.getPet(fromQQ)
 	info := fmt.Sprintf("你融合了你的宠物%s, 得到%d经验。", p.Nick, p.Exp*4/5)
 	b.savePet(fromQQ, &pet.Pet{})
-	b.setExp(fromQQ, int(p.Exp/5))
+	b.setExp(fromQQ, int(p.Exp*4/5))
 	return info
 }
 
