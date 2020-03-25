@@ -35,6 +35,18 @@
 
 所有数据均为每个群独立。多个QQ群互不影响。
 
+下载地址：
+
+https://cqp.cc/t/46674
+
+开源地址：
+
+https://github.com/molin0000/secretMaster
+
+副本编辑器地址：
+
+https://mission-editor.now.sh/
+
 # 2. 目录
 
 <!-- TOC -->
