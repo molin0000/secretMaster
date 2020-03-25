@@ -261,7 +261,7 @@ var menus = Menu{
 	0,
 	"帮助",
 	"回复 帮助 可显示帮助信息。",
-	"支持私聊查询，私聊格式为 指令@群号 详细游戏指南请访问：https://github.com/molin0000/secretMaster/blob/master/playGuide.md`",
+	"支持私聊查询，私聊格式为 指令@群号 详细游戏指南请到酷Q论坛搜索序列战争。",
 	[]Menu{
 		{7, "设置", "回复 设置 可查看插件高级设置。", "", []Menu{
 			{70, ".supermaster", "设置机器人主人，全局，唯一，用法同.master。启动插件后请务必第一时间配置。", "", nil},
@@ -388,4 +388,4 @@ var careerSkillPath = "data/app/me.cqp.molin.secretMaster/skills.xlsx"
 
 var missionPath = "data/app/me.cqp.molin.secretMaster/mission"
 
-var version = &Version{"序列战争", "v3.1.4", "2020-03-25"}
+var version = &Version{"序列战争", "v3.1.5", "2020-03-25"}
