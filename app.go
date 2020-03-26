@@ -34,7 +34,7 @@ func sendSplitPrivateMsg(qq int64, msg string) {
 	for {
 		info := ""
 		for i := 0; i < 5; i++ {
-			if i < length {
+			if cnt < length {
 				info += strs[cnt] + "\n"
 				cnt++
 			} else {
@@ -140,7 +140,7 @@ func sendSplitGroupMsg(group int64, msg string) {
 	for {
 		info := ""
 		for i := 0; i < 5; i++ {
-			if i < length {
+			if cnt < length {
 				info += strs[cnt] + "\n"
 				cnt++
 			} else {
