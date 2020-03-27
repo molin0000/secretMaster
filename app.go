@@ -14,7 +14,7 @@ import (
 
 //go:generate cqcfg -c .
 // cqp: 名称: 序列战争
-// cqp: 版本: 3.1.4:1
+// cqp: 版本: 3.1.5:1
 // cqp: 作者: molin
 // cqp: 简介: 专为诡秘之主粉丝序列群开发的小游戏
 func main() { /*此处应当留空*/ }
@@ -24,6 +24,31 @@ func init() {
 	cqp.PrivateMsg = onPrivateMsg
 	cqp.GroupMsg = onGroupMsg
 	rand.Seed(time.Now().Unix())
+}
+
+func sendSplitPrivateMsg(qq int64, msg string) {
+	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+	strs := strings.Split(msg, "\n")
+	length := len(strs)
+	cnt := 0
+	for {
+		info := ""
+		for i := 0; i < 5; i++ {
+			if cnt < length {
+				info += strs[cnt] + "\n"
+				cnt++
+			} else {
+				break
+			}
+		}
+		info = strings.TrimRight(info, "\n")
+		time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
+		id := cqp.SendPrivateMsg(qq, info)
+		fmt.Printf("\nSend finish id:%d\n", id)
+		if cnt >= length {
+			break
+		}
+	}
 }
 
 func procOldPrivateMsg(fromQQ int64, msg string) int {
@@ -45,10 +70,7 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 	send := func() {
 		if len(ret) > 0 {
 			fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
-			gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
-			time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
-			id := cqp.SendPrivateMsg(fromQQ, ret)
-			fmt.Printf("\nSend finish id:%d\n", id)
+			sendSplitPrivateMsg(fromQQ, ret)
 		}
 	}
 
@@ -110,6 +132,31 @@ func onPrivateMsg(subType, msgID int32, fromQQ int64, msg string, font int32) in
 	return 0
 }
 
+func sendSplitGroupMsg(group int64, msg string) {
+	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+	strs := strings.Split(msg, "\n")
+	length := len(strs)
+	cnt := 0
+	for {
+		info := ""
+		for i := 0; i < 5; i++ {
+			if cnt < length {
+				info += strs[cnt] + "\n"
+				cnt++
+			} else {
+				break
+			}
+		}
+		info = strings.TrimRight(info, "\n")
+		time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
+		id := cqp.SendGroupMsg(group, info)
+		fmt.Printf("\nSend finish id:%d\n", id)
+		if cnt >= length {
+			break
+		}
+	}
+}
+
 func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg string, font int32) int32 {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
@@ -128,10 +175,7 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 		if len(ret) > 0 {
 			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
 			if !bot.IsSilent() {
-				gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
-				time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
-				id := cqp.SendGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
-				fmt.Printf("\nSend finish id:%d\n", id)
+				sendSplitGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
 			} else {
 				fmt.Println("It's silent time.")
 			}
