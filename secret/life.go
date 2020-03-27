@@ -199,12 +199,12 @@ func (b *Bot) lottery(fromQQ uint64) string {
 func (b *Bot) redPack(fromQQ uint64, msg string) string {
 	p := b.getPersonFromDb(fromQQ)
 	if p.SecretLevel < 2 || p.SecretLevel > 9 {
-		return "序列7以下不可发红包"
+		return "序列7以下不可发紫包"
 	}
 
 	strs := strings.Split(msg, ";")
 	if len(strs) != 3 {
-		return "指令格式错误，应为：红包;金额;QQ"
+		return "指令格式错误，应为：紫包;金额;QQ"
 	}
 
 	n1, err1 := strconv.Atoi(strs[1])
@@ -229,5 +229,5 @@ func (b *Bot) redPack(fromQQ uint64, msg string) string {
 	b.setMoney(fromQQ, -1*n1)
 
 	b.setMoney(n2, n1)
-	return fmt.Sprintf("你成功向%d发送了%d金镑的红包", n2, n1)
+	return fmt.Sprintf("你成功向%d发送了%d金镑的紫包", n2, n1)
 }
