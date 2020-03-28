@@ -1,5 +1,7 @@
 package pet
 
+import "path"
+
 var FightLevel = [...]string{
 	"不堪一击",
 	"毫不足虑",
@@ -123,4 +125,4 @@ var foodList = []Food{
 	{"黑麦面包", 10, 4},
 }
 
-var PetFilePath = "data/app/me.cqp.molin.secretMaster/pets.xlsx"
+var PetFilePath = path.Join("data", "app", "me.cqp.molin.secretMaster", "pets.xlsx")

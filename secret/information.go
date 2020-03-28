@@ -172,10 +172,11 @@ func (b *Bot) getProperty(fromQQ uint64) string {
 
 	medalStr := ""
 	medalCnt := b.getMedal(fromQQ)
+	medalStr += fmt.Sprintf("%d", medalCnt)
 	for md := uint64(0); md < medalCnt; md++ {
 		medalStr += "🎖"
 	}
-	if len(medalStr) == 0 {
+	if medalCnt == 0 {
 		medalStr = "无"
 	}
 

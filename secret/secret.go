@@ -156,7 +156,7 @@ func (b *Bot) UpdateFromOldVersion(fromQQ uint64) string {
 		rlp.DecodeBytes(m, &money)
 		b.setMoney(fromQQ, int(money.Money))
 		fmt.Println("继承经验:", p.ChatCount, "继承金钱:", money.Money)
-		info += fmt.Sprintf("\n继承经验:%d, 继承金钱:%d\n", p.ChatCount, money.Money)
+		// info += fmt.Sprintf("\n继承经验:%d, 继承金钱:%d\n", p.ChatCount, money.Money)
 	} else {
 		fmt.Println("老版本数据库不存在")
 	}
@@ -223,9 +223,9 @@ func (b *Bot) Update(fromQQ uint64, nick string) string {
 		if int64(magic) > 0 && !normalHumanStop {
 			v.ChatCount++
 			b.setMoney(fromQQ, 1)
-			if v.ChatCount%100 == 0 {
-				ret += "\n恭喜！你的战力评价升级了！"
-			}
+			// if v.ChatCount%100 == 0 {
+			// 	ret += "\n恭喜！你的战力评价升级了！"
+			// }
 		}
 
 		v.LastChat = uint64(time.Now().Unix())

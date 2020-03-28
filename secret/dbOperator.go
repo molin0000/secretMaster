@@ -3,6 +3,7 @@ package secret
 import (
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"time"
 
@@ -16,7 +17,7 @@ var db *leveldb.DB
 
 func getDb() *leveldb.DB {
 	if db == nil {
-		_db, err := leveldb.OpenFile("data/app/me.cqp.molin.secretMaster/UserData.db", nil)
+		_db, err := leveldb.OpenFile(path.Join("data", "app", "me.cqp.molin.secretMaster", "UserData.db"), nil)
 		if err != nil {
 			fmt.Printf("open db error: %+v", err)
 			panic(err)

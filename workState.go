@@ -18,6 +18,7 @@ type PersonState struct {
 func getGroupInfo(group int64, noCach bool) (detail *cqp.GroupDetail) {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
+			fmt.Println("获取群信息失败", group)
 			detail = nil
 		}
 	}()
@@ -25,10 +26,15 @@ func getGroupInfo(group int64, noCach bool) (detail *cqp.GroupDetail) {
 	return &getInfo
 }
 
-func getGroupList() string {
+func getGroupList() (ret string) {
+	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
+		if err := recover(); err != nil {
+			fmt.Println("getGroupList panic")
+		}
+	}()
 	groups := secret.GetGroups()
 	fmt.Println("getGroupList", groups)
-	ret := "\n"
+	ret = "\n"
 	for i, v := range groups {
 		detail := getGroupInfo(int64(v), false)
 		if detail != nil {

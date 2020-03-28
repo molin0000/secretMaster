@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path"
 	"strconv"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
-var competitionPath = "data/app/me.cqp.molin.secretMaster/competition.xlsx"
+var competitionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "competition.xlsx")
 
 // var competitionPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/competition.xlsx"
 

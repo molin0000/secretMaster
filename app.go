@@ -10,11 +10,12 @@ import (
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
 	"github.com/molin0000/secretMaster/interact"
 	"github.com/molin0000/secretMaster/secret"
+	"github.com/molin0000/secretMaster/text2img"
 )
 
 //go:generate cqcfg -c .
 // cqp: 名称: 序列战争
-// cqp: 版本: 3.1.6:1
+// cqp: 版本: 3.2.0:1
 // cqp: 作者: molin
 // cqp: 简介: 专为诡秘之主粉丝序列群开发的小游戏
 func main() { /*此处应当留空*/ }
@@ -24,6 +25,14 @@ func init() {
 	cqp.PrivateMsg = onPrivateMsg
 	cqp.GroupMsg = onGroupMsg
 	rand.Seed(time.Now().Unix())
+}
+
+func normalSendPrivateMsg(qq int64, msg string) {
+	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+	info := strings.TrimRight(msg, "\n")
+	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
+	id := cqp.SendPrivateMsg(qq, info)
+	fmt.Printf("\nSend finish id:%d\n", id)
 }
 
 func sendSplitPrivateMsg(qq int64, msg string) {
@@ -51,6 +60,25 @@ func sendSplitPrivateMsg(qq int64, msg string) {
 	}
 }
 
+func imgSendPrivateMsg(qq int64, msg string) {
+	if !cqp.CanSendImage() {
+		cqp.SendGroupMsg(qq, "对不起，您不是酷Q Pro，不支持发送图片")
+		return
+	}
+	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+	info := strings.TrimRight(msg, "\n")
+	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
+	filePath := text2img.DrawTextImg(info)
+	cqCode := fmt.Sprintf("[CQ:image,file=%s]", filePath)
+	id := cqp.SendPrivateMsg(qq, cqCode)
+	fmt.Printf("\nSend finish id:%d\n", id)
+}
+
+func getLineCnt(msg string) int {
+	strs := strings.Split(msg, "\n")
+	return len(strs)
+}
+
 func procOldPrivateMsg(fromQQ int64, msg string) int {
 	strArray := strings.Split(msg, "@")
 	if len(strArray) != 2 {
@@ -70,7 +98,16 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 	send := func() {
 		if len(ret) > 0 {
 			fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
-			sendSplitPrivateMsg(fromQQ, ret)
+			// sendSplitPrivateMsg(fromQQ, ret)
+			if getLineCnt(ret) >= 5 {
+				if cqp.CanSendImage() {
+					imgSendPrivateMsg(fromQQ, ret)
+				} else {
+					sendSplitPrivateMsg(fromQQ, ret)
+				}
+			} else {
+				normalSendPrivateMsg(fromQQ, ret)
+			}
 		}
 	}
 
@@ -132,6 +169,14 @@ func onPrivateMsg(subType, msgID int32, fromQQ int64, msg string, font int32) in
 	return 0
 }
 
+func normalSendGroupMsg(group int64, msg string) {
+	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+	info := strings.TrimRight(msg, "\n")
+	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
+	id := cqp.SendGroupMsg(group, info)
+	fmt.Printf("\nSend finish id:%d\n", id)
+}
+
 func sendSplitGroupMsg(group int64, msg string) {
 	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
 	strs := strings.Split(msg, "\n")
@@ -157,6 +202,20 @@ func sendSplitGroupMsg(group int64, msg string) {
 	}
 }
 
+func imgSendGroupMsg(group int64, msg string) {
+	if !cqp.CanSendImage() {
+		cqp.SendGroupMsg(group, "对不起，您不是酷Q Pro，不支持发送图片")
+		return
+	}
+	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+	info := strings.TrimRight(msg, "\n")
+	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
+	filePath := text2img.DrawTextImg(info)
+	cqCode := fmt.Sprintf("[CQ:image,file=%s]", filePath)
+	id := cqp.SendGroupMsg(group, cqCode)
+	fmt.Printf("\nSend finish id:%d\n", id)
+}
+
 func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg string, font int32) int32 {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
@@ -175,7 +234,16 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 		if len(ret) > 0 {
 			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
 			if !bot.IsSilent() {
-				sendSplitGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+				// sendSplitGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+				if getLineCnt(ret) >= 5 {
+					if cqp.CanSendImage() {
+						imgSendGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+					} else {
+						sendSplitGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+					}
+				} else {
+					normalSendGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+				}
 			} else {
 				fmt.Println("It's silent time.")
 			}

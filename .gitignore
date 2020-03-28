@@ -3,3 +3,4 @@
 app.dll
 app.json
 .DS_Store
+data/

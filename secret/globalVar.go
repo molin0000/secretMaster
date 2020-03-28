@@ -1,5 +1,7 @@
 package secret
 
+import "path"
+
 var secretInfo = [...]SecretInfo{
 	{SecretName: "黑夜", SecretLevelName: [10]string{"不眠者", "午夜诗人", "梦魇", "安魂师", "灵巫", "守夜人", "恐惧主教", "隐秘之仆", "未知", "黑夜"}},
 	{SecretName: "死神", SecretLevelName: [10]string{"收尸人", "掘墓人", "通灵者", "死灵导师", "看门人", "不死者", "摆渡人", "死亡执政官", "未知", "死神"}},
@@ -384,8 +386,8 @@ var fishList = []Fish{
 
 var careerSkills []*CareerSkill
 
-var careerSkillPath = "data/app/me.cqp.molin.secretMaster/skills.xlsx"
+var careerSkillPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "skills.xlsx")
 
-var missionPath = "data/app/me.cqp.molin.secretMaster/mission"
+var missionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "mission")
 
-var version = &Version{"序列战争", "v3.1.6", "2020-03-27"}
+var version = &Version{"序列战争", "v3.2.0", "2020-03-27"}
