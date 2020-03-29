@@ -122,6 +122,7 @@ type MoneyBind struct {
 	IniSection string
 	IniKey     string
 	HasUpdate  bool
+	Encode     string
 }
 
 type Config struct {
