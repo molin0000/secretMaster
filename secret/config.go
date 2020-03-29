@@ -108,8 +108,11 @@ func (b *Bot) moneyMap(fromQQ uint64, msg string) string {
 	bind.IniPath = strs[1]
 	bind.IniSection = strs[2]
 	bind.IniKey = strs[3]
+	if len(strs) == 5 {
+		bind.Encode = strs[4]
+	}
 	b.setMoneyBind(bind)
-	return fmt.Sprintf("映射成功, Path:%s, Section:%s, Key:%s\n", strs[1], strs[2], strs[3])
+	return fmt.Sprintf("映射成功, Path:%s, Section:%s, Key:%s %+v\n", strs[1], strs[2], strs[3], *bind)
 }
 
 func (b *Bot) gmCmd(fromQQ uint64, msg string) string {

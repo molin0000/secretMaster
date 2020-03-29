@@ -128,9 +128,15 @@ func (b *Bot) getMoneyFromIni(fromQQ uint64) *Money {
 		fmt.Printf("Fail to read file: %v", err)
 		return &Money{Group: b.Group, QQ: fromQQ, Money: 0}
 	}
+	var amount uint64
+	if bind.Encode != "UTF8" {
+		fmt.Println("Data Path:", cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).String())
+		amount, err = cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).Uint64()
+	} else {
+		fmt.Println("Data Path:", cfg.Section(cString(strconv.FormatUint(fromQQ, 10))).Key(cString(bind.IniKey)).String())
+		amount, err = cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(cString(bind.IniKey)).Uint64()
+	}
 
-	fmt.Println("Data Path:", cfg.Section(cString(strconv.FormatUint(fromQQ, 10))).Key(cString(bind.IniKey)).String())
-	amount, err := cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(cString(bind.IniKey)).Uint64()
 	if err != nil {
 		fmt.Printf("Fail to read file: %v", err)
 		return &Money{Group: b.Group, QQ: fromQQ, Money: 0}
@@ -147,8 +153,13 @@ func (b *Bot) setMoneyToIni(fromQQ uint64, m *Money) {
 		return
 	}
 	fmt.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
-	cfg.Section(cString(strconv.FormatUint(fromQQ, 10))).Key(cString(bind.IniKey)).SetValue(strconv.FormatUint(m.Money, 10))
-	cfg.SaveTo(bind.IniPath)
+	if bind.Encode != "UTF8" {
+		cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).SetValue(strconv.FormatUint(m.Money, 10))
+		cfg.SaveTo(bind.IniPath)
+	} else {
+		cfg.Section(cString(strconv.FormatUint(fromQQ, 10))).Key(cString(bind.IniKey)).SetValue(strconv.FormatUint(m.Money, 10))
+		cfg.SaveTo(bind.IniPath)
+	}
 }
 
 func (b *Bot) getAdvFromDb(fromQQ uint64) *Adventure {
@@ -236,7 +247,7 @@ func (b *Bot) moneyBindKey() []byte {
 func (b *Bot) getMoneyBind() *MoneyBind {
 	verify, err := getDb().Get(b.moneyBindKey(), nil)
 	if err != nil {
-		return &MoneyBind{"/home/user/coolq/data/app/com.qmt.demo/玩家数据.ini", "cQQ", "金币数量", false}
+		return &MoneyBind{"/home/user/coolq/data/app/com.qmt.demo/玩家数据.ini", "cQQ", "金币数量", false, ""}
 	}
 	var v MoneyBind
 	rlp.DecodeBytes(verify, &v)

@@ -9,9 +9,7 @@
 
 插件附加文件使用说明：
 
-`competition.xlsx`和`pets.xlsx`放到 `coolq/data/app/me.cqp.molin.secretMaster/` 目录下
-
-所有的副本json文件放到 `coolq/data/app/me.cqp.molin.secretMaster/mission/` 目录下
+下载`附件.zip`（或者default.zip)，解压到 `coolq/data/app/me.cqp.molin.secretMaster/` 目录下
 
 如果指令无响应，可先删除这些附加文件再试。
 
