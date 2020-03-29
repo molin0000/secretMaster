@@ -241,8 +241,8 @@ func (b *Bot) pray(fromQQ uint64) string {
 	// 	return "你试着向自己祈祷，并无效果。"
 	// }
 
-	if !b.useItem(fromQQ, "灵性材料") {
-		return "连灵性材料都没有，瞎祈祷个什么。"
+	if !b.useItem(fromQQ, "灵力材料") {
+		return "连灵力材料都没有，瞎祈祷个什么。"
 	}
 
 	ps.Date = today
@@ -264,7 +264,7 @@ func (b *Bot) pray(fromQQ uint64) string {
 		b.setPersonValue("Church", fromQQ, cc)
 		b.setExp(cc.CreatorQQ, 10)
 		b.setMagic(fromQQ, int(b.getChurchAdditionInfo(fromQQ, "灵性协调", 50)))
-		return "你摆出精心准备的灵性材料，双手合十，认真祈祷……一阵清风拂过，你感觉自己似乎变强了。"
+		return "你摆出精心准备的灵力材料，双手合十，认真祈祷……一阵清风拂过，你感觉自己似乎变强了。"
 	}
 
 	return "你没有加入教会，请不要胡乱祈祷"
@@ -310,7 +310,7 @@ func (b *Bot) getChurchAdditionInfo(fromQQ uint64, skill string, baseCount uint6
 }
 
 func (b *Bot) getAdditionMagic(fromQQ uint64) int {
-	m := b.getAdditionInfo(fromQQ, "灵性协调", 50)
+	m := b.getAdditionInfo(fromQQ, "灵力协调", 50)
 	w := b.getPersonValue("Work", fromQQ, &Work{}).(*Work)
 
 	return int(m) - int(w.MagicMinus)
