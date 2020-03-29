@@ -287,3 +287,13 @@ type CareerSkill struct {
 	Type  string
 	Desc  string
 }
+
+type ImgMode struct {
+	Enable bool
+	Lines  uint64
+}
+
+type FoldLineMode struct {
+	Enable bool
+	Lines  uint64
+}

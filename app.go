@@ -15,7 +15,7 @@ import (
 
 //go:generate cqcfg -c .
 // cqp: 名称: 序列战争
-// cqp: 版本: 3.2.2:1
+// cqp: 版本: 3.2.3:1
 // cqp: 作者: molin
 // cqp: 简介: 专为诡秘之主粉丝序列群开发的小游戏
 func main() { /*此处应当留空*/ }
@@ -35,14 +35,14 @@ func normalSendPrivateMsg(qq int64, msg string) {
 	fmt.Printf("\nSend finish id:%d\n", id)
 }
 
-func sendSplitPrivateMsg(qq int64, msg string) {
+func sendSplitPrivateMsg(line int, qq int64, msg string) {
 	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
 	strs := strings.Split(msg, "\n")
 	length := len(strs)
 	cnt := 0
 	for {
 		info := ""
-		for i := 0; i < 5; i++ {
+		for i := 0; i < line; i++ {
 			if cnt < length {
 				info += strs[cnt] + "\n"
 				cnt++
@@ -98,15 +98,15 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 	send := func() {
 		if len(ret) > 0 {
 			fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
-			// sendSplitPrivateMsg(fromQQ, ret)
-			if getLineCnt(ret) >= 10 {
-				// if cqp.CanSendImage() {
-				// 	imgSendPrivateMsg(fromQQ, ret, "To"+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
-				// } else {
-				sendSplitPrivateMsg(fromQQ, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
-				// }
+			lineCnt := getLineCnt(ret)
+			img := secret.GetGlobalValue("ImgMode", &secret.ImgMode{}).(*secret.ImgMode)
+			foldLine := secret.GetGlobalValue("FoldLineMode", &secret.FoldLineMode{Enable: true, Lines: 5}).(*secret.FoldLineMode)
+			if img.Enable && (uint64(lineCnt) >= img.Lines) {
+				imgSendPrivateMsg(fromQQ, ret, "To: "+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
+			} else if foldLine.Enable && (uint64(lineCnt) >= foldLine.Lines) {
+				sendSplitPrivateMsg(int(foldLine.Lines), fromQQ, "To: "+GetGroupNickName(&info)+"\n"+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 			} else {
-				normalSendPrivateMsg(fromQQ, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
+				normalSendPrivateMsg(fromQQ, "To: "+GetGroupNickName(&info)+"\n"+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 			}
 		}
 	}
@@ -177,14 +177,14 @@ func normalSendGroupMsg(group int64, msg string) {
 	fmt.Printf("\nSend finish id:%d\n", id)
 }
 
-func sendSplitGroupMsg(group int64, msg string) {
+func sendSplitGroupMsg(line int, group int64, msg string) {
 	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
 	strs := strings.Split(msg, "\n")
 	length := len(strs)
 	cnt := 0
 	for {
 		info := ""
-		for i := 0; i < 5; i++ {
+		for i := 0; i < line; i++ {
 			if cnt < length {
 				info += strs[cnt] + "\n"
 				cnt++
@@ -234,15 +234,15 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 		if len(ret) > 0 {
 			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
 			if !bot.IsSilent() {
-				// sendSplitGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
-				if getLineCnt(ret) >= 5 {
-					// if cqp.CanSendImage() {
-					// 	imgSendGroupMsg(fromGroup, ret, "To"+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
-					// } else {
-					sendSplitGroupMsg(fromGroup, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
-					// }
+				lineCnt := getLineCnt(ret)
+				img := secret.GetGlobalValue("ImgMode", &secret.ImgMode{}).(*secret.ImgMode)
+				foldLine := secret.GetGlobalValue("FoldLineMode", &secret.FoldLineMode{Enable: true, Lines: 5}).(*secret.FoldLineMode)
+				if img.Enable && (uint64(lineCnt) >= img.Lines) {
+					imgSendGroupMsg(fromGroup, ret, "To: "+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
+				} else if foldLine.Enable && (uint64(lineCnt) >= foldLine.Lines) {
+					sendSplitGroupMsg(int(foldLine.Lines), fromGroup, "To: "+GetGroupNickName(&info)+"\n"+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 				} else {
-					normalSendGroupMsg(fromGroup, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
+					normalSendGroupMsg(fromGroup, "To: "+GetGroupNickName(&info)+"\n"+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 				}
 			} else {
 				fmt.Println("It's silent time.")

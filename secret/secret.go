@@ -562,6 +562,15 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 	if strings.Contains(msg, "数值修复") {
 		return b.fixNumber(fromQQ)
 	}
+
+	if strings.Contains(msg, "图片模式") {
+		return b.imgMode(fromQQ, msg)
+	}
+
+	if strings.Contains(msg, "文字分段") {
+		return b.foldLineMode(fromQQ, msg)
+	}
+
 	return ""
 }
 

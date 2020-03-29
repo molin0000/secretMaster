@@ -66,6 +66,11 @@ func (b *Bot) isMaster(fromQQ uint64) bool {
 	return (cfg.HaveMaster && (fromQQ == cfg.MasterQQ)) || (fromQQ == cfgSuper.MasterQQ)
 }
 
+func (b *Bot) isSuperMaster(fromQQ uint64) bool {
+	cfgSuper := GetGlobalValue("Supermaster", &Config{}).(*Config)
+	return (fromQQ == cfgSuper.MasterQQ)
+}
+
 func (b *Bot) notGM() string {
 	return "对不起，你不是GM，别想欺骗机器人"
 }
@@ -323,4 +328,53 @@ func (b *Bot) fixNumber(fromQQ uint64) string {
 		fmt.Println(err)
 	}
 	return "数值修复完成，GM附加幸运全部归零了。"
+}
+
+func (b *Bot) imgMode(fromQQ uint64, msg string) string {
+	if !b.isSuperMaster(fromQQ) {
+		return b.notGM()
+	}
+
+	img := GetGlobalValue("ImgMode", &ImgMode{Enable: false, Lines: 0}).(*ImgMode)
+
+	strs := strings.Split(msg, ";")
+	if len(strs) < 2 {
+		return fmt.Sprintf("当前参数：%+v", *img)
+	}
+
+	lines, err := strconv.Atoi(strs[1])
+	if err != nil {
+		return err.Error()
+	}
+
+	img.Enable = true
+	img.Lines = uint64(lines)
+
+	SetGlobalValue("ImgMode", img)
+
+	return "图片模式修改完成" + fmt.Sprintf("当前参数：%+v", *img)
+}
+
+func (b *Bot) foldLineMode(fromQQ uint64, msg string) string {
+	if !b.isSuperMaster(fromQQ) {
+		return b.notGM()
+	}
+
+	fold := GetGlobalValue("FoldLineMode", &FoldLineMode{Enable: true, Lines: 5}).(*FoldLineMode)
+
+	strs := strings.Split(msg, ";")
+	if len(strs) < 2 {
+		return fmt.Sprintf("当前参数：%+v", *fold)
+	}
+
+	lines, err := strconv.Atoi(strs[1])
+	if err != nil {
+		return err.Error()
+	}
+
+	fold.Lines = uint64(lines)
+
+	SetGlobalValue("FoldLineMode", fold)
+
+	return "文字分段修改完成" + fmt.Sprintf("当前参数：%+v", *fold)
 }

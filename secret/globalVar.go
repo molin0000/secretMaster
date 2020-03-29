@@ -280,6 +280,8 @@ var menus = Menu{
 			{81, "map", "QQ群数据映射，让A群使用B群的数据库。格式：map;AGroupQQ;BGroupQQ", "", nil},
 			{82, "delay", "机器人回复延迟，大的延迟可以减少被封号几率，格式：delay;300  (默认延迟300毫秒）", "", nil},
 			{83, "数值修复", "修复群内异常的幸运数值，将GM加的幸运归零。", "", nil},
+			{84, "图片模式", "使用酷QPro的可以选择回复消息行数超过多少行转为图片模式回复。格式：图片模式;行数 如果想取消，请把行数设成2000", "", nil},
+			{85, "文字分段", "可以选择回复消息行数超过多少行时拆分多条消息回复（默认5行）。格式：文字分段;行数 如果想取消，请把行数设成2000", "", nil},
 		}},
 		{1, "资料", "回复 资料 可显示与人物信息相关的指令。", "", []Menu{
 			{11, "属性", "回复 属性 可查询当前人物的属性信息。", "", nil},
@@ -390,4 +392,4 @@ var careerSkillPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "ski
 
 var missionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "mission")
 
-var version = &Version{"序列战争", "v3.2.2", "2020-03-27"}
+var version = &Version{"序列战争", "v3.2.3", "2020-03-29"}
