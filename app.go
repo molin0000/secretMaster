@@ -15,7 +15,7 @@ import (
 
 //go:generate cqcfg -c .
 // cqp: 名称: 序列战争
-// cqp: 版本: 3.2.0:1
+// cqp: 版本: 3.2.2:1
 // cqp: 作者: molin
 // cqp: 简介: 专为诡秘之主粉丝序列群开发的小游戏
 func main() { /*此处应当留空*/ }
@@ -100,11 +100,11 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 			fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
 			// sendSplitPrivateMsg(fromQQ, ret)
 			if getLineCnt(ret) >= 10 {
-				if cqp.CanSendImage() {
-					imgSendPrivateMsg(fromQQ, ret, "To"+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
-				} else {
-					sendSplitPrivateMsg(fromQQ, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
-				}
+				// if cqp.CanSendImage() {
+				// 	imgSendPrivateMsg(fromQQ, ret, "To"+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
+				// } else {
+				sendSplitPrivateMsg(fromQQ, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
+				// }
 			} else {
 				normalSendPrivateMsg(fromQQ, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 			}
@@ -235,12 +235,12 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
 			if !bot.IsSilent() {
 				// sendSplitGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
-				if getLineCnt(ret) >= 10 {
-					if cqp.CanSendImage() {
-						imgSendGroupMsg(fromGroup, ret, "To"+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
-					} else {
-						sendSplitGroupMsg(fromGroup, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
-					}
+				if getLineCnt(ret) >= 5 {
+					// if cqp.CanSendImage() {
+					// 	imgSendGroupMsg(fromGroup, ret, "To"+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
+					// } else {
+					sendSplitGroupMsg(fromGroup, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
+					// }
 				} else {
 					normalSendGroupMsg(fromGroup, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 				}
