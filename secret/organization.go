@@ -263,7 +263,7 @@ func (b *Bot) pray(fromQQ uint64) string {
 	if find {
 		b.setPersonValue("Church", fromQQ, cc)
 		b.setExp(cc.CreatorQQ, 10)
-		b.setMagic(fromQQ, int(b.getChurchAdditionInfo(fromQQ, "灵性协调", 50)))
+		b.setMagic(fromQQ, int(b.getChurchAdditionInfo(fromQQ, "灵力协调", 50)))
 		return "你摆出精心准备的灵力材料，双手合十，认真祈祷……一阵清风拂过，你感觉自己似乎变强了。"
 	}
 
