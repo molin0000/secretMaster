@@ -114,10 +114,10 @@ func (b *Bot) promotion(fromQQ uint64) string {
 	info += "你静下心来，沐浴焚香，拿出辛苦得来的魔药。\n"
 	successRate := 20
 
-	if !b.useItem(fromQQ, "灵性材料") {
+	if !b.useItem(fromQQ, "灵力材料") {
 		info += "你看着桌面上的材料，总感觉好像少了点什么。算了，不管了。你一口喝下了魔药，等待晋升。\n"
 	} else {
-		info += "你取出了一份精心准备的灵性材料，严肃认真的举行仪式，然后一口喝下了魔药。\n"
+		info += "你取出了一份精心准备的灵力材料，严肃认真的举行仪式，然后一口喝下了魔药。\n"
 		successRate = 60
 	}
 
@@ -127,7 +127,7 @@ func (b *Bot) promotion(fromQQ uint64) string {
 		b.setPersonToDb(fromQQ, p)
 		god := b.getGodFromDb(p.SecretID)
 		if p.SecretLevel == 7 && god != 0 && god != fromQQ {
-			return info + "恭喜！你成功晋升为天使。灵性缓缓收束时你忽然感觉到从遥远的星空投来了某种不可名状的冰冷注视，神灵让人战栗的威压宛若实质。你选择的途径已经存在真神，而祂已经注意到了你……" + b.allSkillLevelUp(fromQQ)
+			return info + "恭喜！你成功晋升为天使。灵力缓缓收束时你忽然感觉到从遥远的星空投来了某种不可名状的冰冷注视，神灵让人战栗的威压宛若实质。你选择的途径已经存在真神，而祂已经注意到了你……" + b.allSkillLevelUp(fromQQ)
 		}
 
 		if (god == 0 || god == fromQQ) && p.SecretLevel == 9 {

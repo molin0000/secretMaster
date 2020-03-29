@@ -14,6 +14,12 @@ func (b *Bot) checkMission(fromQQ uint64, msg string) string {
 		return ""
 	}
 
+	if len(msg) < 2 {
+		return "请回复：选+数值，如选0，选1"
+	}
+
+	msg = strings.TrimLeft(msg, "选")
+
 	selection, err := strconv.Atoi(msg)
 	if err != nil {
 		strs := strings.Split(msg, "] ")
@@ -47,7 +53,7 @@ func (b *Bot) checkMission(fromQQ uint64, msg string) string {
 func (b *Bot) startMission(fromQQ uint64, msg string) string {
 	magic := b.getMagic(fromQQ)
 	if magic < 50 {
-		return "灵性不足"
+		return "灵力不足"
 	}
 
 	b.setMagic(fromQQ, -50)

@@ -14,6 +14,12 @@ func (b *Bot) checkCalc(fromQQ uint64, msg string) string {
 		return ""
 	}
 
+	if len(msg) < 5 {
+		return "请输入：回答+数字，例如：回答212，回答2345"
+	}
+
+	msg = strings.TrimLeft(msg, "回答")
+
 	selection, err := strconv.Atoi(msg)
 	if err != nil {
 		strs := strings.Split(msg, "] ")
@@ -43,7 +49,7 @@ func (b *Bot) checkCalc(fromQQ uint64, msg string) string {
 func (b *Bot) startCalc(fromQQ uint64, msg string) string {
 	magic := b.getMagic(fromQQ)
 	if magic < 25 {
-		return "灵性不足"
+		return "灵力不足"
 	}
 
 	b.setMagic(fromQQ, -25)

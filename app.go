@@ -60,7 +60,7 @@ func sendSplitPrivateMsg(qq int64, msg string) {
 	}
 }
 
-func imgSendPrivateMsg(qq int64, msg string) {
+func imgSendPrivateMsg(qq int64, msg string, pre, end string) {
 	if !cqp.CanSendImage() {
 		cqp.SendGroupMsg(qq, "对不起，您不是酷Q Pro，不支持发送图片")
 		return
@@ -70,7 +70,7 @@ func imgSendPrivateMsg(qq int64, msg string) {
 	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 	filePath := text2img.DrawTextImg(info)
 	cqCode := fmt.Sprintf("[CQ:image,file=%s]", filePath)
-	id := cqp.SendPrivateMsg(qq, cqCode)
+	id := cqp.SendPrivateMsg(qq, pre+cqCode+end)
 	fmt.Printf("\nSend finish id:%d\n", id)
 }
 
@@ -99,14 +99,14 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 		if len(ret) > 0 {
 			fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
 			// sendSplitPrivateMsg(fromQQ, ret)
-			if getLineCnt(ret) >= 5 {
+			if getLineCnt(ret) >= 10 {
 				if cqp.CanSendImage() {
-					imgSendPrivateMsg(fromQQ, ret)
+					imgSendPrivateMsg(fromQQ, ret, "To"+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
 				} else {
-					sendSplitPrivateMsg(fromQQ, ret)
+					sendSplitPrivateMsg(fromQQ, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 				}
 			} else {
-				normalSendPrivateMsg(fromQQ, ret)
+				normalSendPrivateMsg(fromQQ, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 			}
 		}
 	}
@@ -202,7 +202,7 @@ func sendSplitGroupMsg(group int64, msg string) {
 	}
 }
 
-func imgSendGroupMsg(group int64, msg string) {
+func imgSendGroupMsg(group int64, msg string, pre, end string) {
 	if !cqp.CanSendImage() {
 		cqp.SendGroupMsg(group, "对不起，您不是酷Q Pro，不支持发送图片")
 		return
@@ -235,14 +235,14 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
 			if !bot.IsSilent() {
 				// sendSplitGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
-				if getLineCnt(ret) >= 5 {
+				if getLineCnt(ret) >= 10 {
 					if cqp.CanSendImage() {
-						imgSendGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+						imgSendGroupMsg(fromGroup, ret, "To"+GetGroupNickName(&info)+"\n", "\n"+time.Now().Format("2006/1/2 15:04:05"))
 					} else {
-						sendSplitGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+						sendSplitGroupMsg(fromGroup, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 					}
 				} else {
-					normalSendGroupMsg(fromGroup, "@"+GetGroupNickName(&info)+" "+ret)
+					normalSendGroupMsg(fromGroup, "To"+GetGroupNickName(&info)+" "+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 				}
 			} else {
 				fmt.Println("It's silent time.")

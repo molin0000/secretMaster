@@ -31,7 +31,7 @@ func (b *Bot) bank(fromQQ uint64, msg string) string {
 	}
 
 	switch strs[1] {
-	case "存款":
+	case "埋入":
 		if len(strs) < 3 {
 			return "指令错误" + fmt.Sprintf("%+v", strs)
 		}
@@ -40,7 +40,7 @@ func (b *Bot) bank(fromQQ uint64, msg string) string {
 			return "指令错误" + fmt.Sprintf("%+v", err)
 		}
 		if money < 100 {
-			return "每次存款最少100金镑。"
+			return "每次埋入最少100金镑。"
 		}
 		if uint64(money) > b.getMoney(fromQQ) {
 			return "你并没有那么多钱。"
@@ -51,8 +51,8 @@ func (b *Bot) bank(fromQQ uint64, msg string) string {
 		bank.Amount += uint64(money)
 		b.setPersonValue("Bank", fromQQ, bank)
 		b.setMoney(fromQQ, -1*money)
-		return fmt.Sprintf("成功存入%d金镑，当前存款%d金镑。", money, bank.Amount)
-	case "取款":
+		return fmt.Sprintf("成功存入%d金镑，当前埋入%d金镑。", money, bank.Amount)
+	case "挖出":
 		if len(strs) < 3 {
 			return "指令错误" + fmt.Sprintf("%+v", strs)
 		}
@@ -73,11 +73,11 @@ func (b *Bot) bank(fromQQ uint64, msg string) string {
 		b.setPersonValue("Bank", fromQQ, bank)
 		b.setMoney(fromQQ, money)
 		return fmt.Sprintf("成功取出%d金镑", money)
-	case "查账":
+	case "探测":
 		bank := b.getPersonValue("Bank", fromQQ, &Bank{}).(*Bank)
 		bank = calcInterest(bank)
 		b.setPersonValue("Bank", fromQQ, bank)
-		return fmt.Sprintf("当前存款%d金镑。日利率3％", bank.Amount)
+		return fmt.Sprintf("当前埋入%d金镑。日利率3％", bank.Amount)
 	default:
 		return "指令错误" + fmt.Sprintf("%+v", strs)
 	}
@@ -149,7 +149,7 @@ func (b *Bot) work(fromQQ uint64, msg string) string {
 
 func (b *Bot) fishing(fromQQ uint64) string {
 	if b.getMagic(fromQQ) < 5 {
-		return "你已经灵性枯竭了，再去钓鱼，怕会被鱼吃了。"
+		return "你已经灵力枯竭了，再去钓鱼，怕会被鱼吃了。"
 	}
 
 	b.setMagic(fromQQ, -5)

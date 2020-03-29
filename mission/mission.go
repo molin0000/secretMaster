@@ -224,7 +224,7 @@ func (mg *MissionGame) SelectOption(event int, selection int) (msg string, finis
 				msg += mg.failed(event, selection, v.Type)
 				return msg, true
 			}
-			msg += fmt.Sprintf("灵性：%d\n", n)
+			msg += fmt.Sprintf("灵力：%d\n", n)
 			mg.Magic = uint64(int64(mg.Magic) + int64(n))
 		case "跳转":
 			n, err := strconv.Atoi(string(v.Data))
@@ -250,5 +250,5 @@ func (mg *MissionGame) GetInfo() string {
 
 func (mg *MissionGame) Finish() string {
 	mg.Event = 0
-	return fmt.Sprintf("\n----------------\n副本结束! 金镑：%d, 经验：%d, 灵性: %d\n----------------\n", int64(mg.Money), int64(mg.Exp), int64(mg.Magic))
+	return fmt.Sprintf("\n----------------\n副本结束! 金镑：%d, 经验：%d, 灵力: %d\n----------------\n", int64(mg.Money), int64(mg.Exp), int64(mg.Magic))
 }

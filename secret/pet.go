@@ -91,13 +91,13 @@ func (b *Bot) petSummon(fromQQ uint64) string {
 	}
 
 	if b.getMagic(fromQQ) < 20 {
-		return "灵性不足"
+		return "灵力不足"
 	}
 
 	b.setMagic(fromQQ, -20)
-	have := b.useItem(fromQQ, "灵性材料")
+	have := b.useItem(fromQQ, "灵力材料")
 	if !have {
-		return "你缺少灵性材料"
+		return "你缺少灵力材料"
 	}
 	ps := b.getPetStore()
 	pet, ret := ps.Summon()

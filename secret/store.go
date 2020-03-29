@@ -8,7 +8,7 @@ func (b *Bot) redTheater(fromQQ uint64) string {
 	}
 
 	if b.getMagic(fromQQ) < 40 {
-		return "演出才刚刚开始，你突然一阵头晕目眩，感觉到灵性枯竭预警，立刻退票离开了。"
+		return "演出才刚刚开始，你突然一阵头晕目眩，感觉到灵力枯竭预警，立刻退票离开了。"
 	}
 
 	b.setMoney(fromQQ, -100)
@@ -39,7 +39,7 @@ func (b *Bot) buyMagicPotion(fromQQ uint64) string {
 	b.setMoney(fromQQ, -70)
 	b.setPersonValue("Potion", fromQQ, potion)
 
-	return "喝下这瓶药剂后，你满嘴苦涩，灵性似乎恢复了一点。"
+	return "喝下这瓶药剂后，你满嘴苦涩，灵力似乎恢复了一点。"
 }
 
 func (b *Bot) buyMagicItem(fromQQ uint64) string {
@@ -50,7 +50,7 @@ func (b *Bot) buyMagicItem(fromQQ uint64) string {
 	bag := b.getPersonValue("Bag", fromQQ, &Bag{})
 	find := false
 	for i := 0; i < len(bag.(*Bag).Items); i++ {
-		if bag.(*Bag).Items[i].Name == "灵性材料" {
+		if bag.(*Bag).Items[i].Name == "灵力材料" {
 			find = true
 			bag.(*Bag).Items[i].Count++
 			break
@@ -58,11 +58,11 @@ func (b *Bot) buyMagicItem(fromQQ uint64) string {
 	}
 
 	if !find {
-		bag.(*Bag).Items = append(bag.(*Bag).Items, &Item{"灵性材料", 1})
+		bag.(*Bag).Items = append(bag.(*Bag).Items, &Item{"灵力材料", 1})
 	}
 	b.setPersonValue("Bag", fromQQ, bag)
 	b.setMoney(fromQQ, -50)
-	return "你精心挑选了一份外表精致的灵性材料，把它买回家。"
+	return "你精心挑选了一份外表精致的灵力材料，把它买回家。"
 }
 
 func (b *Bot) clearItem(fromQQ uint64) {

@@ -11,7 +11,7 @@ import (
 func (b *Bot) startCompetition(fromQQ uint64) string {
 	magic := b.getMagic(fromQQ)
 	if magic < 5 {
-		return "灵性不足"
+		return "灵力不足"
 	}
 
 	b.setMagic(fromQQ, -5)

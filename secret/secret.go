@@ -387,11 +387,11 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.getGod()
 	}
 
-	if strings.Contains(msg, "灵性药剂") {
+	if strings.Contains(msg, "灵力药剂") {
 		return b.buyMagicPotion(fromQQ)
 	}
 
-	if strings.Contains(msg, "灵性材料") {
+	if strings.Contains(msg, "灵力材料") {
 		return b.buyMagicItem(fromQQ)
 	}
 
@@ -455,7 +455,7 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.pray(fromQQ)
 	}
 
-	if strings.Contains(msg, "银行") {
+	if strings.Contains(msg, "地窖") {
 		return b.bank(fromQQ, msg)
 	}
 

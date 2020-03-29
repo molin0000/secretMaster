@@ -132,7 +132,7 @@ func (b *Bot) gmCmd(fromQQ uint64, msg string) string {
 		return fmt.Sprintf("%d 经验：%d", n2, n1)
 	case "magic":
 		b.setMagic(n2, n1)
-		return fmt.Sprintf("%d 灵性：%d", n2, n1)
+		return fmt.Sprintf("%d 灵力：%d", n2, n1)
 	case "god":
 		b.setGodToDb(uint64(n1-1), &n2)
 		return fmt.Sprintf("设置途径%d 神灵：%d", n1, n2)
