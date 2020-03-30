@@ -95,7 +95,7 @@ func (b *Bot) petSummon(fromQQ uint64) string {
 	}
 
 	b.setMagic(fromQQ, -20)
-	if !b.useItem(fromQQ, "灵力材料") || !b.useItem(fromQQ, "灵性材料") {
+	if !(b.useItem(fromQQ, "灵力材料") || b.useItem(fromQQ, "灵性材料")) {
 		return "你缺少灵力材料"
 	}
 	ps := b.getPetStore()

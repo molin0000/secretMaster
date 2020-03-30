@@ -338,7 +338,7 @@ func globalKey(keyPrefix string) []byte {
 func GetGlobalValue(keyPrefix string, defaultValue interface{}) interface{} {
 	data, err := getDb().Get(globalKey(keyPrefix), nil)
 	if err != nil {
-		fmt.Println("GetGlobalPersonValue nil:", keyPrefix)
+		fmt.Println("GetGlobalValue nil:", keyPrefix)
 		return defaultValue
 	}
 
