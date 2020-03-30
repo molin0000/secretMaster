@@ -13,11 +13,17 @@ func (b *Bot) adventure(fromQQ uint64, limit bool) string {
 	}
 
 	money := b.getMoney(fromQQ)
-	if !limit {
-		if money > 50 {
+	if !limit && a.DayCnt < (3+b.getAdditionAdventure(fromQQ)) {
+		return "您今日的奇遇探险还没有用完，请先进行探险"
+	}
+	if !limit && a.DayCnt >= (3+b.getAdditionAdventure(fromQQ)) {
+		if money > 50 && a.DayCnt < 53+b.getAdditionAdventure(fromQQ) {
 			b.setMoney(fromQQ, -50)
-		} else {
+			a.DayCnt++
+		} else if money < 50 {
 			return "钱包空空，买不起了哦"
+		} else {
+			return "你今天已经探险了太多次了"
 		}
 	} else {
 		a.DayCnt++
