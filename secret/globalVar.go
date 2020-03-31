@@ -392,4 +392,4 @@ var careerSkillPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "ski
 
 var missionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "mission")
 
-var version = &Version{"序列战争", "v3.2.3", "2020-03-29"}
+var version = &Version{"序列战争", "v3.2.4", "2020-03-29"}

@@ -18,9 +18,9 @@ go build -ldflags "-s -w" -buildmode=c-shared -o app.dll
 IF ERRORLEVEL 1 pause
 
 :: Copy app.dll amd app.json
-SET DevDir=F:\coolq\dev\me.cqp.molin.secretmaster
-if defined DevDir (
-    echo Coping files
-    for %%f in (app.dll,app.json) do move %%f "%DevDir%\%%f" > nul
-    IF ERRORLEVEL 1 pause
-)
+::SET DevDir=D:\序列战争版本更新\酷Q\coolq\dev\me.cqp.molin.secretmaster\
+::if defined DevDir (
+ ::   echo Coping files
+  ::  for %%f in (app.dll,app.json) do move %%f "%DevDir%\%%f" > nul
+  ::  IF ERRORLEVEL 1 pause
+::)
