@@ -2,7 +2,7 @@
 
 echo Generating app.json
 SET GOPROXY=https://goproxy.cn
-go build github.com/Tnze/CoolQ-Golang-SDK/v2/tools/cqcfg
+go build github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg
 go generate
 IF ERRORLEVEL 1 pause
 
