@@ -1,4 +1,16 @@
 
 .normal {
-  background: #A179F2;
+  background: #ff99cc;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-self: center;
+}
+
+.body {
+  width: 90%;
+  margin:auto;
+  background-color: #ffccff;
+  height: 90%;
+  border-radius: 20px;
 }
