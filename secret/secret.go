@@ -427,6 +427,10 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.promotion(fromQQ)
 	}
 
+	if strings.Contains(msg, "更改") {
+		return b.changeChurch(fromQQ, msg)
+	}
+
 	if strings.Contains(msg, "创建") {
 		return b.createChurch(fromQQ, msg)
 	}

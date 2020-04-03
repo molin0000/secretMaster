@@ -7,6 +7,7 @@ require github.com/Tnze/CoolQ-Golang-SDK v1.2.0
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/GeertJohan/go.rice v1.0.0
+	github.com/Tnze/CoolQ-Golang-SDK/v2 v2.0.1 // indirect
 	github.com/bregydoc/gtranslate v0.0.0-20191225024717-45b28d4fda86
 	github.com/disintegration/imaging v1.6.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0

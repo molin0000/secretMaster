@@ -324,3 +324,48 @@ func (b *Bot) getAdditionLucky(fromQQ uint64) uint64 {
 	v := b.getAdditionInfo(fromQQ, "幸运光环", 1)
 	return v
 }
+
+func (b *Bot) changeChurch(fromQQ uint64, msg string) string {
+	strs := strings.Split(msg, ";")
+	if len(strs) != 5 {
+		return "\n指令格式不正确！别想欺骗机器人！" + fmt.Sprintf("%+v", strs)
+	}
+	churchs := b.getGroupValue("Churchs", &Churchs{}).(*Churchs)
+
+	enterPrice, err := strconv.Atoi(strs[4])
+
+	if err != nil {
+		return "\n指令格式不正确！别想欺骗机器人！" + fmt.Sprintf("%+v %+v", strs, err)
+	}
+	changeChurch := &ChurchInfo{strs[1], strs[2], nil, fromQQ, b.CurrentNick, uint64(enterPrice), b.getMoney(fromQQ) / 200, 1, b.getMoney(fromQQ), 1}
+
+	info := "\n"
+
+	findSkill := false
+	for _, skill := range skillList {
+		if strs[3] == skill.Name {
+			changeChurch.Skills = append(changeChurch.Skills, &skill)
+			findSkill = true
+			break
+		}
+	}
+
+	if !findSkill {
+		return "\n抱歉，没听说过这个技能。"
+	}
+
+	b.setMoney(fromQQ, -100)
+	
+	b.setPersonValue("Church", fromQQ, changeChurch)
+	for i, c := range churchs.ChurchList {
+		if c.Name == strs[1] && c.CreatorQQ == fromQQ {
+			churchs.ChurchList[i].Money = changeChurch.Money
+			info += fmt.Sprintf("更改成功！\n名称:%s\n介绍:%s\n尊神/教主:%s\n技能:%s\n入会费:%d\n最大人数:%d\n等级:%d级\n注册资本:%d金镑",
+	changeChurch.Name, changeChurch.Commit, changeChurch.CreatorNick, strs[3], changeChurch.Money, b.getMoney(fromQQ)/200, changeChurch.Level, b.getMoney(fromQQ))
+	return info
+	b.setGroupValue("Churchs", churchs)
+		} 
+		return("你确定你创建了这个教会吗")	
+	}
+	return info
+}
