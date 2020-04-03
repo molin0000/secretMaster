@@ -1,0 +1,37 @@
+.normal {
+  background: #ff9acc;
+  height    : 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.body {
+  background-color: #ffccff;
+  margin          : 20px;
+  border-radius   : 20px;
+  width: 800px;
+}
+
+.divide {
+  border: 0.5px solid #ff66b3;
+  margin: 20px;
+}
+
+.msg {
+  background-color: #ffffcc;
+  margin: 20px;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.inline {
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  margin-left: 40px;
+  margin-right: 20px;
+  font-weight: bold;
+}
