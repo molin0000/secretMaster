@@ -354,18 +354,17 @@ func (b *Bot) changeChurch(fromQQ uint64, msg string) string {
 		return "\n抱歉，没听说过这个技能。"
 	}
 
-	b.setMoney(fromQQ, -100)
-	
-	b.setPersonValue("Church", fromQQ, changeChurch)
 	for i, c := range churchs.ChurchList {
 		if c.Name == strs[1] && c.CreatorQQ == fromQQ {
-			churchs.ChurchList[i].Money = changeChurch.Money
+			churchs.ChurchList[i] = changeChurch
 			info += fmt.Sprintf("更改成功！\n名称:%s\n介绍:%s\n尊神/教主:%s\n技能:%s\n入会费:%d\n最大人数:%d\n等级:%d级\n注册资本:%d金镑",
-	changeChurch.Name, changeChurch.Commit, changeChurch.CreatorNick, strs[3], changeChurch.Money, b.getMoney(fromQQ)/200, changeChurch.Level, b.getMoney(fromQQ))
-	return info
-	b.setGroupValue("Churchs", churchs)
-		} 
-		return("你确定你创建了这个教会吗")	
+				changeChurch.Name, changeChurch.Commit, changeChurch.CreatorNick, strs[3], changeChurch.Money, b.getMoney(fromQQ)/200, changeChurch.Level, b.getMoney(fromQQ))
+
+			b.setPersonValue("Church", fromQQ, changeChurch)
+			b.setMoney(fromQQ, -100)
+			b.setGroupValue("Churchs", churchs)
+			return info
+		}
 	}
-	return info
+	return "你确定你创建了这个教会吗"
 }
