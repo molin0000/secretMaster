@@ -1,28 +1,28 @@
-
 .normal {
   margin-top: 30vh;
 }
 
 
 .input {
-  width: 160px;
-  height: 20px;
-  text-align: center;
-  border: none;
+  width        : 160px;
+  height       : 20px;
+  text-align   : center;
+  border       : none;
   border-radius: 20px;
-  margin: 10px;
-  padding: 5px;
+  margin       : 10px;
+  padding      : 5px;
+  height       : 25px;
 }
 
 .button {
-  width: 120px;
-  height: 30px;
-  border: none;
+  width        : 120px;
+  height       : 30px;
+  border       : none;
   border-radius: 15px;
-  margin: 20px;
-  background: #ef27d6;
-  color: white;
-  cursor: pointer;
+  margin       : 20px;
+  background   : #ef27d6;
+  color        : white;
+  cursor       : pointer;
 }
 
 .button:hover {
