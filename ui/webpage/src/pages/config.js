@@ -1,13 +1,15 @@
-import { Divider, Button, Switch, Table, Select } from 'antd';
+import { Divider, Button, Switch, Table, Select, Input } from 'antd';
 import styles from './config.css';
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 const groupColumns = [
   {
     title: '序号',
     dataIndex: 'key',
     key: 'key',
+    width: 50,
   },
   {
     title: '群号',
@@ -67,6 +69,91 @@ const groupData = [
   }
 ]
 
+const activitiesColumns = [
+  {
+    title: '序号',
+    dataIndex: 'key',
+    key: 'key',
+    width: 50,
+  },
+  {
+    title: '关键字',
+    dataIndex: 'word',
+    key: 'word',
+    ellipsis: true,
+  },
+  {
+    title: '回复信息',
+    dataIndex: 'reply',
+    key: 'reply',
+    ellipsis: true,
+  },
+  {
+    title: '类型',
+    dataIndex: 'type',
+    key: 'type',
+  },
+  {
+    title: '经验',
+    dataIndex: 'exp',
+    key: 'exp',
+    width: 70,
+  },
+  {
+    title: '金镑',
+    dataIndex: 'money',
+    key: 'money',
+    width: 70,
+  },
+  {
+    title: '灵力',
+    dataIndex: 'magic',
+    key: 'magic',
+    width: 70,
+  },
+  {
+    title: '操作',
+    dataIndex: 'operation',
+    key: 'operation',
+    render: (text, record) => (
+      <span>
+        <a>删除</a>
+      </span>
+    ),
+  },
+  {
+    title: '开关',
+    dataIndex: 'switch',
+    key: 'switch',
+    render: (text, record) => (
+      <span>
+        <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+      </span>
+    ),
+  },
+]
+
+const activitiesData = [
+  {
+    key: 1,
+    word: "新年快乐",
+    reply: "亚米收到你的祝福啦~红包给你！",
+    type: "每年",
+    exp: 0,
+    money: 100,
+    magic: 0,
+  },
+  {
+    key: 1,
+    word: "签到",
+    reply: "签到成功！",
+    type: "每天",
+    exp: 6,
+    money: 6,
+    magic: 6,
+  },
+]
+
 export default function () {
   return (
     <div className={styles.normal}>
@@ -75,13 +162,13 @@ export default function () {
         <div className={styles.inline}>
           <div className={styles.title}>插件主人（超级管理员）QQ：</div>
           <input className={styles.input} />
-          <Button type="primary">保存</Button>
+          <Button type="primary" style={{marginLeft:"40px"}}>保存</Button>
         </div>
         <Divider className={styles.divide} />
         <div className={styles.inline}>
           <div className={styles.title}>消息回复延迟（毫秒）：</div>
           <input className={styles.input} style={{ marginLeft: "35px" }} />
-          <Button type="primary">保存</Button>
+          <Button type="primary" style={{marginLeft:"40px"}}>保存</Button>
         </div>
         <Divider className={styles.divide} />
         <div className={styles.inline}>
@@ -91,42 +178,64 @@ export default function () {
         <Divider className={styles.divide} />
         <div className={styles.inline}>
           <div className={styles.title}>分群管理：</div>
-          <div className={styles.text}>全局开关：</div>
+          <div className={styles.text} style={{marginLeft:"520px"}}>全局开关：</div>
           <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-          <Button type="primary" style={{ marginLeft: "360px" }}>保存</Button>
         </div>
         <Table columns={groupColumns} dataSource={groupData} size="small" />
         <Divider className={styles.divide} />
         <div className={styles.inline}>
           <div className={styles.title}>货币映射：</div>
-          <div className={styles.text}>启用：</div>
+          <div className={styles.text}  style={{marginLeft:"545px"}}>启用：</div>
           <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-          <Button type="primary" style={{ marginLeft: "380px" }}>保存</Button>
         </div>
         <div className={styles.inline}>
           <div className={styles.text2}>ini文件路径：</div>
-          <input className={styles.input} style={{ margin: "4px 0px 4px 84px" }} />
+          <input className={styles.input} style={{ margin: "4px 0px 4px 84px", width:"520px", textAlign:"left", paddingLeft:"10px" }} />
         </div>
         <div className={styles.inline}>
-          <div className={styles.text2}>ini节点必须为QQ号：[QQ]</div>
-        </div>
-        <div className={styles.inline}>
-          <div className={styles.text2}>关键字：</div>
-          <input className={styles.input} style={{ margin: "4px 0px 4px 110px", width: "200px"}} />
-          <div className={styles.text2} style={{ marginLeft: "80px"}}>编码：</div>
-          <Select defaultValue="GB2312" style={{ width: 124, margin:"4px 0" }}>
+          <div className={styles.text2}>节点为QQ号，关键字：</div>
+          <input className={styles.input} style={{ margin: "6px 0px 6px 20px", width: "100px" }} />
+          <div className={styles.text2} style={{ marginLeft: "40px" }}>编码：</div>
+          <Select defaultValue="GB2312" style={{ width: 124, margin: "4px 0" }}>
             <Option value="GB2312">GB2312</Option>
             <Option value="UTF8">UTF8</Option>
           </Select>
         </div>
+        <div className={styles.inline}>
+          
+        </div>
         <Divider className={styles.divide} />
-        <div>AA</div>
+        <div className={styles.inline}>
+          <div className={styles.title}>图片模式：</div>
+          <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
+          <input className={styles.input} style={{ width: "200px" }} />
+          <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
+          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+        </div>
 
         <Divider className={styles.divide} />
-        <div>AA</div>
-
+        <div className={styles.inline}>
+          <div className={styles.title}>文字分段：</div>
+          <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
+          <input className={styles.input} style={{ width: "200px" }} />
+          <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
+          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+        </div>
         <Divider className={styles.divide} />
-
+        <div className={styles.inline}>
+          <div className={styles.title}>活动管理：</div>
+          <Button type="primary"  style={{marginLeft:"390px"}}>新增</Button>
+          <div className={styles.text} style={{marginLeft:"25px"}}>全局开关：</div>
+          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+        </div>
+        <Table columns={activitiesColumns} dataSource={activitiesData} size="small" />
+        <Divider className={styles.divide} />
+        <div className={styles.inline}>
+          <div className={styles.title}>操作日志：</div>
+        </div>
+        <div style={{margin:"10px 40px 40px 40px"}}>
+          <TextArea rows={6}/>
+        </div>
       </div>
     </div>
   );
