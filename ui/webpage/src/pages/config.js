@@ -178,7 +178,9 @@ export default function () {
         <Divider className={styles.divide} />
         <div className={styles.inline}>
           <div className={styles.title}>分群管理：</div>
-          <div className={styles.text} style={{marginLeft:"520px"}}>全局开关：</div>
+          <div className={styles.text} style={{marginLeft:"360px"}}>全局开关：</div>
+          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+          <div className={styles.text} style={{marginLeft:"30px"}}>全局静默：</div>
           <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
         </div>
         <Table columns={groupColumns} dataSource={groupData} size="small" />

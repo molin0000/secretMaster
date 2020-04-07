@@ -3,6 +3,7 @@
   text-align     : center;
   display        : flex;
   justify-content: center;
+  min-width      : 900px;
 }
 
 .body {
@@ -14,7 +15,7 @@
 
 .divide {
   /* border: 0.5px solid #ff66b3; */
-  border: 0.5px solid #ff9acc;
+  border   : 0.5px solid #ff9acc;
 }
 
 .msg {

@@ -23,6 +23,10 @@ export default {
           component: './register',
         },
         {
+          path: '/about',
+          component: './about',
+        },
+        {
           path: '/',
           component: '../pages/index',
         },

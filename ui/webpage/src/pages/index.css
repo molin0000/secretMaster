@@ -1,9 +1,26 @@
 
 .body {
-  margin: 2em;
   text-align: center;
+  margin-top: 0px;
+  /* height: auto; */
+  background: #ff99cc;
+  padding: 20px;
 }
 
 .text {
   margin: 15px;
+}
+
+.buttonRow {
+  text-align: left;
+  padding: 10px;
+  display: flex;
+  justify-content: start;
+}
+
+.msgBoard {
+  background-color: rgb(53, 12, 65);
+  height: 40vh;
+  border-radius: 20px;
+  color: white;
 }
