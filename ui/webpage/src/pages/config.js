@@ -32,7 +32,7 @@ const groupColumns = [
     key: 'operation',
     render: (text, record) => (
       <span>
-        <a>退群</a>
+        <a href="/#">退群</a>
       </span>
     ),
   },
@@ -117,7 +117,7 @@ const activitiesColumns = [
     key: 'operation',
     render: (text, record) => (
       <span>
-        <a>删除</a>
+        <a href="/#">删除</a>
       </span>
     ),
   },

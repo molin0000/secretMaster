@@ -1,7 +1,7 @@
 
 import styles from './login.css';
 import { Component } from 'react';
-import { Input, Button } from 'antd';
+import { Button } from 'antd';
 class Login extends Component {
   render() {
     return (

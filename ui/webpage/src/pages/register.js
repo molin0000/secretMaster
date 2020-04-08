@@ -1,7 +1,7 @@
 
 import styles from './register.css';
 import { Component } from 'react';
-import { Input, Button } from 'antd';
+import { Button } from 'antd';
 class Register extends Component {
   render() {
     return (

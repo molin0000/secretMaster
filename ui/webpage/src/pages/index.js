@@ -53,7 +53,7 @@ class Home extends Component {
               <Col span={6}><Button type='primary' style={{marginBottom:"10px", width:"20vw"}}>速算</Button></Col>
               <Col span={6}><Button type='primary' style={{marginBottom:"10px", width:"20vw"}}>学识</Button></Col>
               <Col span={6}><Button type='primary' style={{marginBottom:"10px", width:"20vw"}}>阵营</Button></Col>
-              <Col span={6}><Button type='primary' style={{marginBottom:"10px", width:"20vw"}}>排行</Button></Col>
+              <Col span={6}><Button type='primary' style={{marginBottom:"10px", width:"20vw"}}>道具</Button></Col>
             </Row>
             <Row>
               <Col span={6}><Button type='primary' style={{marginBottom:"10px", width:"20vw"}}>祈祷</Button></Col>

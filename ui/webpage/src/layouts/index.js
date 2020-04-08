@@ -1,4 +1,5 @@
 import styles from './index.css';
+import { Link } from 'umi';
 
 function BasicLayout(props) {
   console.log(props);
@@ -9,10 +10,10 @@ function BasicLayout(props) {
   return (
     <div className={styles.normal}>
       <div className={styles.headerRow}>
-        <a href="/" className={props.location.pathname === '/' ? active : normal}>游玩</a>
-        <a href="/config" className={(path === '/config')||(path === '/register')||(path === '/login') ? active : normal }>设置</a>
-        <a href="/help" className={props.location.pathname === '/help' ? active : normal}>帮助</a>
-        <a href="/about" className={props.location.pathname === '/about' ? active : normal}>关于</a>
+        <Link to="/" className={props.location.pathname === '/' ? active : normal}>游玩</Link>
+        <Link to="/config" className={(path === '/config')||(path === '/register')||(path === '/login') ? active : normal }>设置</Link>
+        <Link to="/help" className={props.location.pathname === '/help' ? active : normal}>帮助</Link>
+        <Link to="/about" className={props.location.pathname === '/about' ? active : normal}>关于</Link>
       </div>
       {props.children}
     </div>
