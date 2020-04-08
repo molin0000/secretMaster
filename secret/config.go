@@ -406,3 +406,9 @@ func GetMoneyMap(group uint64) *MoneyBind {
 	bind := b.getMoneyBind()
 	return bind
 }
+
+func SetMoneyMap(group uint64, bind *MoneyBind) {
+	b := &Bot{}
+	b.Group = group
+	b.setMoneyBind(bind)
+}

@@ -3,6 +3,7 @@ package backend
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 	"github.com/molin0000/secretMaster/competition"
@@ -99,6 +100,7 @@ func GetInterfaceList(e echo.Context) (err error) {
 		"/imageMode",
 		"/textSegment",
 		"/activities",
+		"/locked",
 	}
 
 	return response(e, strs, err)
@@ -161,4 +163,130 @@ func GetGroup(e echo.Context) (err error) {
 	ret.GlobalSwitch = sw.Enable
 	ret.GlobalSilence = si.Enable
 	return response(e, ret, err)
+}
+
+func GetActivities(e echo.Context) (err error) {
+	acts := secret.GetActivities()
+	return response(e, acts, err)
+}
+
+func GetLocked(e echo.Context) (err error) {
+	value := secret.GetGlobalPersonValue("Password", 0, &secret.Password{QQ: 0, Password: ""}).(*secret.Password)
+	return response(e, len(value.Password) > 0, err)
+}
+
+func PostPassword(e echo.Context) (err error) {
+	qqStr := e.FormValue("qq")
+	qq, _ := strconv.ParseUint(qqStr, 10, 64)
+	password := e.FormValue("password")
+
+	value := secret.GetGlobalPersonValue("Password", qq, &secret.Password{QQ: qq, Password: ""}).(*secret.Password)
+	if value.QQ == 0 && len(value.Password) == 0 && len(password) > 0 {
+		value.Password = password
+		secret.SetGlobalPersonValue("Password", 0, value)
+		return response(e, true, err)
+	}
+
+	if qq == value.QQ && password == value.Password {
+		return response(e, true, err)
+	}
+	return response(e, "密码错误", err)
+}
+
+func PostSuperMaster(e echo.Context) (err error) {
+	qqStr := e.FormValue("supermaster")
+	password := e.FormValue("password")
+	if !verifyAdminPassword(password) {
+		return response(e, "密码错误", err)
+	}
+
+	qq, _ := strconv.ParseUint(qqStr, 10, 64)
+
+	cfgSuper := secret.GetGlobalValue("Supermaster", &secret.Config{}).(*secret.Config)
+	cfgSuper.HaveMaster = true
+	cfgSuper.MasterQQ = qq
+	secret.SetGlobalValue("Supermaster", cfgSuper)
+
+	return response(e, true, err)
+}
+
+func verifyAdminPassword(password string) bool {
+	value := secret.GetGlobalPersonValue("Password", 0, &secret.Password{QQ: 0, Password: ""}).(*secret.Password)
+	return password == value.Password
+}
+
+func PostDelay(e echo.Context) (err error) {
+	delayStr := e.FormValue("delay")
+	password := e.FormValue("password")
+	if !verifyAdminPassword(password) {
+		return response(e, "密码错误", err)
+	}
+
+	delay, _ := strconv.ParseUint(delayStr, 10, 64)
+
+	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
+	gp.DelayMs = delay
+
+	secret.SetGlobalValue("ReplyDelay", gp)
+
+	return response(e, true, err)
+}
+
+func PostImageMode(e echo.Context) (err error) {
+	p := new(secret.ImgMode)
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+
+	secret.SetGlobalValue("ImgMode", p)
+	return response(e, true, err)
+}
+
+func PostTextSegment(e echo.Context) (err error) {
+	p := new(secret.FoldLineMode)
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+
+	secret.SetGlobalValue("FoldLineMode", p)
+	return response(e, true, err)
+}
+
+type MoneyBindPost struct {
+	Group      uint64 `json:"group" xml:"group" form:"group" query:"group"`
+	IniPath    string `json:"iniPath" xml:"iniPath" form:"iniPath" query:"iniPath"`
+	IniSection string `json:"iniSection" xml:"iniSection" form:"iniSection" query:"iniSection"`
+	IniKey     string `json:"iniKey" xml:"iniKey" form:"iniKey" query:"iniKey"`
+	HasUpdate  bool   `json:"hasUpdate" xml:"hasUpdate" form:"hasUpdate" query:"hasUpdate"`
+	Encode     string `json:"encode" xml:"encode" form:"encode" query:"encode"`
+}
+
+func PostMoneyMap(e echo.Context) (err error) {
+	p := new(MoneyBindPost)
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+
+	pp := &secret.MoneyBind{}
+	pp.IniPath = p.IniPath
+	pp.IniSection = p.IniSection
+	pp.IniKey = p.IniKey
+	pp.HasUpdate = p.HasUpdate
+	pp.Encode = p.Encode
+
+	secret.SetMoneyMap(p.Group, pp)
+
+	return response(e, true, err)
+}
+
+func PostActivities(e echo.Context) (err error) {
+	return response(e, true, err)
+}
+
+func PostChat(e echo.Context) (err error) {
+	return response(e, true, err)
+}
+
+func PostGroup(e echo.Context) (err error) {
+	return response(e, true, err)
 }

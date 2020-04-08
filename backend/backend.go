@@ -10,6 +10,7 @@ import (
 )
 
 func loadRoutes(e *echo.Echo) {
+	//---Get------------
 	e.Add("GET", "/", GetInterfaceList)
 	e.Add("GET", "/version", GetVersion)
 	e.Add("GET", "/count", GetCount)
@@ -19,11 +20,19 @@ func loadRoutes(e *echo.Echo) {
 	e.Add("GET", "/textSegment", GetTextSegment)
 	e.Add("GET", "/moneyMap", GetMoneyMap)
 	e.Add("GET", "/group", GetGroup)
-	// e.Add("POST", "/group", ListMarketsHandler)
-	// e.Add("GET", "/password", ListMarketsHandler)
-	// e.Add("POST", "/chat", ListMarketsHandler)
-	// e.Add("GET", "/activities", ListMarketsHandler)
-	// e.Add("POST", "/activities", ListMarketsHandler)
+	e.Add("GET", "/activities", GetActivities)
+	e.Add("GET", "/locked", GetLocked)
+
+	//----Post--------------------------
+	e.Add("POST", "/password", PostPassword)
+	e.Add("POST", "/supermaster", PostSuperMaster)
+	e.Add("POST", "/delay", PostDelay)
+	e.Add("POST", "/imageMode", PostImageMode)
+	e.Add("POST", "/textSegment", PostTextSegment)
+	e.Add("POST", "/moneyMap", PostMoneyMap)
+	e.Add("POST", "/group", PostGroup)
+	e.Add("POST", "/activities", PostActivities)
+	e.Add("POST", "/chat", PostChat)
 }
 
 func newEchoServer() *echo.Echo {
