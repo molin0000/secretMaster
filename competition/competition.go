@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"path"
 	"strconv"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/molin0000/secretMaster/config"
 )
 
-var competitionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "competition.xlsx")
+// var competitionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "competition.xlsx")
+
+var competitionPath = config.CompetitionPath
 
 // var competitionPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/competition.xlsx"
 
@@ -84,4 +86,8 @@ func GetRandomQuestion() *Question {
 	q := questions[rand.Intn(length)]
 	fmt.Println("q:", q)
 	return q
+}
+
+func GetQuestionCount() int {
+	return len(questions)
 }

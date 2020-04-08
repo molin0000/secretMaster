@@ -1,6 +1,8 @@
 package secret
 
-import "path"
+import (
+	"github.com/molin0000/secretMaster/config"
+)
 
 var secretInfo = [...]SecretInfo{
 	{SecretName: "黑夜", SecretLevelName: [10]string{"不眠者", "午夜诗人", "梦魇", "安魂师", "灵巫", "守夜人", "恐惧主教", "隐秘之仆", "未知", "黑夜"}},
@@ -305,7 +307,7 @@ var menus = Menu{
 			{34, "加入", "回复 加入;名称 可加入现有的教会或隐秘组织。", "", nil},
 			{35, "退出", "回复 退出 可退出当前已经加入的组织。", "", nil},
 			{36, "祈祷", "回复 祈祷 可消耗1份灵力材料，得到3天的神灵庇护。(可使用教会技能，信徒每次祈祷为教主增加10点经验)", "", nil},
-			{37,"更改", "回复 更改 可更改教会入会费，格式为：更改；组织名称;组织简介;技能名称;入会费", "", nil},
+			{37, "更改", "回复 更改 可更改教会入会费，格式为：更改；组织名称;组织简介;技能名称;入会费", "", nil},
 		}},
 		{4, "商店", "回复 商店 可查看神秘黑市的商品清单。", "欢迎光临星火之潮贝克兰德分店，请在浏览商品时，戴好您的斗篷和面具（找到想要购买的商品后，只需要回复购买加商品名称即可，如：购买探险卷轴）", []Menu{
 			{41, "探险卷轴", "（50金镑）走内部渠道，可立即开始1次探险。", "", nil},
@@ -389,8 +391,8 @@ var fishList = []Fish{
 
 var careerSkills []*CareerSkill
 
-var careerSkillPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "skills.xlsx")
+var careerSkillPath = config.SkillPath
 
-var missionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "mission")
+var missionPath = config.MissionPath
 
 var version = &Version{"序列战争", "v3.2.5", "2020-04-04"}

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
+	"github.com/molin0000/secretMaster/backend"
 	"github.com/molin0000/secretMaster/secret"
 )
 
@@ -46,6 +47,37 @@ func getGroupList() (ret string) {
 		}
 	}
 	return ret
+}
+
+func GetGroupInfoList() []*backend.GroupInfo {
+	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
+		if err := recover(); err != nil {
+			fmt.Println("getGroupList panic")
+		}
+	}()
+	groups := secret.GetGroups()
+	fmt.Println("getGroupList", groups)
+	gps := make([]*backend.GroupInfo, 0)
+	key := uint64(0)
+	for i, v := range groups {
+		detail := getGroupInfo(int64(v), false)
+		if detail != nil {
+			gi := &backend.GroupInfo{}
+			gi.Key = key
+			key++
+			gi.Group = v
+			gi.Member = fmt.Sprintf("%d/%d", detail.MembersNum, detail.MaxMemberNum)
+			b := &secret.Bot{}
+			b.Group = v
+			gi.Master = b.GetMaster()
+			gi.Silence = b.IsSilent()
+			gi.Switch = b.GetSwitch()
+			gps = append(gps, gi)
+		} else {
+			secret.RemoveGroup(uint64(i))
+		}
+	}
+	return gps
 }
 
 func switchState(fromQQ int64, msg string) {

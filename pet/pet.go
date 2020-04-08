@@ -172,6 +172,18 @@ func LoadPets(path string) {
 	fmt.Printf("已加载:%d现世宠物，%d灵界宠物，%d宠物投食\n", len(realPets), len(spiritPets), len(foodList))
 }
 
+func GetRealPetCount() int {
+	return len(_realPets)
+}
+
+func GetSpiritPetCount() int {
+	return len(_spiritPets)
+}
+
+func GetFoodCount() int {
+	return len(foodList)
+}
+
 func (ps *PetStore) GetStorePets() string {
 	fmt.Println("GetStorePets", len(ps.RealPets), len(ps.SpiritPets))
 	if len(ps.RealPets) == 0 {

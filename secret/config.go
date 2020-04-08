@@ -60,6 +60,11 @@ func (b *Bot) setSuperMaster(fromQQ uint64, msg string) string {
 	return fmt.Sprintf("成功设置%d为插件supermaster", masterQQ)
 }
 
+func (b *Bot) GetMaster() uint64 {
+	cfg := b.getGroupValue("Config", &Config{}).(*Config)
+	return cfg.MasterQQ
+}
+
 func (b *Bot) isMaster(fromQQ uint64) bool {
 	cfg := b.getGroupValue("Config", &Config{}).(*Config)
 	cfgSuper := GetGlobalValue("Supermaster", &Config{}).(*Config)
@@ -189,6 +194,10 @@ func (b *Bot) gmCmd(fromQQ uint64, msg string) string {
 	default:
 		return "参数解析错误"
 	}
+}
+
+func (b *Bot) GetSwitch() bool {
+	return b.getSwitch()
 }
 
 func (b *Bot) botSwitch(fromQQ uint64, enable bool) string {
@@ -380,4 +389,20 @@ func (b *Bot) foldLineMode(fromQQ uint64, msg string) string {
 	SetGlobalValue("FoldLineMode", fold)
 
 	return "文字分段修改完成" + fmt.Sprintf("当前参数：%+v", *fold)
+}
+
+func GetVersion() *Version {
+	return version
+}
+
+func GetSuperMaster() uint64 {
+	cfgSuper := GetGlobalValue("Supermaster", &Config{}).(*Config)
+	return cfgSuper.MasterQQ
+}
+
+func GetMoneyMap(group uint64) *MoneyBind {
+	b := &Bot{}
+	b.Group = group
+	bind := b.getMoneyBind()
+	return bind
 }

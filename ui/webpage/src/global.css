@@ -53,3 +53,7 @@ body {
 body {
   background-color: #660066;
 }
+
+.ant-card-bordered {
+  border-radius: 20px;
+}

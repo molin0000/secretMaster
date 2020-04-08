@@ -298,3 +298,11 @@ type FoldLineMode struct {
 	Enable bool
 	Lines  uint64
 }
+
+type GlobalSwitch struct {
+	Enable bool
+}
+
+type GlobalSilence struct {
+	Enable bool
+}

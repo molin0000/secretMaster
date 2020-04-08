@@ -8,7 +8,7 @@ import (
 )
 
 func MakeDoc() {
-	http.Handle("/doc", http.FileServer(rice.MustFindBox("../doc").HTTPBox()))
+	http.Handle("/", http.FileServer(rice.MustFindBox("./webpage/dist").HTTPBox()))
 	fmt.Println("8080 ListenAndServe...")
 	http.ListenAndServe(":8080", nil)
 }

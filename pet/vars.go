@@ -1,6 +1,6 @@
 package pet
 
-import "path"
+import "github.com/molin0000/secretMaster/config"
 
 var FightLevel = [...]string{
 	"不堪一击",
@@ -125,4 +125,5 @@ var foodList = []Food{
 	{"黑麦面包", 10, 4},
 }
 
-var PetFilePath = path.Join("data", "app", "me.cqp.molin.secretMaster", "pets.xlsx")
+// var PetFilePath = path.Join("data", "app", "me.cqp.molin.secretMaster", "pets.xlsx")
+var PetFilePath = config.PetPath

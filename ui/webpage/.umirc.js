@@ -27,6 +27,10 @@ export default {
           component: './about',
         },
         {
+          path: '/qqlogin',
+          component: './qqlogin',
+        },
+        {
           path: '/',
           component: '../pages/index',
         },

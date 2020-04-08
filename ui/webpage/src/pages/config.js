@@ -46,6 +46,16 @@ const groupColumns = [
       </span>
     ),
   },
+  {
+    title: '静默',
+    dataIndex: 'silence',
+    key: 'silence',
+    render: (text, record) => (
+      <span>
+        <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+      </span>
+    ),
+  },
 ]
 
 const groupData = [
@@ -187,8 +197,13 @@ export default function () {
         <Divider className={styles.divide} />
         <div className={styles.inline}>
           <div className={styles.title}>货币映射：</div>
-          <div className={styles.text}  style={{marginLeft:"545px"}}>启用：</div>
-          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+        </div>
+        <div className={styles.inline}>
+          <div className={styles.text2}>QQ群号：</div>
+          <input className={styles.input} style={{ margin: "4px 0px 4px 104px", width:"120px", textAlign:"left", paddingLeft:"10px" }} />
+          <Button style={{marginLeft:"20px", marginTop:"2px"}}>加载</Button>
+          <div className={styles.text}  style={{marginLeft:"185px", marginTop:"6px"}}>启用：</div>
+          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked style={{marginTop:"6px"}} />
         </div>
         <div className={styles.inline}>
           <div className={styles.text2}>ini文件路径：</div>

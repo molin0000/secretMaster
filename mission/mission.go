@@ -65,6 +65,10 @@ func loadMissions(jsonPath string) {
 	}
 }
 
+func GetMissionCount() int {
+	return len(missionList)
+}
+
 func readJSONFile(path string) string {
 	fi, err := os.Open(path)
 	if err != nil {
