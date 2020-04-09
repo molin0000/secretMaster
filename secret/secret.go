@@ -575,6 +575,10 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.foldLineMode(fromQQ, msg)
 	}
 
+	if strings.Contains(msg, "口令") {
+		return SetPassword(fromQQ, msg)
+	}
+
 	return ""
 }
 

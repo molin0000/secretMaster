@@ -265,6 +265,14 @@ func (b *Bot) groupKey(keyPrefix string) []byte {
 	return []byte(keyPrefix + "_" + strconv.FormatInt(int64(b.Group), 10))
 }
 
+func (b *Bot) SetGroupValue(keyPrefix string, p interface{}) {
+	b.setGroupValue(keyPrefix, p)
+}
+
+func (b *Bot) GetGroupValue(keyPrefix string, defaultValue interface{}) interface{} {
+	return b.getGroupValue(keyPrefix, defaultValue)
+}
+
 func (b *Bot) setGroupValue(keyPrefix string, p interface{}) {
 	buf, _ := rlp.EncodeToBytes(p)
 	getDb().Put(b.groupKey(keyPrefix), buf, nil)

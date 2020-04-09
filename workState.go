@@ -159,6 +159,6 @@ func isPersonInGroup(group, qq uint64) (exist bool) {
 			exist = false
 		}
 	}()
-	cqp.GetGroupMemberInfo(int64(group), int64(qq), true)
+	cqp.GetGroupMemberInfo(int64(group), int64(qq), false)
 	return true
 }

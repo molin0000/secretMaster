@@ -200,6 +200,10 @@ func (b *Bot) GetSwitch() bool {
 	return b.getSwitch()
 }
 
+func (b *Bot) SetSwitch(enable bool) {
+	b.setSwitch(enable)
+}
+
 func (b *Bot) botSwitch(fromQQ uint64, enable bool) string {
 	if !b.isMaster(fromQQ) {
 		return b.notGM()
@@ -411,4 +415,16 @@ func SetMoneyMap(group uint64, bind *MoneyBind) {
 	b := &Bot{}
 	b.Group = group
 	b.setMoneyBind(bind)
+}
+
+func SetPassword(fromQQ uint64, msg string) string {
+	pwd := GetGlobalPersonValue("Password", fromQQ, &Password{QQ: fromQQ, Password: ""}).(*Password)
+	strs := strings.Split(msg, ";")
+	if len(strs) != 2 {
+		return "当前口令是：" + pwd.Password
+	}
+
+	pwd.Password = strs[1]
+	SetGlobalPersonValue("Password", fromQQ, pwd)
+	return "成功设置口令：" + pwd.Password
 }

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
+	"github.com/molin0000/secretMaster/backend"
 	"github.com/molin0000/secretMaster/interact"
 	"github.com/molin0000/secretMaster/secret"
 	"github.com/molin0000/secretMaster/text2img"
@@ -15,7 +16,7 @@ import (
 
 //go:generate cqcfg -c .
 // cqp: 名称: 序列战争
-// cqp: 版本: 3.2.5:1
+// cqp: 版本: 3.3.0:1
 // cqp: 作者: molin
 // cqp: 简介: 专为诡秘之主粉丝序列群开发的小游戏
 func main() { /*此处应当留空*/ }
@@ -25,6 +26,7 @@ func init() {
 	cqp.PrivateMsg = onPrivateMsg
 	cqp.GroupMsg = onGroupMsg
 	rand.Seed(time.Now().Unix())
+	backend.StartServer(GetGroupInfoList)
 }
 
 func normalSendPrivateMsg(qq int64, msg string) {
@@ -79,6 +81,10 @@ func getLineCnt(msg string) int {
 	return len(strs)
 }
 
+func ProcPrivateMsg(fromQQ int64, msg string) {
+	procOldPrivateMsg(fromQQ, msg)
+}
+
 func procOldPrivateMsg(fromQQ int64, msg string) int {
 	strArray := strings.Split(msg, "@")
 	if len(strArray) != 2 {
@@ -89,7 +95,7 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 	fromGroup := int64(value)
 	msg = strArray[0]
 
-	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, true)
+	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, false)
 	selfQQ := cqp.GetLoginQQ()
 	selfInfo := cqp.GetGroupMemberInfo(fromGroup, selfQQ, false)
 	bot := secret.NewSecretBot(uint64(cqp.GetLoginQQ()), uint64(fromGroup), selfInfo.Name, true, &interact.Interact{})
@@ -224,7 +230,7 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	}()
 
 	fmt.Println("Group msg:", msg)
-	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, true)
+	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, false)
 	selfQQ := cqp.GetLoginQQ()
 	selfInfo := cqp.GetGroupMemberInfo(fromGroup, selfQQ, false)
 	bot := secret.NewSecretBot(uint64(cqp.GetLoginQQ()), uint64(fromGroup), selfInfo.Name, false, &interact.Interact{})

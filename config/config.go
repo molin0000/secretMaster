@@ -1,17 +1,19 @@
 package config
 
-// var CompetitionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "competition.xlsx")
+import "path"
 
-// var PetPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "pets.xlsx")
+var CompetitionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "competition.xlsx")
 
-// var SkillPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "skills.xlsx")
+var PetPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "pets.xlsx")
 
-// var MissionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "mission")
+var SkillPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "skills.xlsx")
 
-var CompetitionPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/competition.xlsx"
+var MissionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "mission")
 
-var PetPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/pets.xlsx"
+// var CompetitionPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/competition.xlsx"
 
-var SkillPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/skills.xlsx"
+// var PetPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/pets.xlsx"
 
-var MissionPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/mission"
+// var SkillPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/skills.xlsx"
+
+// var MissionPath = "/Users/molin/coolq/data/app/me.cqp.molin.secretMaster/mission"

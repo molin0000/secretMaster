@@ -30,9 +30,14 @@ func loadRoutes(e *echo.Echo) {
 	e.Add("POST", "/imageMode", PostImageMode)
 	e.Add("POST", "/textSegment", PostTextSegment)
 	e.Add("POST", "/moneyMap", PostMoneyMap)
-	e.Add("POST", "/group", PostGroup)
 	e.Add("POST", "/activities", PostActivities)
 	e.Add("POST", "/chat", PostChat)
+
+	e.Add("POST", "/globalSwitch", PostGlobalSwitch)
+	e.Add("POST", "/globalSilent", PostGlobalSilent)
+	e.Add("POST", "/groupSwitch", PostGroupSwitch)
+	e.Add("POST", "/groupSilent", PostGroupSilent)
+	e.Add("POST", "/groupExit", PostGroupExit)
 }
 
 func newEchoServer() *echo.Echo {

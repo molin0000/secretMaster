@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
 	"github.com/labstack/echo"
 	"github.com/molin0000/secretMaster/competition"
+	"github.com/molin0000/secretMaster/interact"
 	"github.com/molin0000/secretMaster/mission"
 	"github.com/molin0000/secretMaster/pet"
 	"github.com/molin0000/secretMaster/secret"
@@ -139,20 +141,20 @@ func GetMoneyMap(e echo.Context) (err error) {
 }
 
 type GroupInfo struct {
-	Key     uint64 `json:"key"     `
-	Group   uint64 `json:"group"   `
-	Member  string `json:"member"  `
-	Master  uint64 `json:"master"  `
-	Switch  bool   `json:"switch"  `
-	Silence bool   `json:"silence" `
+	Key     uint64 `json:"key" xml:"key" form:"key" query:"key"`
+	Group   uint64 `json:"group" xml:"group" form:"group" query:"group"`
+	Member  string `json:"member" xml:"member" form:"member" query:"member"`
+	Master  uint64 `json:"master" xml:"master" form:"master" query:"master"`
+	Switch  bool   `json:"switch" xml:"switch" form:"switch" query:"switch"`
+	Silence bool   `json:"silence" xml:"silence" form:"silence" query:"silence"`
 }
 
 var GetGroupInfoList func() []*GroupInfo
 
 type GetGroupRet struct {
-	GlobalSwitch  bool         `json:"globalSwitch"     `
-	GlobalSilence bool         `json:"globalSilence"     `
-	Groups        []*GroupInfo `json:"groups"     `
+	GlobalSwitch  bool         `json:"globalSwitch" xml:"globalSwitch" form:"globalSwitch" query:"globalSwitch"`
+	GlobalSilence bool         `json:"globalSilence" xml:"globalSilence" form:"globalSilence" query:"globalSilence"`
+	Groups        []*GroupInfo `json:"groups" xml:"groups" form:"groups" query:"groups"`
 }
 
 func GetGroup(e echo.Context) (err error) {
@@ -196,7 +198,7 @@ func PostPassword(e echo.Context) (err error) {
 func PostSuperMaster(e echo.Context) (err error) {
 	qqStr := e.FormValue("supermaster")
 	password := e.FormValue("password")
-	if !verifyAdminPassword(password) {
+	if !verifyPassword(0, password) {
 		return response(e, "密码错误", err)
 	}
 
@@ -210,15 +212,15 @@ func PostSuperMaster(e echo.Context) (err error) {
 	return response(e, true, err)
 }
 
-func verifyAdminPassword(password string) bool {
-	value := secret.GetGlobalPersonValue("Password", 0, &secret.Password{QQ: 0, Password: ""}).(*secret.Password)
+func verifyPassword(qq uint64, password string) bool {
+	value := secret.GetGlobalPersonValue("Password", qq, &secret.Password{QQ: 0, Password: ""}).(*secret.Password)
 	return password == value.Password
 }
 
 func PostDelay(e echo.Context) (err error) {
 	delayStr := e.FormValue("delay")
 	password := e.FormValue("password")
-	if !verifyAdminPassword(password) {
+	if !verifyPassword(0, password) {
 		return response(e, "密码错误", err)
 	}
 
@@ -280,13 +282,205 @@ func PostMoneyMap(e echo.Context) (err error) {
 }
 
 func PostActivities(e echo.Context) (err error) {
+	p := []*secret.Activity{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+	secret.SetActivities(p)
 	return response(e, true, err)
+}
+
+type ChatMsg struct {
+	QQ       uint64 `json:"qq" xml:"qq" form:"qq" query:"qq"`
+	Password string `json:"password" xml:"password" form:"password" query:"password"`
+	Msg      string `json:"msg" xml:"msg" form:"msg" query:"msg"`
+}
+
+type ChatReply struct {
+	Msg string
+}
+
+type PersonState struct {
+	Group  uint64
+	Switch bool
+	State  uint64 // 0:Start, 1:GroupSelect, 2:Play
+}
+
+func GetGroupNickName(info *cqp.GroupMember) string {
+	if len(info.Card) > 0 {
+		return info.Card
+	}
+
+	return info.Name
+}
+
+func GetGroupMemberInfo(group, qq int64, noCatch bool) cqp.GroupMember {
+	return cqp.GetGroupMemberInfo(group, qq, noCatch)
 }
 
 func PostChat(e echo.Context) (err error) {
+	p := &ChatMsg{}
+	if err := e.Bind(p); err != nil {
+		return response(e, "数据错误", err)
+	}
+
+	if !verifyPassword(p.QQ, p.Password) {
+		return response(e, &ChatReply{Msg: "口令错误"}, err)
+	}
+
+	msg := p.Msg
+	fromQQ := int64(p.QQ)
+	state := secret.GetGlobalPersonValue("State", uint64(fromQQ), &PersonState{0, false, 0}).(*PersonState)
+
+	fromGroup := int64(state.Group)
+
+	info := GetGroupMemberInfo(fromGroup, fromQQ, false)
+	selfQQ := cqp.GetLoginQQ()
+	selfInfo := GetGroupMemberInfo(fromGroup, selfQQ, false)
+	bot := secret.NewSecretBot(uint64(selfQQ), uint64(fromGroup), selfInfo.Name, true, &interact.Interact{})
+	ret := ""
+
+	update := func() {
+		if len(msg) > 9 {
+			fmt.Println(msg, "大于3", len(msg))
+			ret = bot.Update(uint64(fromQQ), GetGroupNickName(&info))
+		} else {
+			fmt.Println(msg, "小于3", len(msg))
+		}
+	}
+
+	update()
+	ret = bot.RunPrivate(msg, uint64(fromQQ), GetGroupNickName(&info))
+
+	fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
+
+	return response(e, &ChatReply{Msg: ret}, err)
+}
+
+type GroupOperate struct {
+	Group    uint64 `json:"group" xml:"group" form:"group" query:"group"`
+	Value    bool   `json:"value" xml:"value" form:"value" query:"value"`
+	Password string `json:"password" xml:"password" form:"password" query:"password"`
+}
+
+func PostGlobalSwitch(e echo.Context) (err error) {
+	p := &GroupOperate{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+
+	if verifyPassword(0, p.Password) {
+		return response(e, "密码错误", err)
+	}
+
+	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
+	if sw.Enable != p.Value {
+		sw.Enable = p.Value
+		secret.SetGlobalValue("GlobalSwitch", sw)
+	}
+
 	return response(e, true, err)
 }
 
-func PostGroup(e echo.Context) (err error) {
+func PostGlobalSilent(e echo.Context) (err error) {
+	p := &GroupOperate{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+	if verifyPassword(0, p.Password) {
+		return response(e, "密码错误", err)
+	}
+
+	si := secret.GetGlobalValue("GlobalSilence", &secret.GlobalSilence{}).(*secret.GlobalSilence)
+	if si.Enable != p.Value {
+		si.Enable = p.Value
+		secret.SetGlobalValue("GlobalSilence", si)
+	}
+
 	return response(e, true, err)
 }
+
+func PostGroupSwitch(e echo.Context) (err error) {
+	p := &GroupOperate{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+	if verifyPassword(0, p.Password) {
+		return response(e, "密码错误", err)
+	}
+
+	b := &secret.Bot{}
+	b.Group = p.Group
+	b.SetSwitch(p.Value)
+	return response(e, true, err)
+}
+
+func PostGroupSilent(e echo.Context) (err error) {
+	p := &GroupOperate{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+	if verifyPassword(0, p.Password) {
+		return response(e, "密码错误", err)
+	}
+
+	b := &secret.Bot{}
+	b.Group = p.Group
+
+	s := b.GetGroupValue("Silence", &secret.SilenceState{}).(*secret.SilenceState)
+	if p.Value {
+		s.IsSilence = true
+		s.OpenEndTime = "23:59"
+		s.OpenStartTime = "23:58"
+	} else {
+		s.IsSilence = false
+		b.SetGroupValue("Silence", s)
+	}
+	return response(e, true, err)
+}
+
+func PostGroupExit(e echo.Context) (err error) {
+	p := &GroupOperate{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+	if verifyPassword(0, p.Password) {
+		return response(e, "密码错误", err)
+	}
+
+	cqp.SetGroupLeave(int64(p.Group), false)
+	return response(e, true, err)
+}
+
+// e.Add("POST", "/globalSwitch", PostGlobalSwitch)
+// e.Add("POST", "/globalSilent", PostGlobalSilent)
+// e.Add("POST", "/groupSwitch", PostGroupSwitch)
+// e.Add("POST", "/groupSilent", PostGroupSilent)
+// e.Add("POST", "/groupExit", PostGroupExit)
+
+// type GroupInfo struct {
+// 	Key     uint64 `json:"key" xml:"key" form:"key" query:"key"`
+// 	Group   uint64 `json:"group" xml:"group" form:"group" query:"group"`
+// 	Member  string `json:"member" xml:"member" form:"member" query:"member"`
+// 	Master  uint64 `json:"master" xml:"master" form:"master" query:"master"`
+// 	Switch  bool   `json:"switch" xml:"switch" form:"switch" query:"switch"`
+// 	Silence bool   `json:"silence" xml:"silence" form:"silence" query:"silence"`
+// }
+
+// var GetGroupInfoList func() []*GroupInfo
+
+// type GetGroupRet struct {
+// 	GlobalSwitch  bool         `json:"globalSwitch" xml:"globalSwitch" form:"globalSwitch" query:"globalSwitch"`
+// 	GlobalSilence bool         `json:"globalSilence" xml:"globalSilence" form:"globalSilence" query:"globalSilence"`
+// 	Groups        []*GroupInfo `json:"groups" xml:"groups" form:"groups" query:"groups"`
+// }
+
+// func GetGroup(e echo.Context) (err error) {
+// 	ret := &GetGroupRet{}
+// 	ret.Groups = GetGroupInfoList()
+// 	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
+// 	si := secret.GetGlobalValue("GlobalSilence", &secret.GlobalSilence{}).(*secret.GlobalSilence)
+// 	ret.GlobalSwitch = sw.Enable
+// 	ret.GlobalSilence = si.Enable
+// 	return response(e, ret, err)
+// }
