@@ -191,6 +191,9 @@ func (b *Bot) gmCmd(fromQQ uint64, msg string) string {
 		}
 		b.setPersonValue("Bank", n2, p)
 		return fmt.Sprintf("%d bank date to: %d, %+v", n2, n1, p)
+	case "clearpassword":
+		SetPassword(0, "口令;")
+		return "管理密码清除成功"
 	default:
 		return "参数解析错误"
 	}

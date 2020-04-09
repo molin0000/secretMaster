@@ -9,6 +9,8 @@ import (
 	"path"
 	"strconv"
 	"strings"
+
+	"github.com/molin0000/secretMaster/config"
 )
 
 type Result struct {
@@ -66,6 +68,9 @@ func loadMissions(jsonPath string) {
 }
 
 func GetMissionCount() int {
+	if len(missionList) == 0 {
+		loadMissions(config.MissionPath)
+	}
 	return len(missionList)
 }
 

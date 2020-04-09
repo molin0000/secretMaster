@@ -7,8 +7,11 @@ import (
 	rice "github.com/GeertJohan/go.rice"
 )
 
-func MakeDoc() {
+func StartUI() {
+	fmt.Println("图形界面启动...")
 	http.Handle("/", http.FileServer(rice.MustFindBox("./webpage/dist").HTTPBox()))
-	fmt.Println("8080 ListenAndServe...")
-	http.ListenAndServe(":8080", nil)
+	fmt.Println("5000 ListenAndServe...")
+	go func() {
+		http.ListenAndServe(":5000", nil)
+	}()
 }

@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -56,7 +57,11 @@ func newEchoServer() *echo.Echo {
 	return e
 }
 
+var echoServer *echo.Echo
+var httpServer *http.Server
+
 func StartServer(getGroup func() []*GroupInfo) {
+	fmt.Println("后台服务启动...")
 	GetGroupInfoList = getGroup
 	e := newEchoServer()
 	s := &http.Server{
@@ -65,15 +70,35 @@ func StartServer(getGroup func() []*GroupInfo) {
 		WriteTimeout: 20 * time.Second,
 	}
 
+	echoServer = e
+	httpServer = s
+
 	go func() {
 		if err := e.StartServer(s); err != nil {
 			fmt.Printf("shutting down the server: %v", err)
-			panic(err)
+			// panic(err)
 		}
 	}()
+
+	fmt.Println("后台服务启动完成...")
 
 	// <-ctx.Done()
 	// if err := e.Shutdown(ctx); err != nil {
 	// 	e.Logger.Fatal(err)
 	// }
+}
+
+func StopServer() {
+	fmt.Println("后台服务准备停止")
+	ctx, stop := context.WithCancel(context.Background())
+	stop()
+	httpServer.Shutdown(ctx)
+	if err := echoServer.Shutdown(ctx); err != nil {
+		echoServer.Logger.Fatal(err)
+	}
+	httpServer.Close()
+	echoServer.Listener.Close()
+	echoServer.Server.Close()
+	echoServer.Close()
+	fmt.Println("后台服务停止完毕")
 }

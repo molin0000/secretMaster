@@ -29,42 +29,6 @@ func response(e echo.Context, data interface{}, err error) error {
 	return e.JSONPretty(http.StatusOK, ret, "  ")
 }
 
-// func Get(e echo.Context) (err error) {
-// 	// data := {}
-// 	// return response(e, data, err)
-// }
-
-// func Post(e echo.Context) (err error) {
-// 	// var market string
-// 	// err = e.Bind(&market)
-// 	// if err != nil {
-// 	// 	utils.Debugf("bind param error: %v, params:%v", err, e.Request().Body)
-// 	// 	return response(e, nil, err)
-// 	// }
-// 	// err = models.MarketDao.InsertMarket(&market)
-// 	// return response(e, nil, err)
-// }
-
-// func GetOrdersHandler(e echo.Context) (err error) {
-// 	var req struct {
-// 		Address  string `json:"address"   query:"address"   validate:"required"`
-// 		MarketID string `json:"market_id" query:"market_id" validate:"required"`
-// 		Status   string `json:"status"    query:"status"`
-// 		Offset   int    `json:"offset"    query:"offset"`
-// 		Limit    int    `json:"limit "    query:"limit"`
-// 	}
-
-// 	var orders []*models.Order
-// 	var count int64
-
-// 	err = e.Bind(&req)
-// 	if err == nil {
-// 		count, orders = models.OrderDao.FindByAccount(req.Address, req.MarketID, req.Status, req.Offset, req.Limit)
-// 	}
-
-// 	return response(e, map[string]interface{}{"count": count, "orders": orders}, err)
-// }
-
 func GetVersion(e echo.Context) (err error) {
 	v := secret.GetVersion()
 	return response(e, v, err)
@@ -178,11 +142,16 @@ func GetLocked(e echo.Context) (err error) {
 }
 
 func PostPassword(e echo.Context) (err error) {
-	qqStr := e.FormValue("qq")
-	qq, _ := strconv.ParseUint(qqStr, 10, 64)
-	password := e.FormValue("password")
+	p := &secret.Password{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
 
-	value := secret.GetGlobalPersonValue("Password", qq, &secret.Password{QQ: qq, Password: ""}).(*secret.Password)
+	fmt.Printf("PostPassword:%+v\n", *p)
+	password := p.Password
+	qq := p.QQ
+
+	value := secret.GetGlobalPersonValue("Password", p.QQ, &secret.Password{QQ: p.QQ, Password: ""}).(*secret.Password)
 	if value.QQ == 0 && len(value.Password) == 0 && len(password) > 0 {
 		value.Password = password
 		secret.SetGlobalPersonValue("Password", 0, value)
@@ -451,36 +420,3 @@ func PostGroupExit(e echo.Context) (err error) {
 	cqp.SetGroupLeave(int64(p.Group), false)
 	return response(e, true, err)
 }
-
-// e.Add("POST", "/globalSwitch", PostGlobalSwitch)
-// e.Add("POST", "/globalSilent", PostGlobalSilent)
-// e.Add("POST", "/groupSwitch", PostGroupSwitch)
-// e.Add("POST", "/groupSilent", PostGroupSilent)
-// e.Add("POST", "/groupExit", PostGroupExit)
-
-// type GroupInfo struct {
-// 	Key     uint64 `json:"key" xml:"key" form:"key" query:"key"`
-// 	Group   uint64 `json:"group" xml:"group" form:"group" query:"group"`
-// 	Member  string `json:"member" xml:"member" form:"member" query:"member"`
-// 	Master  uint64 `json:"master" xml:"master" form:"master" query:"master"`
-// 	Switch  bool   `json:"switch" xml:"switch" form:"switch" query:"switch"`
-// 	Silence bool   `json:"silence" xml:"silence" form:"silence" query:"silence"`
-// }
-
-// var GetGroupInfoList func() []*GroupInfo
-
-// type GetGroupRet struct {
-// 	GlobalSwitch  bool         `json:"globalSwitch" xml:"globalSwitch" form:"globalSwitch" query:"globalSwitch"`
-// 	GlobalSilence bool         `json:"globalSilence" xml:"globalSilence" form:"globalSilence" query:"globalSilence"`
-// 	Groups        []*GroupInfo `json:"groups" xml:"groups" form:"groups" query:"groups"`
-// }
-
-// func GetGroup(e echo.Context) (err error) {
-// 	ret := &GetGroupRet{}
-// 	ret.Groups = GetGroupInfoList()
-// 	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
-// 	si := secret.GetGlobalValue("GlobalSilence", &secret.GlobalSilence{}).(*secret.GlobalSilence)
-// 	ret.GlobalSwitch = sw.Enable
-// 	ret.GlobalSilence = si.Enable
-// 	return response(e, ret, err)
-// }

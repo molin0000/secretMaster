@@ -308,6 +308,6 @@ type GlobalSilence struct {
 }
 
 type Password struct {
-	QQ       uint64 `json:"qq"   query:"qq"   validate:"required"`
-	Password string `json:"password"   query:"password"`
+	QQ       uint64 `json:"qq" xml:"qq" form:"qq" query:"qq"`
+	Password string `json:"password" xml:"password" form:"password" query:"password"`
 }

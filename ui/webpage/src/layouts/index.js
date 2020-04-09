@@ -2,11 +2,11 @@ import styles from './index.css';
 import { Link } from 'umi';
 
 function BasicLayout(props) {
-  console.log(props);
   let active = styles.menuItem + ' ' + styles.menuItemActive;
   let normal = styles.menuItem;
   let path = props.location.pathname;
   document.title = '⭐️序列战争⭐️';
+  global.server = 'http://' + window.location.hostname + ':3003/';
   return (
     <div className={styles.normal}>
       <div className={styles.headerRow}>

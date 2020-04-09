@@ -12,6 +12,7 @@ import (
 	"github.com/molin0000/secretMaster/interact"
 	"github.com/molin0000/secretMaster/secret"
 	"github.com/molin0000/secretMaster/text2img"
+	"github.com/molin0000/secretMaster/ui"
 )
 
 //go:generate cqcfg -c .
@@ -26,7 +27,21 @@ func init() {
 	cqp.PrivateMsg = onPrivateMsg
 	cqp.GroupMsg = onGroupMsg
 	rand.Seed(time.Now().Unix())
+	cqp.Enable = Enable
+	cqp.Disable = Disable
+	ui.StartUI()
+}
+
+func Enable() int32 {
+	fmt.Println("序列战争 Enable")
 	backend.StartServer(GetGroupInfoList)
+	return 0
+}
+
+func Disable() int32 {
+	fmt.Println("序列战争 Disable")
+	backend.StopServer()
+	return 0
 }
 
 func normalSendPrivateMsg(qq int64, msg string) {

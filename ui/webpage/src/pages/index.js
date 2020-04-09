@@ -2,11 +2,60 @@ import styles from './index.css';
 import { Component } from 'react';
 import { Button, Statistic, Row, Col, Input, Divider } from 'antd';
 import router from 'umi/router'
+import { apiAsyncPost } from './utils/utils.js';
+
 const { TextArea } = Input;
 
 class Home extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      qq: 0,
+      password: "",
+      msg: "",
+      reply: "",
+    }
+  }
+
+  formatNumber = n => {
+    n = n.toString()
+    return n[1] ? n : '0' + n
+  }
+  // 时间格式化
+  formatTime = date => {
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hour = date.getHours()
+    const minute = date.getMinutes()
+    const second = date.getSeconds()
+   
+    return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':')
+  }
+
   componentWillMount(props) {
-    console.log('componentWillMount', props)
+    if (!global.qq) {
+      router.push('/qqlogin');
+      return;
+    }
+
+    this.setState({ qq: global.qq, password: global.password });
+  }
+
+  sendMsg = (msg) => {
+    let data = {
+      qq: Number(this.state.qq),
+      password: this.state.password,
+      msg
+    }
+    console.log("msg:", data);
+    apiAsyncPost('chat', data, (res) => {
+      console.log(res);
+      let info = this.state.reply;
+      this.setState({ reply: info + "\n--------------" + this.formatTime(new Date()) + "---------------\n" + res.data.data.Msg });
+      var ta = document.getElementById('textArea');
+      ta.scrollTop = ta.scrollHeight;
+    });
   }
 
   render() {
@@ -14,65 +63,49 @@ class Home extends Component {
       <div className={styles.body}>
         <Row gutter={16}>
           <Row>
-            <Col span={6}>
+            <Col span={12}>
               <Button type='primary' style={{ width: '20vw', marginTop: '10px' }}
                 onClick={() => { router.push('/qqlogin'); }}>QQ登录</Button>
             </Col>
-            <Col span={9}>
-              <Statistic title="当前QQ号码" value={1234567890} groupSeparator={""} />
+            <Col span={12}>
+              <Statistic title="当前QQ号码" value={this.state.qq} groupSeparator={""} />
             </Col>
-            <Col span={9}>
+            {/* <Col span={9}>
               <Statistic title="昵称" value={"空想之喵"} />
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             <Col span={1}></Col>
             <Col span={22}>
-              <TextArea rows={16} style={{ marginTop: "10px", marginBottom: "10px", background: "#660066", borderRadius: "20px", color: "white" }} readOnly={true} value={`To: 空想之喵
-
-昵称：空想之喵
-途径：魔女
-序列：序列4：绝望
-勋章：3🎖🎖🎖
-经验：6343
-金镑：13
-幸运：0
-灵力：200
-修炼时间：857小时
-战力评价：超凡入圣
-教会/组织：喵喵会
-工作：无业游民
-尊名：无`}>
-
-              </TextArea>
+              <TextArea id="textArea" rows={16} style={{ marginTop: "10px", marginBottom: "10px", background: "#660066", borderRadius: "20px", color: "white" }} readOnly={true} value={this.state.reply} />
             </Col>
             <Col span={1}></Col>
           </Row>
           <Row>
             <Row>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>探险</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>钓鱼</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>副本</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>许愿</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('探险') }}>探险</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('钓鱼') }}>钓鱼</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('副本') }}>副本</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('许愿') }}>许愿</Button></Col>
             </Row>
             <Row>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>速算</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>学识</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>阵营</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>道具</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('速算') }}>速算</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('学识') }}>学识</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('阵营') }}>阵营</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('道具') }}>道具</Button></Col>
             </Row>
             <Row>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>祈祷</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>商店</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>属性</Button></Col>
-              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }}>排行</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('祈祷') }}>祈祷</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('商店') }}>商店</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('属性') }}>属性</Button></Col>
+              <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw" }} onClick={() => { this.sendMsg('排行') }}>排行</Button></Col>
             </Row>
           </Row>
           <Divider style={{ width: "80%" }} />
           <Row>
             <Col span={2}></Col>
-            <Col span={16}><Input /></Col>
-            <Col span={4}><Button type='primary' style={{ width: "20vw", marginLeft: "10px" }}>发送</Button></Col>
+            <Col span={16}><Input value={this.state.msg} onChange={(e) => { this.setState({ msg: e.target.value }) }} /></Col>
+            <Col span={4}><Button type='primary' style={{ width: "20vw", marginLeft: "10px" }} onClick={() => { this.sendMsg(this.state.msg) }}>发送</Button></Col>
           </Row>
         </Row>
       </div>
