@@ -56,9 +56,16 @@ body {
 
 .ant-card-bordered {
   border-radius: 20px;
+  background-color: #ffccff;
+  border-radius: 20px;
 }
 
 .ant-card-body {
+  background-color: #ffccff;
+  border-radius: 20px;
+}
+
+.ant-card-head {
   background-color: #ffccff;
   border-radius: 20px;
 }

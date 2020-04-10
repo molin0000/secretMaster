@@ -65,7 +65,7 @@ class Home extends Component {
           <Row gutter={16}>
             <Row>
               <Col span={12}>
-                <Button type='primary' style={{ width: '20vw', marginTop: '10px' }}
+                <Button type='primary' style={{ width: '20vw', marginTop: '10px', maxWidth:"100px" }}
                   onClick={() => { router.push('/qqlogin'); }}>QQ登录</Button>
               </Col>
               <Col span={12}>
