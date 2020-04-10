@@ -3,7 +3,6 @@ package backend
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
 	"github.com/labstack/echo"
@@ -165,13 +164,16 @@ func PostPassword(e echo.Context) (err error) {
 }
 
 func PostSuperMaster(e echo.Context) (err error) {
-	qqStr := e.FormValue("supermaster")
-	password := e.FormValue("password")
+	p := &secret.Password{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+
+	qq := p.QQ
+	password := p.Password
 	if !verifyPassword(0, password) {
 		return response(e, "密码错误", err)
 	}
-
-	qq, _ := strconv.ParseUint(qqStr, 10, 64)
 
 	cfgSuper := secret.GetGlobalValue("Supermaster", &secret.Config{}).(*secret.Config)
 	cfgSuper.HaveMaster = true
@@ -183,17 +185,25 @@ func PostSuperMaster(e echo.Context) (err error) {
 
 func verifyPassword(qq uint64, password string) bool {
 	value := secret.GetGlobalPersonValue("Password", qq, &secret.Password{QQ: 0, Password: ""}).(*secret.Password)
+	fmt.Println("verifyPassword", qq, password, value)
 	return password == value.Password
 }
 
 func PostDelay(e echo.Context) (err error) {
-	delayStr := e.FormValue("delay")
-	password := e.FormValue("password")
+	type Delay struct {
+		Delay    uint64 `json:"delay" xml:"delay" form:"delay" query:"delay"`
+		Password string `json:"password" xml:"password" form:"password" query:"password"`
+	}
+	p := &Delay{}
+	if err := e.Bind(p); err != nil {
+		return response(e, false, err)
+	}
+
+	delay := p.Delay
+	password := p.Password
 	if !verifyPassword(0, password) {
 		return response(e, "密码错误", err)
 	}
-
-	delay, _ := strconv.ParseUint(delayStr, 10, 64)
 
 	gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
 	gp.DelayMs = delay

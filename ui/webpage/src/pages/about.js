@@ -1,10 +1,24 @@
 
 import styles from './about.css';
+import { Component } from 'react';
+import {apiGet} from './utils/utils.js';
 
-export default function() {
-  return (
-    <div className={styles.body}>
-        <h2 style={{marginLeft:'15px'}}>当前版本：{'v3.2.4'}</h2>
+class About extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { version: 'v3.2.4' }
+  }
+
+  async componentWillMount() {
+    let ret = await apiGet('version');
+    console.log(ret);
+    this.setState({version: ret.data.data.Version});
+  }
+
+  render() {
+    return (
+      <div className={styles.body}>
+        <h2 style={{ marginLeft: '15px' }}>当前版本：{this.state.version}</h2>
         <div className={styles.text}>欢迎使用序列战争插件~O(∩_∩)O~</div>
         <div className={styles.text}>这是一款《诡秘之主》背景的QQ群游戏</div>
         <div className={styles.text}>在群友们的共同努力下，现已经开发出了许多独具魅力的功能系统</div>
@@ -20,5 +34,8 @@ export default function() {
           <span role="img" aria-label="heart">❤️</span>O(∩_∩)O<span role="img" aria-label="heart">❤️</span>空想之喵<span role="img" aria-label="heart">❤️</span>
         </div>
       </div>
-  );
+    );
+  }
 }
+
+export default About;

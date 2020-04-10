@@ -35,9 +35,9 @@ class QQLogin extends Component {
   render() {
     return (
       <div className={styles.normal}>
-        <Card title="QQ登录">
+        <Card title="QQ登录" style={{maxWidth:"600px"}}>
           <Input placeholder={"请输入QQ号码"} style={{ width: "200px", textAlign: "center", margin: "10px" }} value={this.state.qq} onChange={(e) => { this.setState({ qq: e.target.value }); }} />
-          <Input placeholder={"请输入口令，默认为空"} style={{ width: "200px", textAlign: "center", margin: "10px" }} value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }); }} />
+          <Input placeholder={"请输入口令，默认为空"} style={{ width: "200px", textAlign: "center", margin: "10px" }} value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }); }} onKeyDown={e => { if (e.keyCode === 13) this.onOk() }} />
           <Button type='primary' onClick={this.onOk}>登录</Button>
           <p>使用QQ号码登录来绑定游玩账号</p>
           <p>请注意！！口令不是你的QQ密码！！</p>

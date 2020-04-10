@@ -1,7 +1,7 @@
-import { Divider, Button, Switch, Table, Select, Input } from 'antd';
+import { Divider, Button, Switch, Table, Select, Input, message } from 'antd';
 import styles from './config.css';
 import { Component } from 'react';
-import { apiGet, apiAsyncGet } from './utils/utils.js';
+import { apiGet, apiAsyncGet, apiPost } from './utils/utils.js';
 import router from 'umi/router'
 
 
@@ -249,6 +249,25 @@ class Config extends Component {
     this.setState({ logs: log });
   }
 
+  onSaveSuperMaster = () => {
+    this.onSave('supermaster', { qq: Number(this.state.supermaster), password: global.adminPassword });
+  }
+
+  onSaveDelay = async () => {
+    this.onSave('supermaster', { delay: Number(this.state.delay), password: global.adminPassword });
+  }
+
+  onSave = async (path, data) => {
+    console.log(data);
+    let ret = await apiPost(path, data);
+    if (ret.data.data === true) {
+      message.success("保存成功");
+      return;
+    }
+    message.error("保存失败");
+    console.log(ret);
+  }
+
   render() {
     return (
       <div className={styles.normal}>
@@ -257,13 +276,13 @@ class Config extends Component {
           <div className={styles.inline}>
             <div className={styles.title}>插件主人（超级管理员）QQ：</div>
             <input className={styles.input} value={this.state.supermaster} onChange={e => this.setState({ supermaster: e.target.value })} />
-            <Button type="primary" style={{ marginLeft: "40px" }}>保存</Button>
+            <Button type="primary" style={{ marginLeft: "40px" }} onClick={this.onSaveSuperMaster}>保存</Button>
           </div>
           <Divider className={styles.divide} />
           <div className={styles.inline}>
             <div className={styles.title}>消息回复延迟（毫秒）：</div>
             <input className={styles.input} style={{ marginLeft: "35px" }} value={this.state.delay} onChange={e => this.setState({ delay: e.target.value })} />
-            <Button type="primary" style={{ marginLeft: "40px" }}>保存</Button>
+            <Button type="primary" style={{ marginLeft: "40px" }} onClick={this.onSaveDelay}>保存</Button>
           </div>
           <Divider className={styles.divide} />
           <div className={styles.inline}>

@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# Build Web
+
 cd ui/webpage
 umi build
 cd ..

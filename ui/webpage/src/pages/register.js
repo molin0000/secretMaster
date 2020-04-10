@@ -51,7 +51,7 @@ class Register extends Component {
           <h3>首次使用请设置管理员密码</h3>
           <input className={styles.input} placeholder="密码" type="password" onChange={this.onChangeP1} value={this.state.password}/>
           <br/>
-          <input className={styles.input} placeholder="密码确认" type="password" onChange={this.onChangeP2} value={this.state.passwordConfirm}/>
+          <input className={styles.input} placeholder="密码确认" type="password" onChange={this.onChangeP2} value={this.state.passwordConfirm} onKeyDown={e => { if (e.keyCode === 13) this.onOk() }}/>
           <br/>
           <Button type="primary" className={styles.button} onClick={this.onOk}>确定</Button>
         </div>
