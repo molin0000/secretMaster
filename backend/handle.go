@@ -348,7 +348,7 @@ func PostGlobalSwitch(e echo.Context) (err error) {
 		return response(e, false, err)
 	}
 
-	if verifyPassword(0, p.Password) {
+	if !verifyPassword(0, p.Password) {
 		return response(e, "密码错误", err)
 	}
 
@@ -366,7 +366,7 @@ func PostGlobalSilent(e echo.Context) (err error) {
 	if err := e.Bind(p); err != nil {
 		return response(e, false, err)
 	}
-	if verifyPassword(0, p.Password) {
+	if !verifyPassword(0, p.Password) {
 		return response(e, "密码错误", err)
 	}
 
@@ -384,7 +384,7 @@ func PostGroupSwitch(e echo.Context) (err error) {
 	if err := e.Bind(p); err != nil {
 		return response(e, false, err)
 	}
-	if verifyPassword(0, p.Password) {
+	if !verifyPassword(0, p.Password) {
 		return response(e, "密码错误", err)
 	}
 
@@ -399,7 +399,7 @@ func PostGroupSilent(e echo.Context) (err error) {
 	if err := e.Bind(p); err != nil {
 		return response(e, false, err)
 	}
-	if verifyPassword(0, p.Password) {
+	if !verifyPassword(0, p.Password) {
 		return response(e, "密码错误", err)
 	}
 
@@ -423,7 +423,7 @@ func PostGroupExit(e echo.Context) (err error) {
 	if err := e.Bind(p); err != nil {
 		return response(e, false, err)
 	}
-	if verifyPassword(0, p.Password) {
+	if !verifyPassword(0, p.Password) {
 		return response(e, "密码错误", err)
 	}
 

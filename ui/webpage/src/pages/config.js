@@ -8,144 +8,7 @@ import router from 'umi/router'
 const { Option } = Select;
 const { TextArea } = Input;
 
-const groupColumns = [
-  {
-    title: '序号',
-    dataIndex: 'key',
-    key: 'key',
-    width: 50,
-  },
-  {
-    title: '群号',
-    dataIndex: 'group',
-    key: 'group',
-  },
-  {
-    title: '人数',
-    dataIndex: 'member',
-    key: 'member',
-  },
-  {
-    title: '管理员',
-    dataIndex: 'master',
-    key: 'master',
-  },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    key: 'operation',
-    render: (text, record) => (
-      <span>
-        <a href="/#">退群</a>
-      </span>
-    ),
-  },
-  {
-    title: '开关',
-    dataIndex: 'switch',
-    key: 'switch',
-    render: (text, record) => (
-      <span>
-        <Switch checkedChildren="开" unCheckedChildren="关" checked={text} />
-      </span>
-    ),
-  },
-  {
-    title: '静默',
-    dataIndex: 'silence',
-    key: 'silence',
-    render: (text, record) => (
-      <span>
-        <Switch checkedChildren="开" unCheckedChildren="关" checked={text} />
-      </span>
-    ),
-  },
-]
 
-const activitiesColumns = [
-  {
-    title: '序号',
-    dataIndex: 'key',
-    key: 'key',
-    width: 50,
-  },
-  {
-    title: '关键字',
-    dataIndex: 'word',
-    key: 'word',
-    ellipsis: true,
-  },
-  {
-    title: '回复信息',
-    dataIndex: 'reply',
-    key: 'reply',
-    ellipsis: true,
-  },
-  {
-    title: '类型',
-    dataIndex: 'type',
-    key: 'type',
-  },
-  {
-    title: '经验',
-    dataIndex: 'exp',
-    key: 'exp',
-    width: 70,
-  },
-  {
-    title: '金镑',
-    dataIndex: 'money',
-    key: 'money',
-    width: 70,
-  },
-  {
-    title: '灵力',
-    dataIndex: 'magic',
-    key: 'magic',
-    width: 70,
-  },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    key: 'operation',
-    render: (text, record) => (
-      <span>
-        <a href="/#">删除</a>
-      </span>
-    ),
-  },
-  {
-    title: '开关',
-    dataIndex: 'switch',
-    key: 'switch',
-    render: (text, record) => (
-      <span>
-        <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-      </span>
-    ),
-  },
-]
-
-const activitiesData = [
-  {
-    key: 1,
-    word: "新年快乐",
-    reply: "亚米收到你的祝福啦~红包给你！",
-    type: "每年",
-    exp: 0,
-    money: 100,
-    magic: 0,
-  },
-  {
-    key: 2,
-    word: "签到",
-    reply: "签到成功！",
-    type: "每天",
-    exp: 6,
-    money: 6,
-    magic: 6,
-  },
-]
 
 class Config extends Component {
   constructor(props) {
@@ -186,6 +49,161 @@ class Config extends Component {
       logs: '',
     }
   }
+
+  groupColumns = [
+    {
+      title: '序号',
+      dataIndex: 'key',
+      key: 'key',
+      width: 50,
+    },
+    {
+      title: '群号',
+      dataIndex: 'group',
+      key: 'group',
+    },
+    {
+      title: '人数',
+      dataIndex: 'member',
+      key: 'member',
+    },
+    {
+      title: '管理员',
+      dataIndex: 'master',
+      key: 'master',
+    },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      key: 'operation',
+      render: (text, record) => (
+        <span>
+          <a href="/#">退群</a>
+        </span>
+      ),
+    },
+    {
+      title: '开关',
+      dataIndex: 'switch',
+      key: 'switch',
+      render: (text, record, index) => (
+        <span>
+          <Switch checkedChildren="开" unCheckedChildren="关" checked={text} onChange={
+              async (e) => {
+                console.log(e);
+                console.log('record', record);
+                let ret = this.onSave('groupSwitch', { group: record.group, value: e, password: global.adminPassword });
+                if (ret) {
+                  let group = Object.assign({}, this.state.group);
+                  for (let i=0; i<group.groups.length; i++) {
+                    if (group.groups[i].group === record.group) {
+                      group.groups[i].switch = e;
+                      break;
+                    }
+                  }
+                  this.setState({ group });
+                }
+              }
+            } />
+        </span>
+      ),
+    },
+    {
+      title: '静默',
+      dataIndex: 'silence',
+      key: 'silence',
+      render: (text, record) => (
+        <span>
+          <Switch checkedChildren="开" unCheckedChildren="关" checked={text} />
+        </span>
+      ),
+    },
+  ]
+  
+  activitiesColumns = [
+    {
+      title: '序号',
+      dataIndex: 'key',
+      key: 'key',
+      width: 50,
+    },
+    {
+      title: '关键字',
+      dataIndex: 'word',
+      key: 'word',
+      ellipsis: true,
+    },
+    {
+      title: '回复信息',
+      dataIndex: 'reply',
+      key: 'reply',
+      ellipsis: true,
+    },
+    {
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
+      title: '经验',
+      dataIndex: 'exp',
+      key: 'exp',
+      width: 70,
+    },
+    {
+      title: '金镑',
+      dataIndex: 'money',
+      key: 'money',
+      width: 70,
+    },
+    {
+      title: '灵力',
+      dataIndex: 'magic',
+      key: 'magic',
+      width: 70,
+    },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      key: 'operation',
+      render: (text, record) => (
+        <span>
+          <a href="/#">删除</a>
+        </span>
+      ),
+    },
+    {
+      title: '开关',
+      dataIndex: 'switch',
+      key: 'switch',
+      render: (text, record) => (
+        <span>
+          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+        </span>
+      ),
+    },
+  ]
+  
+  activitiesData = [
+    {
+      key: 1,
+      word: "新年快乐",
+      reply: "亚米收到你的祝福啦~红包给你！",
+      type: "每年",
+      exp: 0,
+      money: 100,
+      magic: 0,
+    },
+    {
+      key: 2,
+      word: "签到",
+      reply: "签到成功！",
+      type: "每天",
+      exp: 6,
+      money: 6,
+      magic: 6,
+    },
+  ]
 
   async componentWillMount(props) {
     let locked = await apiGet('locked');
@@ -262,10 +280,11 @@ class Config extends Component {
     let ret = await apiPost(path, data);
     if (ret.data.data === true) {
       message.success("保存成功");
-      return;
+      return true;
     }
     message.error("保存失败");
     console.log(ret);
+    return false;
   }
 
   render() {
@@ -293,11 +312,21 @@ class Config extends Component {
           <div className={styles.inline}>
             <div className={styles.title}>分群管理：</div>
             <div className={styles.text} style={{ marginLeft: "360px" }}>全局开关：</div>
-            <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSwitch} />
+            <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSwitch} onChange={
+              async (e) => {
+                console.log(e);
+                let ret = this.onSave('globalSwitch', { group: 0, value: e, password: global.adminPassword });
+                if (ret) {
+                  let group = Object.assign({}, this.state.group);
+                  group.globalSwitch = e;
+                  this.setState({ group });
+                }
+              }
+            } />
             <div className={styles.text} style={{ marginLeft: "30px" }}>全局静默：</div>
             <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSilence} />
           </div>
-          <Table columns={groupColumns} dataSource={this.state.group.groups} size="small" />
+          <Table columns={this.groupColumns} dataSource={this.state.group.groups} size="small" />
           <Divider className={styles.divide} />
           <div className={styles.inline}>
             <div className={styles.title}>货币映射：</div>
@@ -371,7 +400,7 @@ class Config extends Component {
             <div className={styles.text} style={{ marginLeft: "25px" }}>全局开关：</div>
             <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
           </div>
-          <Table columns={activitiesColumns} dataSource={activitiesData} size="small" />
+          <Table columns={this.activitiesColumns} dataSource={this.activitiesData} size="small" />
           <Divider className={styles.divide} />
           <div className={styles.inline}>
             <div className={styles.title}>操作日志：</div>

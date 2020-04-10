@@ -163,6 +163,11 @@ func onPrivateMsg(subType, msgID int32, fromQQ int64, msg string, font int32) in
 		}
 	}()
 
+	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
+	if !sw.Enable {
+		return 0
+	}
+
 	fmt.Println("Private msg:", msg, fromQQ)
 
 	if strings.Contains(msg, "广播") {
@@ -243,6 +248,11 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 			fmt.Println(err) // 这里的err其实就是panic传入的内容
 		}
 	}()
+
+	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
+	if !sw.Enable {
+		return 0
+	}
 
 	fmt.Println("Group msg:", msg)
 	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, false)
