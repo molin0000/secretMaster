@@ -183,6 +183,7 @@ class Config extends Component {
         groups: [],
       },
       activities: [],
+      logs: '',
     }
   }
 
@@ -242,6 +243,12 @@ class Config extends Component {
 
   }
 
+  appendLog = (msg) => {
+    let log = this.state.logs;
+    log += "\n" + (new Date()).toString() + "\n" + msg;
+    this.setState({ logs: log });
+  }
+
   render() {
     return (
       <div className={styles.normal}>
@@ -249,13 +256,13 @@ class Config extends Component {
           <div className={styles.msg}>更多设置选项，请查看使用手册，或私聊机器人发送“设置”查询和使用。</div>
           <div className={styles.inline}>
             <div className={styles.title}>插件主人（超级管理员）QQ：</div>
-            <input className={styles.input} value={this.state.supermaster} />
+            <input className={styles.input} value={this.state.supermaster} onChange={e => this.setState({ supermaster: e.target.value })} />
             <Button type="primary" style={{ marginLeft: "40px" }}>保存</Button>
           </div>
           <Divider className={styles.divide} />
           <div className={styles.inline}>
             <div className={styles.title}>消息回复延迟（毫秒）：</div>
-            <input className={styles.input} style={{ marginLeft: "35px" }} value={this.state.delay} />
+            <input className={styles.input} style={{ marginLeft: "35px" }} value={this.state.delay} onChange={e => this.setState({ delay: e.target.value })} />
             <Button type="primary" style={{ marginLeft: "40px" }}>保存</Button>
           </div>
           <Divider className={styles.divide} />
@@ -278,20 +285,35 @@ class Config extends Component {
           </div>
           <div className={styles.inline}>
             <div className={styles.text2} >QQ群号：</div>
-            <input className={styles.input} value={this.state.moneyMap.group} style={{ margin: "4px 0px 4px 104px", width: "120px", textAlign: "center" }} />
+            <input className={styles.input} value={this.state.moneyMap.group} style={{ margin: "4px 0px 4px 104px", width: "120px", textAlign: "center" }} onChange={e => {
+              let moneyMap = Object.assign({}, this.state.moneyMap);
+              moneyMap.group = e.target.value;
+              this.setState({ moneyMap });
+            }
+            } />
             <Button style={{ marginLeft: "20px", marginTop: "2px" }}>加载</Button>
             <div className={styles.text} style={{ marginLeft: "185px", marginTop: "6px" }}>启用：</div>
-            <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.moneyMap.hasUpdate} style={{ marginTop: "6px"}} />
+            <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.moneyMap.hasUpdate} style={{ marginTop: "6px" }} />
           </div>
           <div className={styles.inline}>
             <div className={styles.text2}>ini文件路径：</div>
-            <input className={styles.input} style={{ margin: "4px 0px 4px 84px", width: "520px", textAlign: "left", paddingLeft: "10px" }} value={this.state.moneyMap.iniPath} />
+            <input className={styles.input} style={{ margin: "4px 0px 4px 84px", width: "520px", textAlign: "left", paddingLeft: "10px" }} value={this.state.moneyMap.iniPath} onChange={e => {
+              let moneyMap = Object.assign({}, this.state.moneyMap);
+              moneyMap.iniPath = e.target.value;
+              this.setState({ moneyMap });
+            }
+            } />
           </div>
           <div className={styles.inline}>
             <div className={styles.text2}>节点为QQ号，关键字：</div>
-            <input className={styles.input} style={{ margin: "6px 0px 6px 20px", width: "100px" }} value={this.state.moneyMap.iniKey} />
+            <input className={styles.input} style={{ margin: "6px 0px 6px 20px", width: "100px" }} value={this.state.moneyMap.iniKey} onChange={e => {
+              let moneyMap = Object.assign({}, this.state.moneyMap);
+              moneyMap.iniKey = e.target.value;
+              this.setState({ moneyMap });
+            }
+            } />
             <div className={styles.text2} style={{ marginLeft: "40px" }}>编码：</div>
-            <Select defaultValue={this.state.moneyMap.encode?this.state.moneyMap.encode:"GB2312"} style={{ width: 124, margin: "4px 0" }}>
+            <Select defaultValue={this.state.moneyMap.encode ? this.state.moneyMap.encode : "GB2312"} style={{ width: 124, margin: "4px 0" }}>
               <Option value="GB2312">GB2312</Option>
               <Option value="UTF8">UTF8</Option>
             </Select>
@@ -300,7 +322,12 @@ class Config extends Component {
           <div className={styles.inline}>
             <div className={styles.title}>图片模式：</div>
             <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
-            <input className={styles.input} style={{ width: "200px" }} value={this.state.imageMode.lines} />
+            <input className={styles.input} style={{ width: "200px" }} value={this.state.imageMode.lines} onChange={e => {
+              let imageMode = Object.assign({}, this.state.imageMode);
+              imageMode.lines = e.target.value;
+              this.setState({ imageMode });
+            }
+            } />
             <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
             <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.imageMode.enable} />
           </div>
@@ -309,7 +336,12 @@ class Config extends Component {
           <div className={styles.inline}>
             <div className={styles.title}>文字分段：</div>
             <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
-            <input className={styles.input} style={{ width: "200px" }} value={this.state.textSegment.lines} />
+            <input className={styles.input} style={{ width: "200px" }} value={this.state.textSegment.lines} onChange={e => {
+              let textSegment = Object.assign({}, this.state.textSegment);
+              textSegment.lines = e.target.value;
+              this.setState({ textSegment });
+            }
+            } />
             <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
             <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.textSegment.enable} />
           </div>
@@ -326,7 +358,7 @@ class Config extends Component {
             <div className={styles.title}>操作日志：</div>
           </div>
           <div style={{ margin: "10px 40px 40px 40px" }}>
-            <TextArea rows={6} />
+            <TextArea rows={6} value={this.state.logs} />
           </div>
         </div>
       </div>
