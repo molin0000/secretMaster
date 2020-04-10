@@ -52,7 +52,7 @@ class Home extends Component {
     apiAsyncPost('chat', data, (res) => {
       console.log(res);
       let info = this.state.reply;
-      this.setState({ reply: info + "\n--------------" + this.formatTime(new Date()) + "---------------\n" + res.data.data.Msg });
+      this.setState({ reply: info + "\n---------" + this.formatTime(new Date()) + "----------\n" + res.data.data.Msg });
       var ta = document.getElementById('textArea');
       ta.scrollTop = ta.scrollHeight;
     });
@@ -105,7 +105,7 @@ class Home extends Component {
           <Row>
             <Col span={2}></Col>
             <Col span={16}><Input value={this.state.msg} onChange={(e) => { this.setState({ msg: e.target.value }) }} /></Col>
-            <Col span={4}><Button type='primary' style={{ width: "20vw", marginLeft: "10px" }} onClick={() => { this.sendMsg(this.state.msg) }}>发送</Button></Col>
+            <Col span={4}><Button type='primary' style={{ width: "20vw", marginLeft: "10px" }} onClick={() => { this.sendMsg(this.state.msg); this.setState({msg: ""}) }}>发送</Button></Col>
           </Row>
         </Row>
       </div>
