@@ -61,11 +61,11 @@ class Home extends Component {
   render() {
     return (
       <div className={styles.body}>
-        <Card style={{maxWidth:"600px"}}>
+        <Card style={{ maxWidth: "600px" }}>
           <Row gutter={16}>
             <Row>
               <Col span={12}>
-                <Button type='primary' style={{ width: '20vw', marginTop: '10px', maxWidth:"100px" }}
+                <Button type='primary' style={{ width: '20vw', marginTop: '10px', maxWidth: "100px" }}
                   onClick={() => { router.push('/qqlogin'); }}>QQ登录</Button>
               </Col>
               <Col span={12}>
@@ -84,29 +84,29 @@ class Home extends Component {
             </Row>
             <Row>
               <Row gutter={16}>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('探险') }}>探险</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('钓鱼') }}>钓鱼</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('副本') }}>副本</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('许愿') }}>许愿</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('探险') }}>探险</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('钓鱼') }}>钓鱼</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('副本') }}>副本</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('许愿') }}>许愿</Button></Col>
               </Row>
               <Row gutter={16}>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('速算') }}>速算</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('学识') }}>学识</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('阵营') }}>阵营</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('道具') }}>道具</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('速算') }}>速算</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('学识') }}>学识</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('阵营') }}>阵营</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('道具') }}>道具</Button></Col>
               </Row>
               <Row gutter={16}>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('祈祷') }}>祈祷</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('商店') }}>商店</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('属性') }}>属性</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth:"100px" }} onClick={() => { this.sendMsg('排行') }}>排行</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('祈祷') }}>祈祷</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('商店') }}>商店</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('属性') }}>属性</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('排行') }}>排行</Button></Col>
               </Row>
             </Row>
             <Divider style={{ width: "80%" }} />
             <Row>
               <Col span={2}></Col>
-              <Col span={16}><Input value={this.state.msg} onChange={(e) => { this.setState({ msg: e.target.value }) }} /></Col>
-              <Col span={4}><Button type='primary' style={{ width: "20vw", marginLeft: "10px", maxWidth:"100px" }} onClick={() => { this.sendMsg(this.state.msg); this.setState({ msg: "" }) }}>发送</Button></Col>
+              <Col span={16}><Input value={this.state.msg} onChange={(e) => { this.setState({ msg: e.target.value }) }} onKeyDown={e => { if (e.keyCode === 13) { this.sendMsg(this.state.msg); this.setState({ msg: "" }) } }} /></Col>
+              <Col span={4}><Button type='primary' style={{ width: "20vw", marginLeft: "10px", maxWidth: "100px" }} onClick={() => { this.sendMsg(this.state.msg); this.setState({ msg: "" }) }}>发送</Button></Col>
             </Row>
           </Row>
         </Card>
