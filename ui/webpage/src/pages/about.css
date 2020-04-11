@@ -1,10 +1,10 @@
-
 .body {
-  margin: 2em;
-  text-align: center;
+  margin         : 2em;
+  text-align     : center;
+  display        : flex;
+  justify-content: center;
 }
 
 .text {
   margin: 10px;
 }
-

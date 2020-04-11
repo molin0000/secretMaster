@@ -2,13 +2,15 @@
   text-align     : center;
   display        : flex;
   justify-content: center;
-  min-width      : 900px;
+  /* width      : 900px; */
 }
 
 .body {
   margin          : 20px;
   border-radius   : 20px;
-  width           : 800px;
+  display        : flex;
+  justify-content: center;
+  /* width           : 800px; */
 }
 
 .divide {
