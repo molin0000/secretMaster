@@ -1,4 +1,4 @@
-import { Card, Input, Button, message } from 'antd';
+import { Card, Input, Button, message, Row, Modal } from 'antd';
 import styles from './qqlogin.css';
 import router from 'umi/router'
 import { Component } from 'react';
@@ -35,21 +35,25 @@ class QQLogin extends Component {
   render() {
     return (
       <div className={styles.normal}>
-        <Card title="QQ登录" style={{maxWidth:"600px"}}>
-          <Input placeholder={"请输入QQ号码"} style={{ width: "200px", textAlign: "center", margin: "10px" }} value={this.state.qq} onChange={(e) => { this.setState({ qq: e.target.value }); }} />
-          <Input placeholder={"请输入口令"} style={{ width: "200px", textAlign: "center", margin: "10px" }} value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }); }} onKeyDown={e => { if (e.keyCode === 13) this.onOk() }} />
-          <Button type='primary' onClick={this.onOk}>登录</Button>
-          <p>使用QQ号码登录来绑定游玩账号</p>
-          <p>请注意！！口令不是你的QQ密码！！</p>
-          <p>是通过私聊机器人配置的口令</p>
-          <p>必须先设定口令才能登陆</p>
-          <p>随时可以私聊机器人修改口令</p>
-          <p>配置指令格式为：口令;新口令</p>
-          <p>例如：口令;cat</p>
-          <p>需要绑定私聊QQ群</p>
-          <p>绑定方法为：私聊机器人发送：序列战争</p>
-          <p>更换绑定群请私聊机器人发送一个@</p>
-          <p>网页版目前不支持绑定群聊功能，需要私聊机器人完成绑定</p>
+        <Card title="QQ登录" style={{ maxWidth: "600px" }}>
+          <Row>
+            <Input placeholder={"请输入QQ号码"} style={{ width: "200px", textAlign: "center", margin: "10px" }} value={this.state.qq} onChange={(e) => { this.setState({ qq: e.target.value }); }} />
+          </Row>
+          <Row>
+            <Input placeholder={"请输入口令(不是QQ密码！)"} style={{ width: "200px", textAlign: "center", margin: "10px" }} value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }); }} onKeyDown={e => { if (e.keyCode === 13) this.onOk() }} />
+          </Row>
+          <Row>
+            <Button type='primary' onClick={this.onOk} style={{marginTop:"20px", marginBottom:"10px"}}>登录</Button>
+
+          </Row>
+          <Row>
+            <a href="# "
+            onClick={() => {
+              Modal.success({
+                content: '使用QQ号码登录来绑定游玩账号,请注意！！口令不是你的QQ密码！是通过私聊机器人配置的口令。必须先设定口令才能登陆。随时可以私聊机器人修改口令，配置指令格式为：口令;新口令，例如：口令;cat。需要绑定私聊QQ群，绑定方法为：私聊机器人发送：序列战争。更换绑定群请私聊机器人发送一个@，网页版目前不支持绑定群聊功能，需要私聊机器人完成绑定',
+              });}}>登录说明?</a>
+          </Row>
+          {/* */}
         </Card>
       </div>
     );

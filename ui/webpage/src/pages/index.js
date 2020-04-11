@@ -69,7 +69,12 @@ class Home extends Component {
                   onClick={() => { router.push('/qqlogin'); }}>QQ登录</Button>
               </Col>
               <Col span={12}>
-                <Statistic title="当前QQ号码" value={this.state.qq} groupSeparator={""} />
+                {/* <Statistic title="当前QQ号码" value={this.state.qq} groupSeparator={""} /> */}
+                <Row style={{color:"white", padding:"15px"}}>
+                  <Col span={12}>当前QQ号码:</Col>
+                  <Col span={12}>{this.state.qq}</Col>
+                </Row>
+
               </Col>
               {/* <Col span={9}>
               <Statistic title="昵称" value={"空想之喵"} />
@@ -78,7 +83,7 @@ class Home extends Component {
             <Row>
               <Col span={1}></Col>
               <Col span={22}>
-                <TextArea id="textArea" rows={16} style={{ marginTop: "10px", marginBottom: "10px", background: "#660066", borderRadius: "20px", color: "white" }} readOnly={true} value={this.state.reply} />
+                <TextArea id="textArea" rows={16} style={{ marginTop: "10px", marginBottom: "10px", background: "#AE8AFF", borderRadius: "20px", color: "white" }} readOnly={true} value={this.state.reply} />
               </Col>
               <Col span={1}></Col>
             </Row>

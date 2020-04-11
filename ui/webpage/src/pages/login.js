@@ -1,7 +1,7 @@
 
 import styles from './login.css';
 import { Component } from 'react';
-import { Button, message, Modal } from 'antd';
+import { Button, message, Modal, Card } from 'antd';
 import { apiPost, apiGet } from './utils/utils';
 import router from 'umi/router';
 class Login extends Component {
@@ -42,9 +42,11 @@ class Login extends Component {
   render() {
     return (
       <div className={styles.normal}>
-        <div>
-          <h3>请输入管理员密码</h3>
+        <Card title={"请输入管理员密码"} style={{ maxWidth: "600px" }}>
+          {/* <h3>请输入管理员密码</h3> */}
           <input className={styles.input} placeholder="密码" type="password" value={this.state.password} onChange={(e) => { this.setState({ password: e.target.value }) }} onKeyDown={e => { if (e.keyCode === 13) this.onOk() }} />
+          <br />
+          <Button type="primary" className={styles.button} onClick={this.onOk}>登入</Button>
           <br />
           <a href="# "
             onClick={() => {
@@ -52,9 +54,7 @@ class Login extends Component {
                 content: '使用超级管理员QQ私聊机器人发送：GM;clearpassword;0;0 可清除密码',
               });
             }}>忘记密码?</a>
-          <br />
-          <Button type="primary" className={styles.button} onClick={this.onOk}>登入</Button>
-        </div>
+        </Card>
       </div>
     );
   }

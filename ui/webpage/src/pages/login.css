@@ -1,5 +1,8 @@
 .normal {
-  margin-top: 30vh;
+  /* margin-top: 30vh; */
+  display: flex;
+  justify-content: center;
+  padding: 40px;
 }
 
 

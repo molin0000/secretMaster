@@ -1,5 +1,4 @@
 .normal {
-  background     : #ff9acc;
   text-align     : center;
   display        : flex;
   justify-content: center;
@@ -7,7 +6,6 @@
 }
 
 .body {
-  background-color: #ffccff;
   margin          : 20px;
   border-radius   : 20px;
   width           : 800px;
