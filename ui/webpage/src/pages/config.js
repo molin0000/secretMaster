@@ -112,9 +112,25 @@ class Config extends Component {
       title: '静默',
       dataIndex: 'silence',
       key: 'silence',
-      render: (text, record) => (
+      render: (text, record, index) => (
         <span>
-          <Switch checkedChildren="开" unCheckedChildren="关" checked={text} />
+          <Switch checkedChildren="开" unCheckedChildren="关" checked={text} onChange={
+            async (e) => {
+              console.log(e);
+              console.log('record', record);
+              let ret = this.onSave('groupSilent', { group: record.group, value: e, password: global.adminPassword });
+              if (ret) {
+                let group = Object.assign({}, this.state.group);
+                for (let i = 0; i < group.groups.length; i++) {
+                  if (group.groups[i].group === record.group) {
+                    group.groups[i].silence = e;
+                    break;
+                  }
+                }
+                this.setState({ group });
+              }
+            }
+          } />
         </span>
       ),
     },
@@ -291,7 +307,7 @@ class Config extends Component {
     return (
       <div className={styles.normal}>
         <div className={styles.body}>
-          <Card style={{width:"840px"}}>
+          <Card style={{ width: "840px" }}>
             <div className={styles.msg}>更多设置选项，请查看使用手册，或私聊机器人发送“设置”查询和使用。</div>
             <div className={styles.inline}>
               <div className={styles.title}>插件主人（超级管理员）QQ：</div>
@@ -325,11 +341,21 @@ class Config extends Component {
                 }
               } />
               <div className={styles.text} style={{ marginLeft: "30px" }}>全局静默：</div>
-              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSilence} />
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSilence} onChange={
+                async (e) => {
+                  console.log(e);
+                  let ret = this.onSave('globalSilent', { group: 0, value: e, password: global.adminPassword });
+                  if (ret) {
+                    let group = Object.assign({}, this.state.group);
+                    group.globalSilence = e;
+                    this.setState({ group });
+                  }
+                }
+              } />
             </div>
             <Table columns={this.groupColumns} dataSource={this.state.group.groups} size="small" />
             <Divider className={styles.divide} />
-            <div className={styles.inline}>
+            {/* <div className={styles.inline}>
               <div className={styles.title}>货币映射：</div>
             </div>
             <div className={styles.inline}>
@@ -367,7 +393,7 @@ class Config extends Component {
                 <Option value="UTF8">UTF8</Option>
               </Select>
             </div>
-            <Divider className={styles.divide} />
+            <Divider className={styles.divide} /> */}
             <div className={styles.inline}>
               <div className={styles.title}>图片模式：</div>
               <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
@@ -378,7 +404,15 @@ class Config extends Component {
               }
               } />
               <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
-              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.imageMode.enable} />
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.imageMode.enable} onChange={e => {
+                let ret = this.onSave('imageMode', { enable: e, lines: Number(this.state.imageMode.lines) });
+                if (ret) {
+                  let imageMode = Object.assign({}, this.state.imageMode);
+                  imageMode.enable = e;
+                  this.setState({ imageMode });
+                }
+              }
+              } />
             </div>
 
             <Divider className={styles.divide} />
@@ -392,7 +426,15 @@ class Config extends Component {
               }
               } />
               <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
-              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.textSegment.enable} />
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.textSegment.enable} onChange={e => {
+                let ret = this.onSave('textSegment', { enable: e, lines: Number(this.state.textSegment.lines) });
+                if (ret) {
+                  let textSegment = Object.assign({}, this.state.textSegment);
+                  textSegment.enable = e;
+                  this.setState({ textSegment });
+                }
+              }
+              } />
             </div>
             <Divider className={styles.divide} />
             <div className={styles.inline}>
@@ -402,13 +444,13 @@ class Config extends Component {
               <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
             </div>
             <Table columns={this.activitiesColumns} dataSource={this.activitiesData} size="small" />
-            <Divider className={styles.divide} />
+            {/* <Divider className={styles.divide} />
             <div className={styles.inline}>
               <div className={styles.title}>操作日志：</div>
             </div>
             <div style={{ margin: "10px 40px 40px 40px" }}>
               <TextArea rows={6} value={this.state.logs} />
-            </div>
+            </div> */}
           </Card>
         </div>
       </div>

@@ -411,6 +411,7 @@ func PostGroupSilent(e echo.Context) (err error) {
 		s.IsSilence = true
 		s.OpenEndTime = "23:59"
 		s.OpenStartTime = "23:58"
+		b.SetGroupValue("Silence", s)
 	} else {
 		s.IsSilence = false
 		b.SetGroupValue("Silence", s)

@@ -52,7 +52,7 @@ class Home extends Component {
     apiAsyncPost('chat', data, (res) => {
       console.log(res);
       let info = this.state.reply;
-      this.setState({ reply: info + "\n---------" + this.formatTime(new Date()) + "----------\n" + res.data.data.Msg });
+      this.setState({ reply: info + "\n------" + this.formatTime(new Date()) + "-------\n" + res.data.data.Msg });
       var ta = document.getElementById('textArea');
       ta.scrollTop = ta.scrollHeight;
     });
@@ -64,11 +64,11 @@ class Home extends Component {
         <Card style={{ maxWidth: "600px" }}>
           <Row gutter={16}>
             <Row>
-              <Col span={12}>
+              <Col span={8}>
                 <Button type='primary' style={{ width: '20vw', marginTop: '10px', maxWidth: "100px" }}
                   onClick={() => { router.push('/qqlogin'); }}>QQ登录</Button>
               </Col>
-              <Col span={12}>
+              <Col span={16}>
                 {/* <Statistic title="当前QQ号码" value={this.state.qq} groupSeparator={""} /> */}
                 <Row style={{color:"white", padding:"15px"}}>
                   <Col span={12}>当前QQ号码:</Col>
@@ -83,7 +83,7 @@ class Home extends Component {
             <Row>
               <Col span={1}></Col>
               <Col span={22}>
-                <TextArea id="textArea" rows={16} style={{ marginTop: "10px", marginBottom: "10px", background: "#AE8AFF", borderRadius: "20px", color: "white" }} readOnly={true} value={this.state.reply} />
+                <TextArea id="textArea" rows={14} style={{ marginTop: "10px", marginBottom: "10px", background: "#AE8AFF", borderRadius: "20px", color: "white", fontSize:"12px" }} readOnly={true} value={this.state.reply} />
               </Col>
               <Col span={1}></Col>
             </Row>

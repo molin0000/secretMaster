@@ -221,6 +221,11 @@ func (b *Bot) botSwitch(fromQQ uint64, enable bool) string {
 }
 
 func (b *Bot) IsSilent() bool {
+	gs := GetGlobalValue("GlobalSilence", &GlobalSilence{}).(*GlobalSilence)
+	if gs.Enable {
+		return true
+	}
+
 	s := b.getGroupValue("Silence", &SilenceState{}).(*SilenceState)
 	if !s.IsSilence {
 		return false
