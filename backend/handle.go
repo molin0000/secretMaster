@@ -261,7 +261,7 @@ func PostMoneyMap(e echo.Context) (err error) {
 }
 
 func PostActivities(e echo.Context) (err error) {
-	p := []*secret.Activity{}
+	p := &secret.ActivityState{}
 	if err := e.Bind(p); err != nil {
 		return response(e, false, err)
 	}

@@ -1,0 +1,15 @@
+
+.normal {
+  /* background: #797DF2; */
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.title {
+  margin: 20px 5px 5px 5px;
+}
+
+.input {
+  width: 220px!important;
+}

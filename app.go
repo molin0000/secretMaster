@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -30,7 +32,6 @@ func init() {
 	rand.Seed(time.Now().Unix())
 	cqp.Enable = Enable
 	cqp.Disable = Disable
-
 	ui.StartUI()
 }
 
@@ -40,6 +41,10 @@ func addLog(p int32, logType, reason string) int32 {
 
 func Enable() int32 {
 	qlog.HandleLog(addLog)
+
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	qlog.Println(dir, err)
+
 	qlog.Println("序列战争 Enable")
 	backend.StartServer(GetGroupInfoList)
 	return 0

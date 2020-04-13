@@ -11,10 +11,15 @@ type Activity struct {
 	Enable  bool   `json:"enable" xml:"enable" form:"enable" query:"enable"`
 }
 
-func GetActivities() []*Activity {
-	return GetGlobalValue("Activities", []*Activity{}).([]*Activity)
+type ActivityState struct {
+	GlobalSwitch bool        `json:"globalSwitch" xml:"globalSwitch" form:"globalSwitch" query:"globalSwitch"`
+	Activities   []*Activity `json:"activities" xml:"activities" form:"activities" query:"activities"`
 }
 
-func SetActivities(activites []*Activity) {
+func GetActivities() *ActivityState {
+	return GetGlobalValue("Activities", &ActivityState{}).(*ActivityState)
+}
+
+func SetActivities(activites *ActivityState) {
 	SetGlobalValue("Activities", activites)
 }

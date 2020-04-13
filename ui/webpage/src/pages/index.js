@@ -102,7 +102,7 @@ class Home extends Component {
               </Row>
               <Row gutter={16}>
                 <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('祈祷') }}>祈祷</Button></Col>
-                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('商店') }}>商店</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('购买探险卷轴') }}>卷轴</Button></Col>
                 <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('属性') }}>属性</Button></Col>
                 <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('排行') }}>排行</Button></Col>
               </Row>

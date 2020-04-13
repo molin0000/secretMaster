@@ -31,6 +31,10 @@ export default {
           component: './qqlogin',
         },
         {
+          path: '/newAct',
+          component: './newAct',
+        },
+        {
           path: '/',
           component: '../pages/index',
         },

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/molin0000/secretMaster/config"
 	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -17,8 +18,9 @@ var db *leveldb.DB
 
 func getDb() *leveldb.DB {
 	if db == nil {
-		_db, err := leveldb.OpenFile(path.Join("data", "app", "me.cqp.molin.secretMaster", "UserData.db"), nil)
+		_db, err := leveldb.OpenFile(path.Join(config.GetCoolqPath(), "data", "app", "me.cqp.molin.secretMaster", "UserData.db"), nil)
 		if err != nil {
+			qlog.Println(path.Join(config.GetCoolqPath(), "data", "app", "me.cqp.molin.secretMaster", "UserData.db"))
 			qlog.Printf("open db error: %+v", err)
 			panic(err)
 		}

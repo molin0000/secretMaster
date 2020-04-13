@@ -92,6 +92,7 @@ body {
 .ant-card-head {
   background-color: #CABFFB;
   border-radius   : 20px;
+  border: none;
 }
 
 .ant-card-head-title {

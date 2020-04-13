@@ -1,14 +1,8 @@
-import { Divider, Button, Switch, Table, Select, Input, message, Card } from 'antd';
+import { Divider, Button, Switch, Table, message, Card, Popconfirm } from 'antd';
 import styles from './config.css';
 import { Component } from 'react';
 import { apiGet, apiAsyncGet, apiPost } from './utils/utils.js';
 import router from 'umi/router'
-
-
-const { Option } = Select;
-const { TextArea } = Input;
-
-
 
 class Config extends Component {
   constructor(props) {
@@ -24,14 +18,6 @@ class Config extends Component {
         "SpiritPetCnt": 0,
         "PetFoodCnt": 0,
       },
-      moneyMap: {
-        "group": 0,
-        "iniPath": "/home/user/coolq/data/app/com.qmt.demo/玩家数据.ini",
-        "iniSection": "cQQ",
-        "iniKey": "金币数量",
-        "hasUpdate": false,
-        "encode": ""
-      },
       imageMode: {
         "enable": false,
         "lines": 0
@@ -45,7 +31,10 @@ class Config extends Component {
         globalSilence: false,
         groups: [],
       },
-      activities: [],
+      activities: {
+        globalSwitch: true,
+        activites: [],
+      },
       logs: '',
     }
   }
@@ -72,16 +61,6 @@ class Config extends Component {
       dataIndex: 'master',
       key: 'master',
     },
-    // {
-    //   title: '操作',
-    //   dataIndex: 'operation',
-    //   key: 'operation',
-    //   render: (text, record) => (
-    //     <span>
-    //       <a href="/#">退群</a>
-    //     </span>
-    //   ),
-    // },
     {
       title: '开关',
       dataIndex: 'switch',
@@ -145,8 +124,8 @@ class Config extends Component {
     },
     {
       title: '关键字',
-      dataIndex: 'word',
-      key: 'word',
+      dataIndex: 'keyWord',
+      key: 'keyWord',
       ellipsis: true,
     },
     {
@@ -182,11 +161,29 @@ class Config extends Component {
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
-      render: (text, record) => (
-        <span>
-          <a href="/#">删除</a>
-        </span>
-      ),
+      render: (text, record) =>
+        this.state.activities.activities.length >= 1 ? (
+          <Popconfirm title="确认要删除?" onConfirm={async () => {
+            console.log(text, record);
+            let activities = Object.assign({}, this.state.activities);
+            for (let i=0; i<activities.activities.length; i++) {
+              if (activities.activities[i].keyWord === record.keyWord) {
+                activities.activities.splice(i, 1);
+                let ret = await apiPost('activities', activities);
+                if (ret.data.data === true) {
+                  message.success("删除成功");
+                  this.setState({activities});
+                  return;
+                } else {
+                  message.error('删除失败');
+                  return;
+                }
+              }
+            }
+          }}>
+            <a href="# ">删除</a>
+          </Popconfirm>
+        ) : null,
     },
     {
       title: '开关',
@@ -197,27 +194,6 @@ class Config extends Component {
           <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
         </span>
       ),
-    },
-  ]
-
-  activitiesData = [
-    {
-      key: 1,
-      word: "新年快乐",
-      reply: "亚米收到你的祝福啦~红包给你！",
-      type: "每年",
-      exp: 0,
-      money: 100,
-      magic: 0,
-    },
-    {
-      key: 2,
-      word: "签到",
-      reply: "签到成功！",
-      type: "每天",
-      exp: 6,
-      money: 6,
-      magic: 6,
     },
   ]
 
@@ -253,13 +229,6 @@ class Config extends Component {
       this.setState({ delay: res.data.data.DelayMs });
     });
 
-    apiAsyncGet('moneyMap', (res) => {
-      console.log(res.data.data);
-      let ret = res.data.data;
-      ret.group = this.state.moneyMap.group;
-      this.setState({ moneyMap: ret });
-    });
-
     apiAsyncGet('imageMode', (res) => {
       console.log(res.data.data);
       this.setState({ imageMode: res.data.data });
@@ -271,6 +240,9 @@ class Config extends Component {
     });
 
     apiAsyncGet('activities', (res) => {
+      if (res.data.data.activities == null) {
+        res.data.data.activities = [];
+      }
       console.log(res.data.data);
       this.setState({ activities: res.data.data });
     });
@@ -355,45 +327,6 @@ class Config extends Component {
             </div>
             <Table columns={this.groupColumns} dataSource={this.state.group.groups} size="small" />
             <Divider className={styles.divide} />
-            {/* <div className={styles.inline}>
-              <div className={styles.title}>货币映射：</div>
-            </div>
-            <div className={styles.inline}>
-              <div className={styles.text2} >QQ群号：</div>
-              <input className={styles.input} value={this.state.moneyMap.group} style={{ margin: "4px 0px 4px 104px", width: "120px", textAlign: "center" }} onChange={e => {
-                let moneyMap = Object.assign({}, this.state.moneyMap);
-                moneyMap.group = e.target.value;
-                this.setState({ moneyMap });
-              }
-              } />
-              <Button type='primary' style={{ marginLeft: "20px", marginTop: "2px" }}>加载</Button>
-              <div className={styles.text} style={{ marginLeft: "185px", marginTop: "6px" }}>启用：</div>
-              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.moneyMap.hasUpdate} style={{ marginTop: "6px" }} />
-            </div>
-            <div className={styles.inline}>
-              <div className={styles.text2}>ini文件路径：</div>
-              <input className={styles.input} style={{ margin: "4px 0px 4px 84px", width: "520px", textAlign: "left", paddingLeft: "10px" }} value={this.state.moneyMap.iniPath} onChange={e => {
-                let moneyMap = Object.assign({}, this.state.moneyMap);
-                moneyMap.iniPath = e.target.value;
-                this.setState({ moneyMap });
-              }
-              } />
-            </div>
-            <div className={styles.inline}>
-              <div className={styles.text2}>节点为QQ号，关键字：</div>
-              <input className={styles.input} style={{ margin: "6px 0px 6px 20px", width: "100px" }} value={this.state.moneyMap.iniKey} onChange={e => {
-                let moneyMap = Object.assign({}, this.state.moneyMap);
-                moneyMap.iniKey = e.target.value;
-                this.setState({ moneyMap });
-              }
-              } />
-              <div className={styles.text2} style={{ marginLeft: "40px" }}>编码：</div>
-              <Select defaultValue={this.state.moneyMap.encode ? this.state.moneyMap.encode : "GB2312"} style={{ width: 124, margin: "4px 0" }}>
-                <Option value="GB2312">GB2312</Option>
-                <Option value="UTF8">UTF8</Option>
-              </Select>
-            </div>
-            <Divider className={styles.divide} /> */}
             <div className={styles.inline}>
               <div className={styles.title}>图片模式：</div>
               <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
@@ -439,18 +372,15 @@ class Config extends Component {
             <Divider className={styles.divide} />
             <div className={styles.inline}>
               <div className={styles.title}>活动管理：</div>
-              <Button type="primary" style={{ marginLeft: "390px" }}>新增</Button>
+              <Button type="primary" style={{ marginLeft: "390px" }} onClick={() => {
+                global.activities = Object.assign({}, this.state.activities);
+                router.push("/newAct");
+              }
+              }>新增</Button>
               <div className={styles.text} style={{ marginLeft: "25px" }}>全局开关：</div>
-              <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.activities.globalSwitch} />
             </div>
-            <Table columns={this.activitiesColumns} dataSource={this.activitiesData} size="small" />
-            {/* <Divider className={styles.divide} />
-            <div className={styles.inline}>
-              <div className={styles.title}>操作日志：</div>
-            </div>
-            <div style={{ margin: "10px 40px 40px 40px" }}>
-              <TextArea rows={6} value={this.state.logs} />
-            </div> */}
+            <Table columns={this.activitiesColumns} dataSource={this.state.activities.activities} size="small" />
           </Card>
         </div>
       </div>
