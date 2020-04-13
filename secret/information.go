@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
@@ -92,7 +93,7 @@ func (b *Bot) deletePerson(fromQQ uint64) string {
 			iter.Release()
 			err := iter.Error()
 			if err != nil {
-				fmt.Println(err)
+				qlog.Println(err)
 			}
 			break
 		}
@@ -209,7 +210,7 @@ func (b *Bot) getRank(fromQQ uint64) string {
 	iter.Release()
 	err := iter.Error()
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 	}
 
 	retValue := ""
@@ -312,7 +313,7 @@ func (b *Bot) getLuck(fromQQ uint64) uint64 {
 		e.BaseLuck = 0
 		b.setExternToDb(fromQQ, e)
 	}
-	fmt.Println("baseLuck", e.BaseLuck, "addLuck", b.getAdditionLucky(fromQQ))
+	qlog.Println("baseLuck", e.BaseLuck, "addLuck", b.getAdditionLucky(fromQQ))
 	return e.BaseLuck + b.getAdditionLucky(fromQQ)
 }
 

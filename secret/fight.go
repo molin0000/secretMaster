@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/molin0000/secretMaster/pet"
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func (b *Bot) getBattleField() string {
@@ -42,7 +43,7 @@ func (b *Bot) getBattleField() string {
 }
 
 func (b *Bot) updateBattleField() {
-	fmt.Println("updateBattleField")
+	qlog.Println("updateBattleField")
 	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
 	fmt.Printf("%+v", bf)
 	timeNow := uint64(time.Now().Unix())

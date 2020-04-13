@@ -26,6 +26,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func TestStreamKind(t *testing.T) {
@@ -753,9 +755,9 @@ func ExampleStream() {
 	}
 
 	// Decode elements
-	fmt.Println(s.Uint())
-	fmt.Println(s.Uint())
-	fmt.Println(s.Bytes())
+	qlog.Println(s.Uint())
+	qlog.Println(s.Uint())
+	qlog.Println(s.Bytes())
 
 	// Acknowledge end of list
 	if err := s.ListEnd(); err != nil {

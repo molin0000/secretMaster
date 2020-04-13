@@ -8,6 +8,7 @@ import (
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/molin0000/secretMaster/config"
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 // var competitionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "competition.xlsx")
@@ -40,21 +41,21 @@ func fileExists(filename string) bool {
 }
 
 func init() {
-	fmt.Println("加载竞赛表格...")
+	qlog.Println("加载竞赛表格...")
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println("加载竞赛表格...失败")
-			fmt.Println(err)
+			qlog.Println("加载竞赛表格...失败")
+			qlog.Println(err)
 		}
 	}()
 
 	if !fileExists(competitionPath) {
-		fmt.Println("文件不存在")
+		qlog.Println("文件不存在")
 	}
 
 	f, err := excelize.OpenFile(competitionPath)
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 		return
 	}
 	// Get all the rows in the Sheet1.
@@ -84,7 +85,7 @@ func GetRandomQuestion() *Question {
 		return nil
 	}
 	q := questions[rand.Intn(length)]
-	fmt.Println("q:", q)
+	qlog.Println("q:", q)
 	return q
 }
 

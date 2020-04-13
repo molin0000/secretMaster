@@ -10,6 +10,7 @@ import (
 	"github.com/molin0000/secretMaster/interact"
 	"github.com/molin0000/secretMaster/mission"
 	"github.com/molin0000/secretMaster/pet"
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/secret"
 )
 
@@ -185,7 +186,7 @@ func PostSuperMaster(e echo.Context) (err error) {
 
 func verifyPassword(qq uint64, password string) bool {
 	value := secret.GetGlobalPersonValue("Password", qq, &secret.Password{QQ: 0, Password: ""}).(*secret.Password)
-	fmt.Println("verifyPassword", qq, password, value)
+	qlog.Println("verifyPassword", qq, password, value)
 	return password == value.Password
 }
 
@@ -321,10 +322,10 @@ func PostChat(e echo.Context) (err error) {
 
 	update := func() {
 		if len(msg) > 9 {
-			fmt.Println(msg, "大于3", len(msg))
+			qlog.Println(msg, "大于3", len(msg))
 			ret = bot.Update(uint64(fromQQ), GetGroupNickName(&info))
 		} else {
-			fmt.Println(msg, "小于3", len(msg))
+			qlog.Println(msg, "小于3", len(msg))
 		}
 	}
 

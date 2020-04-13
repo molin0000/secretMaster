@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/molin0000/secretMaster/competition"
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func (b *Bot) startCompetition(fromQQ uint64) string {
@@ -28,7 +29,7 @@ func (b *Bot) startCompetition(fromQQ uint64) string {
 	qs.StartTime = uint64(time.Now().Unix())
 	b.setPersonValue("Competition", fromQQ, qs)
 
-	fmt.Println("学识竞猜开始", fromQQ, *qs.Q)
+	qlog.Println("学识竞猜开始", fromQQ, *qs.Q)
 
 	info := fmt.Sprintf(`
 ============
@@ -48,7 +49,7 @@ func (b *Bot) checkCompetion(fromQQ uint64, msg string) string {
 		return ""
 	}
 
-	fmt.Println("msg", msg, "qs", qs)
+	qlog.Println("msg", msg, "qs", qs)
 
 	if qs.Q == nil {
 		qs.VictoryCnt = 0
@@ -67,7 +68,7 @@ func (b *Bot) checkCompetion(fromQQ uint64, msg string) string {
 
 	var answer string
 	strs := strings.Split(msg, "] ")
-	fmt.Println(strs)
+	qlog.Println(strs)
 	if len(strs) > 1 {
 		answer = strs[1]
 	} else {

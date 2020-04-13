@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func (b *Bot) adventure(fromQQ uint64, limit bool) string {
@@ -43,11 +45,11 @@ func (b *Bot) adventure(fromQQ uint64, limit bool) string {
 	info := ""
 	m := 0
 	e := 0
-	fmt.Println("i:", i)
+	qlog.Println("i:", i)
 
 	for p := 0; p < len(adventureEvents); p++ {
 		i = i - adventureEvents[p].Probability
-		fmt.Println("i:", i)
+		qlog.Println("i:", i)
 		if i < 0 {
 			switch adventureEvents[p].Type {
 			case 1:

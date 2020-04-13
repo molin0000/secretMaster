@@ -1,8 +1,9 @@
 package text2img
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/molin0000/secretMaster/qlog"
 	// "github.com/bregydoc/gtranslate"
 )
 
@@ -18,5 +19,5 @@ func TestImg(t *testing.T) {
 一二三四五六七吧旧时一二三四五六七吧旧时
 一二三四五六七吧旧时一二三四五六七吧旧时一二三四五六七吧旧时一二三四五六七吧旧时一二三四五六七吧旧时
 修炼时间：603小时`
-	fmt.Println(DrawTextImg(str))
+	qlog.Println(DrawTextImg(str))
 }

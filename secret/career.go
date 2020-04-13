@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 type unuseCode struct {
@@ -51,7 +53,7 @@ type unuseCode struct {
 	// 		ret = "恭喜！你的序列晋升了！" + b.allSkillLevelUp(p.QQ)
 	// 	}
 
-	// 	fmt.Println("level:", p.SecretLevel)
+	// 	qlog.Println("level:", p.SecretLevel)
 
 	// 	if (uint64(time.Now().Unix()) - p.LevelDown) > 3600*24*7 {
 	// 		if p.SecretLevel >= (uint64(time.Now().Unix())-p.LevelDown)/(3600*24*7) {
@@ -154,8 +156,8 @@ func (b *Bot) getSecretList() string {
 func (b *Bot) changeSecretList(msgRaw string, fromQQ uint64) string {
 	index := strings.Index(msgRaw, "更换")
 	msg := msgRaw[index:]
-	fmt.Println("changeSecretList:", msg, msgRaw)
-	defer fmt.Println("finish changed")
+	qlog.Println("changeSecretList:", msg, msgRaw)
+	defer qlog.Println("finish changed")
 
 	var valid = regexp.MustCompile("[0-9]")
 	r := valid.FindAllStringSubmatch(msg, -1)

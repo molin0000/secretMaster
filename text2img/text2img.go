@@ -13,6 +13,7 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
+	"github.com/molin0000/secretMaster/qlog"
 	"golang.org/x/image/font"
 )
 
@@ -46,9 +47,9 @@ func DrawTextImg(msg string) string {
 		<-t.C
 		err := os.Remove(delFile)
 		if err != nil {
-			fmt.Println(err.Error())
+			qlog.Println(err.Error())
 		} else {
-			fmt.Println("成功删除：", delFile)
+			qlog.Println("成功删除：", delFile)
 		}
 	}
 
@@ -90,7 +91,7 @@ func writeOnImage(target *image.NRGBA, msg string) {
 	c.SetFontSize(FontSize)
 	fontFam, err := getFontFamily()
 	if err != nil {
-		fmt.Println("get font family error")
+		qlog.Println("get font family error")
 	}
 	// 设置用于绘制文本的字体
 	c.SetFont(fontFam)
@@ -120,13 +121,13 @@ func getFontFamily() (*truetype.Font, error) {
 	// 这里需要读取中文字体，否则中文文字会变成方格
 	fontBytes, err := ioutil.ReadFile("C:/windows/Fonts/simsun.ttc")
 	if err != nil {
-		fmt.Println("read file error:", err)
+		qlog.Println("read file error:", err)
 		return &truetype.Font{}, err
 	}
 
 	f, err := freetype.ParseFont(fontBytes)
 	if err != nil {
-		fmt.Println("parse font error:", err)
+		qlog.Println("parse font error:", err)
 		return &truetype.Font{}, err
 	}
 

@@ -2,12 +2,12 @@
 
 # Build Web
 
-cd ui/webpage
-umi build
-cd ..
-rm rice-box.go
-rice embed-go
-cd ..
+# cd ui/webpage
+# umi build
+# cd ..
+# rm rice-box.go
+# rice embed-go
+# cd ..
 
 docker start -a build-gocqplg
 ./cqcfg -c .

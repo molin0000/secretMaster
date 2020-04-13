@@ -5,13 +5,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/secret"
 )
 
 func testGetGroupInfoList() []*GroupInfo {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println("getGroupList panic")
+			qlog.Println("getGroupList panic")
 		}
 	}()
 
@@ -44,6 +45,6 @@ func TestStartServer(t *testing.T) {
 
 	for {
 		<-ticker.C
-		fmt.Println("20s passed")
+		qlog.Println("20s passed")
 	}
 }

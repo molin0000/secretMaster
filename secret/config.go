@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
@@ -252,7 +253,7 @@ func (b *Bot) IsSilent() bool {
 	startMinute := t1Hour*60 + t1Minute
 	endMinute := t2Hour*60 + t2Minute
 
-	fmt.Println("Slient check:", dayMinute, startMinute, endMinute)
+	qlog.Println("Slient check:", dayMinute, startMinute, endMinute)
 
 	if dayMinute >= startMinute && dayMinute <= endMinute {
 		return false
@@ -349,7 +350,7 @@ func (b *Bot) fixNumber(fromQQ uint64) string {
 	iter.Release()
 	err := iter.Error()
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 	}
 	return "数值修复完成，GM附加幸运全部归零了。"
 }

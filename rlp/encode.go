@@ -183,7 +183,7 @@ func (w *encbuf) Write(b []byte) (int, error) {
 
 func (w *encbuf) encode(val interface{}) error {
 	rval := reflect.ValueOf(val)
-	// fmt.Println(rval.Type())
+	// qlog.Println(rval.Type())
 	ti, err := cachedTypeInfo(rval.Type(), tags{})
 	if err != nil {
 		return err

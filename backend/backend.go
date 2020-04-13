@@ -8,6 +8,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func loadRoutes(e *echo.Echo) {
@@ -61,7 +62,7 @@ var echoServer *echo.Echo
 var httpServer *http.Server
 
 func StartServer(getGroup func() []*GroupInfo) {
-	fmt.Println("后台服务启动...")
+	qlog.Println("后台服务启动...")
 	GetGroupInfoList = getGroup
 	e := newEchoServer()
 	s := &http.Server{
@@ -80,7 +81,7 @@ func StartServer(getGroup func() []*GroupInfo) {
 		}
 	}()
 
-	fmt.Println("后台服务启动完成...")
+	qlog.Println("后台服务启动完成...")
 
 	// <-ctx.Done()
 	// if err := e.Shutdown(ctx); err != nil {
@@ -89,7 +90,7 @@ func StartServer(getGroup func() []*GroupInfo) {
 }
 
 func StopServer() {
-	fmt.Println("后台服务准备停止")
+	qlog.Println("后台服务准备停止")
 	ctx, stop := context.WithCancel(context.Background())
 	stop()
 	httpServer.Shutdown(ctx)
@@ -100,5 +101,5 @@ func StopServer() {
 	echoServer.Listener.Close()
 	echoServer.Server.Close()
 	echoServer.Close()
-	fmt.Println("后台服务停止完毕")
+	qlog.Println("后台服务停止完毕")
 }

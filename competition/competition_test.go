@@ -1,17 +1,18 @@
 package competition
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func TestCompetition(t *testing.T) {
-	fmt.Println(GetRandomQuestion())
-	fmt.Println(GetRandomQuestion())
-	fmt.Println(GetRandomQuestion())
-	fmt.Println(GetRandomQuestion())
-	fmt.Println(GetRandomQuestion())
-	fmt.Println(GetRandomQuestion())
-	fmt.Println(GetRandomQuestion())
+	qlog.Println(GetRandomQuestion())
+	qlog.Println(GetRandomQuestion())
+	qlog.Println(GetRandomQuestion())
+	qlog.Println(GetRandomQuestion())
+	qlog.Println(GetRandomQuestion())
+	qlog.Println(GetRandomQuestion())
+	qlog.Println(GetRandomQuestion())
 
 }

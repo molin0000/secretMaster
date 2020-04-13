@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 	sc "golang.org/x/text/encoding/simplifiedchinese"
@@ -94,7 +95,7 @@ func (b *Bot) setPersonToDb(fromQQ uint64, p *Person) {
 func (b *Bot) getMoneyFromDb(fromQQ uint64, chatCnt uint64) *Money {
 	bind := b.getMoneyBind()
 	if bind.HasUpdate && fileExists(bind.IniPath) {
-		fmt.Println("get from ini.")
+		qlog.Println("get from ini.")
 		return b.getMoneyFromIni(fromQQ)
 	}
 
@@ -130,10 +131,10 @@ func (b *Bot) getMoneyFromIni(fromQQ uint64) *Money {
 	}
 	var amount uint64
 	if bind.Encode != "UTF8" {
-		fmt.Println("Data Path:", cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).String())
+		qlog.Println("Data Path:", cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).String())
 		amount, err = cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).Uint64()
 	} else {
-		fmt.Println("Data Path:", cfg.Section(cString(strconv.FormatUint(fromQQ, 10))).Key(cString(bind.IniKey)).String())
+		qlog.Println("Data Path:", cfg.Section(cString(strconv.FormatUint(fromQQ, 10))).Key(cString(bind.IniKey)).String())
 		amount, err = cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(cString(bind.IniKey)).Uint64()
 	}
 
@@ -295,7 +296,7 @@ func (b *Bot) personKey(keyPrefix string, fromQQ uint64) []byte {
 func (b *Bot) setPersonValue(keyPrefix string, fromQQ uint64, p interface{}) {
 	buf, err := rlp.EncodeToBytes(p)
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 	}
 	getDb().Put(b.personKey(keyPrefix, fromQQ), buf, nil)
 }
@@ -303,7 +304,7 @@ func (b *Bot) setPersonValue(keyPrefix string, fromQQ uint64, p interface{}) {
 func (b *Bot) getPersonValue(keyPrefix string, fromQQ uint64, defaultValue interface{}) interface{} {
 	data, err := getDb().Get(b.personKey(keyPrefix, fromQQ), nil)
 	if err != nil {
-		fmt.Println("getPersonValue nil:", keyPrefix, b.Group, fromQQ)
+		qlog.Println("getPersonValue nil:", keyPrefix, b.Group, fromQQ)
 		return defaultValue
 	}
 
@@ -322,7 +323,7 @@ func globalPersonKey(keyPrefix string, fromQQ uint64) []byte {
 func GetGlobalPersonValue(keyPrefix string, fromQQ uint64, defaultValue interface{}) interface{} {
 	data, err := getDb().Get(globalPersonKey(keyPrefix, fromQQ), nil)
 	if err != nil {
-		fmt.Println("GetGlobalPersonValue nil:", keyPrefix, fromQQ)
+		qlog.Println("GetGlobalPersonValue nil:", keyPrefix, fromQQ)
 		return defaultValue
 	}
 
@@ -346,7 +347,7 @@ func globalKey(keyPrefix string) []byte {
 func GetGlobalValue(keyPrefix string, defaultValue interface{}) interface{} {
 	data, err := getDb().Get(globalKey(keyPrefix), nil)
 	if err != nil {
-		fmt.Println("GetGlobalValue nil:", keyPrefix)
+		qlog.Println("GetGlobalValue nil:", keyPrefix)
 		return defaultValue
 	}
 

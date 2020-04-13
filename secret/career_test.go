@@ -1,8 +1,9 @@
 package secret
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func TestSkill(t *testing.T) {
@@ -10,13 +11,13 @@ func TestSkill(t *testing.T) {
 	b := NewSecretBot(1234, 4567, "aa", false, &debugInteract{})
 	b.clearSkill(fromQQ)
 
-	fmt.Println(b.getSkill(fromQQ))
+	qlog.Println(b.getSkill(fromQQ))
 
 	b.setSkill(fromQQ, 0, 1)
 	b.setSkill(fromQQ, 1, 1)
 	b.setSkill(fromQQ, 2, 1)
 
-	fmt.Println(b.getSkill(fromQQ))
+	qlog.Println(b.getSkill(fromQQ))
 
 	b.skillLevelUp(fromQQ, 0)
 	b.skillLevelUp(fromQQ, 1)
@@ -27,43 +28,43 @@ func TestSkill(t *testing.T) {
 	b.skillLevelUp(fromQQ, 0)
 	b.skillLevelUp(fromQQ, 0)
 
-	fmt.Println(b.getSkill(fromQQ))
-	fmt.Println(b.allSkillLevelUp(fromQQ))
-	fmt.Println(b.getSkill(fromQQ))
+	qlog.Println(b.getSkill(fromQQ))
+	qlog.Println(b.allSkillLevelUp(fromQQ))
+	qlog.Println(b.getSkill(fromQQ))
 
 	b.clearSkill(fromQQ)
 	b.skillLevelUp(fromQQ, 1)
 
-	fmt.Println(b.getSkill(fromQQ))
+	qlog.Println(b.getSkill(fromQQ))
 }
 
 func TestPromotion(t *testing.T) {
 	fromQQ := uint64(111)
 	b := NewSecretBot(1234, 4567, "aa", false, &debugInteract{})
-	fmt.Println(b.deletePerson(fromQQ))
+	qlog.Println(b.deletePerson(fromQQ))
 	b.Update(fromQQ, "ThinkCat")
-	fmt.Println(b.promotion(fromQQ))
-	fmt.Println(b.changeSecretList("更换1", fromQQ))
+	qlog.Println(b.promotion(fromQQ))
+	qlog.Println(b.changeSecretList("更换1", fromQQ))
 	god := uint64(123)
 	b.setGodToDb(0, &god)
 	b.Update(fromQQ, "ThinkCat")
 	b.setExp(fromQQ, 101)
-	fmt.Println(b.promotion(fromQQ))
+	qlog.Println(b.promotion(fromQQ))
 	b.setMoney(fromQQ, 200)
 	b.buyMagicItem(fromQQ)
-	fmt.Println(b.promotion(fromQQ))
+	qlog.Println(b.promotion(fromQQ))
 	b.setExp(fromQQ, 101)
 	b.setMoney(fromQQ, 200)
 	b.buyMagicItem(fromQQ)
-	fmt.Println(b.getMoney(fromQQ), b.getExp(fromQQ))
-	fmt.Println(b.promotion(fromQQ))
+	qlog.Println(b.getMoney(fromQQ), b.getExp(fromQQ))
+	qlog.Println(b.promotion(fromQQ))
 
 	for i := 0; i < 500; i++ {
 		b.setMoney(fromQQ, 200)
 		b.setExp(fromQQ, 101)
 
-		fmt.Println(b.getMoney(fromQQ), b.getExp(fromQQ))
-		fmt.Println(b.promotion(fromQQ))
+		qlog.Println(b.getMoney(fromQQ), b.getExp(fromQQ))
+		qlog.Println(b.promotion(fromQQ))
 	}
 	god = uint64(0)
 	b.setGodToDb(0, &god)
@@ -71,7 +72,7 @@ func TestPromotion(t *testing.T) {
 		b.setMoney(fromQQ, 200)
 		b.setExp(fromQQ, 101)
 
-		fmt.Println(b.getMoney(fromQQ), b.getExp(fromQQ))
-		fmt.Println(b.promotion(fromQQ))
+		qlog.Println(b.getMoney(fromQQ), b.getExp(fromQQ))
+		qlog.Println(b.promotion(fromQQ))
 	}
 }
