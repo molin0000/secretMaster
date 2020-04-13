@@ -1,7 +1,6 @@
 package mission
 
 import (
-	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -13,7 +12,7 @@ func TestRandomMission(t *testing.T) {
 	rand.Seed(time.Now().Unix())
 	for i := 0; i < 100; i++ {
 		ms := NewRandomMission("D:\\序列战争版本更新\\酷Q\\coolq\\data\\app\\me.cqp.molin.secretMaster\\mission")
-		fmt.Printf("%+v\n\n", ms)
+		qlog.Printf("%+v\n\n", ms)
 	}
 }
 

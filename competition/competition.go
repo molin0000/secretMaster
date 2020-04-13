@@ -1,7 +1,6 @@
 package competition
 
 import (
-	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
@@ -76,7 +75,7 @@ func init() {
 		questions = append(questions, q)
 	}
 
-	fmt.Printf("共加载竞赛题：%d\n", len(questions))
+	qlog.Printf("共加载竞赛题：%d\n", len(questions))
 }
 
 func GetRandomQuestion() *Question {

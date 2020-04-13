@@ -108,7 +108,7 @@ func writeOnImage(target *image.NRGBA, msg string) {
 			pt := freetype.Pt(20, 40+(fixed.Ceil()+5)*i)
 			_, err = c.DrawString(sv, pt)
 			if err != nil {
-				fmt.Printf("draw error: %v \n", err)
+				qlog.Printf("draw error: %v \n", err)
 				return
 			}
 			i++

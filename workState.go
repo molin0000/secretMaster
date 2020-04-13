@@ -40,7 +40,7 @@ func getGroupList() (ret string) {
 	for i, v := range groups {
 		detail := getGroupInfo(int64(v), false)
 		if detail != nil {
-			fmt.Printf("%+v", detail)
+			qlog.Printf("%+v", detail)
 			ret += fmt.Sprintf("%d) %s [%d] (%d/%d);\n", i, detail.Name, v, detail.MembersNum, detail.MaxMemberNum)
 			qlog.Println(ret)
 		} else {
@@ -87,7 +87,7 @@ func switchState(fromQQ int64, msg string) {
 		return
 	}
 
-	fmt.Printf("switchState:%+v", state)
+	qlog.Printf("switchState:%+v", state)
 
 	if msg == "关闭私聊" {
 		state.Switch = false

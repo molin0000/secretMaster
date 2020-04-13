@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
@@ -98,7 +97,7 @@ func GetMoneyMap(e echo.Context) (err error) {
 	}
 
 	err = e.Bind(&req)
-	fmt.Printf("%+v", req)
+	qlog.Printf("%+v", req)
 
 	mp := secret.GetMoneyMap(req.Group)
 	return response(e, mp, err)
@@ -147,7 +146,7 @@ func PostPassword(e echo.Context) (err error) {
 		return response(e, false, err)
 	}
 
-	fmt.Printf("PostPassword:%+v\n", *p)
+	qlog.Printf("PostPassword:%+v\n", *p)
 	password := p.Password
 	qq := p.QQ
 
@@ -332,7 +331,7 @@ func PostChat(e echo.Context) (err error) {
 	update()
 	ret = bot.RunPrivate(msg, uint64(fromQQ), GetGroupNickName(&info))
 
-	fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
+	qlog.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
 
 	return response(e, &ChatReply{Msg: ret}, err)
 }

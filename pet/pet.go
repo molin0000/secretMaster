@@ -170,7 +170,7 @@ func LoadPets(path string) {
 
 		foodList = append(foodList, food)
 	}
-	fmt.Printf("已加载:%d现世宠物，%d灵界宠物，%d宠物投食\n", len(realPets), len(spiritPets), len(foodList))
+	qlog.Printf("已加载:%d现世宠物，%d灵界宠物，%d宠物投食\n", len(realPets), len(spiritPets), len(foodList))
 }
 
 func GetRealPetCount() int {

@@ -2,7 +2,6 @@ package backend
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -76,7 +75,7 @@ func StartServer(getGroup func() []*GroupInfo) {
 
 	go func() {
 		if err := e.StartServer(s); err != nil {
-			fmt.Printf("shutting down the server: %v", err)
+			qlog.Printf("shutting down the server: %v", err)
 			// panic(err)
 		}
 	}()

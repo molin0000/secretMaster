@@ -45,7 +45,7 @@ func (b *Bot) getBattleField() string {
 func (b *Bot) updateBattleField() {
 	qlog.Println("updateBattleField")
 	bf := b.getGroupValue("BattleField", &BattleField{}).(*BattleField)
-	fmt.Printf("%+v", bf)
+	qlog.Printf("%+v", bf)
 	timeNow := uint64(time.Now().Unix())
 	for i, v := range bf.Nightwatches {
 		duration := timeNow - v.UpdateTime
@@ -282,7 +282,7 @@ func (b *Bot) getBattleScore(fromQQ uint64) (exp, skill, item, rp, speed, pt, to
 
 func (b *Bot) getPlayerSpeed(fromQQ uint64) int64 {
 	ms := b.getPersonValue("Calc", fromQQ, &CalcState{false, nil}).(*CalcState)
-	fmt.Printf("speed:%+v", ms)
+	qlog.Printf("speed:%+v", ms)
 
 	if ms.Calc == nil {
 		return 0

@@ -56,7 +56,7 @@ func normalSendPrivateMsg(qq int64, msg string) {
 	info := strings.TrimRight(msg, "\n")
 	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 	id := cqp.SendPrivateMsg(qq, info)
-	fmt.Printf("\nSend finish id:%d\n", id)
+	qlog.Printf("\nSend finish id:%d\n", id)
 }
 
 func sendSplitPrivateMsg(line int, qq int64, msg string) {
@@ -77,7 +77,7 @@ func sendSplitPrivateMsg(line int, qq int64, msg string) {
 		info = strings.TrimRight(info, "\n")
 		time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 		id := cqp.SendPrivateMsg(qq, info)
-		fmt.Printf("\nSend finish id:%d\n", id)
+		qlog.Printf("\nSend finish id:%d\n", id)
 		if cnt >= length {
 			break
 		}
@@ -95,7 +95,7 @@ func imgSendPrivateMsg(qq int64, msg string, pre, end string) {
 	filePath := text2img.DrawTextImg(info)
 	cqCode := fmt.Sprintf("[CQ:image,file=%s]", filePath)
 	id := cqp.SendPrivateMsg(qq, pre+cqCode+end)
-	fmt.Printf("\nSend finish id:%d\n", id)
+	qlog.Printf("\nSend finish id:%d\n", id)
 }
 
 func getLineCnt(msg string) int {
@@ -125,7 +125,7 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 
 	send := func() {
 		if len(ret) > 0 {
-			fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
+			qlog.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
 			lineCnt := getLineCnt(ret)
 			img := secret.GetGlobalValue("ImgMode", &secret.ImgMode{}).(*secret.ImgMode)
 			foldLine := secret.GetGlobalValue("FoldLineMode", &secret.FoldLineMode{Enable: true, Lines: 5}).(*secret.FoldLineMode)
@@ -207,7 +207,7 @@ func normalSendGroupMsg(group int64, msg string) {
 	info := strings.TrimRight(msg, "\n")
 	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 	id := cqp.SendGroupMsg(group, info)
-	fmt.Printf("\nSend finish id:%d\n", id)
+	qlog.Printf("\nSend finish id:%d\n", id)
 }
 
 func sendSplitGroupMsg(line int, group int64, msg string) {
@@ -228,7 +228,7 @@ func sendSplitGroupMsg(line int, group int64, msg string) {
 		info = strings.TrimRight(info, "\n")
 		time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 		id := cqp.SendGroupMsg(group, info)
-		fmt.Printf("\nSend finish id:%d\n", id)
+		qlog.Printf("\nSend finish id:%d\n", id)
 		if cnt >= length {
 			break
 		}
@@ -246,7 +246,7 @@ func imgSendGroupMsg(group int64, msg string, pre, end string) {
 	filePath := text2img.DrawTextImg(info)
 	cqCode := fmt.Sprintf("[CQ:image,file=%s]", filePath)
 	id := cqp.SendGroupMsg(group, cqCode)
-	fmt.Printf("\nSend finish id:%d\n", id)
+	qlog.Printf("\nSend finish id:%d\n", id)
 }
 
 func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg string, font int32) int32 {
@@ -270,7 +270,7 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 
 	send := func() {
 		if len(ret) > 0 {
-			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
+			qlog.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
 			if !bot.IsSilent() {
 				lineCnt := getLineCnt(ret)
 				img := secret.GetGlobalValue("ImgMode", &secret.ImgMode{}).(*secret.ImgMode)

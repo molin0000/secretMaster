@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func calcInterest(bank *Bank) *Bank {
@@ -20,7 +22,7 @@ func calcInterest(bank *Bank) *Bank {
 		bank.Date = uint64(time.Now().Unix() / (3600 * 24))
 	}
 
-	fmt.Printf("%+v", bank)
+	qlog.Printf("%+v", bank)
 	return bank
 }
 

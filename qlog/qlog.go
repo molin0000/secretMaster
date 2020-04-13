@@ -38,3 +38,7 @@ func Println(msg ...interface{}) {
 	formatStr += "\n"
 	AddLog(Debug, "工作日志", fmt.Sprintf(formatStr, msg...))
 }
+
+func Printf(formatStr string, msg ...interface{}) {
+	AddLog(Debug, "工作日志", fmt.Sprintf(formatStr, msg...))
+}

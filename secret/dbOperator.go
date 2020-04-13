@@ -1,7 +1,6 @@
 package secret
 
 import (
-	"fmt"
 	"os"
 	"path"
 	"strconv"
@@ -20,7 +19,7 @@ func getDb() *leveldb.DB {
 	if db == nil {
 		_db, err := leveldb.OpenFile(path.Join("data", "app", "me.cqp.molin.secretMaster", "UserData.db"), nil)
 		if err != nil {
-			fmt.Printf("open db error: %+v", err)
+			qlog.Printf("open db error: %+v", err)
 			panic(err)
 		}
 		db = _db
@@ -105,7 +104,7 @@ func (b *Bot) getMoneyFromDb(fromQQ uint64, chatCnt uint64) *Money {
 func (b *Bot) setMoneyToDb(fromQQ uint64, m *Money) {
 	bind := b.getMoneyBind()
 	if bind.HasUpdate {
-		fmt.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
+		qlog.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
 		b.setMoneyToIni(fromQQ, m)
 		return
 	}
@@ -126,7 +125,7 @@ func (b *Bot) getMoneyFromIni(fromQQ uint64) *Money {
 	bind := b.getMoneyBind()
 	cfg, err := ini.Load(bind.IniPath)
 	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
+		qlog.Printf("Fail to read file: %v", err)
 		return &Money{Group: b.Group, QQ: fromQQ, Money: 0}
 	}
 	var amount uint64
@@ -139,7 +138,7 @@ func (b *Bot) getMoneyFromIni(fromQQ uint64) *Money {
 	}
 
 	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
+		qlog.Printf("Fail to read file: %v", err)
 		return &Money{Group: b.Group, QQ: fromQQ, Money: 0}
 	}
 
@@ -150,10 +149,10 @@ func (b *Bot) setMoneyToIni(fromQQ uint64, m *Money) {
 	bind := b.getMoneyBind()
 	cfg, err := ini.Load(bind.IniPath)
 	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
+		qlog.Printf("Fail to read file: %v", err)
 		return
 	}
-	fmt.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
+	qlog.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
 	if bind.Encode != "UTF8" {
 		cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).SetValue(strconv.FormatUint(m.Money, 10))
 		cfg.SaveTo(bind.IniPath)

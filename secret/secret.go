@@ -49,7 +49,7 @@ func init() {
 		careerSkills = append(careerSkills, cs)
 	}
 
-	fmt.Printf("共加载技能：%d\n", len(careerSkills))
+	qlog.Printf("共加载技能：%d\n", len(careerSkills))
 }
 
 func atoi(msg string) uint64 {
@@ -141,7 +141,7 @@ func (b *Bot) UpdateFromOldVersion(fromQQ uint64) string {
 		qlog.Println("老版本数据库已找到，准备升级", fromQQ)
 		_db, err := leveldb.OpenFile("secret.db", nil)
 		if err != nil {
-			fmt.Printf("open db error: %+v", err)
+			qlog.Printf("open db error: %+v", err)
 			return ""
 		}
 		defer _db.Close()

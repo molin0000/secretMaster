@@ -303,7 +303,7 @@ func (b *Bot) setLuck(fromQQ uint64, v int) {
 	e := b.getExternFromDb(fromQQ)
 	e.BaseLuck = uint64(v)
 	b.setExternToDb(fromQQ, e)
-	fmt.Printf("setLuck:%+v", *e)
+	qlog.Printf("setLuck:%+v", *e)
 }
 
 func (b *Bot) getLuck(fromQQ uint64) uint64 {

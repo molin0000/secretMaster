@@ -270,7 +270,7 @@ func (w *encbuf) toWriter(out io.Writer) (err error) {
 		// write string data after the last list header
 		_, err = out.Write(w.str[strpos:])
 	}
-	// fmt.Printf(hexutil.Encode(w.str))
+	// qlog.Printf(hexutil.Encode(w.str))
 
 	return err
 }
