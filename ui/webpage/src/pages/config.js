@@ -72,16 +72,16 @@ class Config extends Component {
       dataIndex: 'master',
       key: 'master',
     },
-    {
-      title: '操作',
-      dataIndex: 'operation',
-      key: 'operation',
-      render: (text, record) => (
-        <span>
-          <a href="/#">退群</a>
-        </span>
-      ),
-    },
+    // {
+    //   title: '操作',
+    //   dataIndex: 'operation',
+    //   key: 'operation',
+    //   render: (text, record) => (
+    //     <span>
+    //       <a href="/#">退群</a>
+    //     </span>
+    //   ),
+    // },
     {
       title: '开关',
       dataIndex: 'switch',

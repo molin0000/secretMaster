@@ -419,15 +419,15 @@ func PostGroupSilent(e echo.Context) (err error) {
 	return response(e, true, err)
 }
 
-func PostGroupExit(e echo.Context) (err error) {
-	p := &GroupOperate{}
-	if err := e.Bind(p); err != nil {
-		return response(e, false, err)
-	}
-	if !verifyPassword(0, p.Password) {
-		return response(e, "密码错误", err)
-	}
+// func PostGroupExit(e echo.Context) (err error) {
+// 	p := &GroupOperate{}
+// 	if err := e.Bind(p); err != nil {
+// 		return response(e, false, err)
+// 	}
+// 	if !verifyPassword(0, p.Password) {
+// 		return response(e, "密码错误", err)
+// 	}
 
-	cqp.SetGroupLeave(int64(p.Group), false)
-	return response(e, true, err)
-}
+// 	cqp.SetGroupLeave(int64(p.Group), false)
+// 	return response(e, true, err)
+// }

@@ -38,7 +38,7 @@ func loadRoutes(e *echo.Echo) {
 	e.Add("POST", "/globalSilent", PostGlobalSilent)
 	e.Add("POST", "/groupSwitch", PostGroupSwitch)
 	e.Add("POST", "/groupSilent", PostGroupSilent)
-	e.Add("POST", "/groupExit", PostGroupExit)
+	// e.Add("POST", "/groupExit", PostGroupExit)
 }
 
 func newEchoServer() *echo.Echo {
