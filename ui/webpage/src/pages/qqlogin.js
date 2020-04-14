@@ -20,7 +20,6 @@ class QQLogin extends Component {
     }
 
     let ret = await apiPost('password', { qq: Number(this.state.qq), password: this.state.password });
-    console.log(ret);
     if (ret.data.data !== true) {
       message.error("口令错误！");
       return;

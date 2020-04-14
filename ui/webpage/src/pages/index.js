@@ -48,9 +48,7 @@ class Home extends Component {
       password: this.state.password,
       msg
     }
-    console.log("msg:", data);
     apiAsyncPost('chat', data, (res) => {
-      console.log(res);
       let info = this.state.reply;
       this.setState({ reply: info + "\n------" + this.formatTime(new Date()) + "-------\n" + res.data.data.Msg });
       var ta = document.getElementById('textArea');

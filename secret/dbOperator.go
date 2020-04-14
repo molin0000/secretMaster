@@ -294,12 +294,20 @@ func (b *Bot) personKey(keyPrefix string, fromQQ uint64) []byte {
 	return []byte(keyPrefix + "_" + strconv.FormatInt(int64(b.Group), 10) + "_" + strconv.FormatInt(int64(fromQQ), 10))
 }
 
+func (b *Bot) SetPersonValue(keyPrefix string, fromQQ uint64, p interface{}) {
+	b.setPersonValue(keyPrefix, fromQQ, p)
+}
+
 func (b *Bot) setPersonValue(keyPrefix string, fromQQ uint64, p interface{}) {
 	buf, err := rlp.EncodeToBytes(p)
 	if err != nil {
 		qlog.Println(err)
 	}
 	getDb().Put(b.personKey(keyPrefix, fromQQ), buf, nil)
+}
+
+func (b *Bot) GetPersonValue(keyPrefix string, fromQQ uint64, defaultValue interface{}) interface{} {
+	return b.getPersonValue(keyPrefix, fromQQ, defaultValue)
 }
 
 func (b *Bot) getPersonValue(keyPrefix string, fromQQ uint64, defaultValue interface{}) interface{} {

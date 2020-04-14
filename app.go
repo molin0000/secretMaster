@@ -20,7 +20,7 @@ import (
 
 //go:generate cqcfg -c .
 // cqp: 名称: 序列战争
-// cqp: 版本: 3.3.5:1
+// cqp: 版本: 3.3.6:1
 // cqp: 作者: molin
 // cqp: 简介: 专为诡秘之主粉丝序列群开发的小游戏
 func main() { /*此处应当留空*/ }
@@ -32,7 +32,7 @@ func init() {
 	rand.Seed(time.Now().Unix())
 	cqp.Enable = Enable
 	cqp.Disable = Disable
-	ui.StartUI()
+	go ui.StartUI()
 }
 
 func addLog(p int32, logType, reason string) int32 {
@@ -46,7 +46,7 @@ func Enable() int32 {
 	qlog.Println(dir, err)
 
 	qlog.Println("序列战争 Enable")
-	backend.StartServer(GetGroupInfoList)
+	go backend.StartServer(GetGroupInfoList)
 	return 0
 }
 
@@ -261,29 +261,30 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 		}
 	}()
 
-	selfQQ := cqp.GetLoginQQ()
-	if !secret.TalkToMe(msg, selfQQ) {
-		found, money, exp, magic := secret.CheckActivities(msg)
-		if found {
-			b := &secret.Bot{}
-			b.Group = uint64(fromGroup)
-			b.SetMoney(uint64(fromQQ), int(money))
-			b.SetExp(uint64(fromQQ), int(exp))
-			b.SetMagic(uint64(fromQQ), int(magic))
-		}
-		return 0
-	}
-
 	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
 	if !sw.Enable {
 		return 0
 	}
+
+	selfQQ := cqp.GetLoginQQ()
 
 	qlog.Println("Group msg:", msg)
 	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, false)
 	selfInfo := cqp.GetGroupMemberInfo(fromGroup, selfQQ, false)
 	bot := secret.NewSecretBot(uint64(selfQQ), uint64(fromGroup), selfInfo.Name, false, &interact.Interact{})
 	ret := ""
+
+	found, money, exp, magic, reply := secret.CheckActivities(msg, fromQQ, fromGroup)
+	qlog.Println(found, money, exp, magic, reply)
+
+	if found {
+		b := bot
+		b.Group = uint64(fromGroup)
+		b.SetMoney(uint64(fromQQ), int(money))
+		b.SetExp(uint64(fromQQ), int(exp))
+		b.SetMagic(uint64(fromQQ), int(magic))
+		normalSendGroupMsg(fromGroup, reply)
+	}
 
 	send := func() {
 		if len(ret) > 0 {

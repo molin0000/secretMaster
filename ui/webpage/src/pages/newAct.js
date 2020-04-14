@@ -44,10 +44,8 @@ class NewAct extends Component {
     };
 
     data.activities.push(value);
-    console.log('data', data);
 
     let ret = await apiPost('activities', data);
-    console.log('ret', ret.data.data);
     if (ret.data.data === true) {
       message.success("保存成功");
       router.push("/config")
@@ -70,7 +68,6 @@ class NewAct extends Component {
             <Option value="每周">每周</Option>
             <Option value="每月">每月</Option>
             <Option value="每年">每年</Option>
-            <Option value="单次">单次</Option>
             <Option value="每人一次">每人一次</Option>
           </Select>
           <div className={styles.title}>金镑：</div>

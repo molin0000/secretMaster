@@ -69,8 +69,6 @@ class Config extends Component {
         <span>
           <Switch checkedChildren="开" unCheckedChildren="关" checked={text} onChange={
             async (e) => {
-              console.log(e);
-              console.log('record', record);
               let ret = this.onSave('groupSwitch', { group: record.group, value: e, password: global.adminPassword });
               if (ret) {
                 let group = Object.assign({}, this.state.group);
@@ -95,8 +93,6 @@ class Config extends Component {
         <span>
           <Switch checkedChildren="开" unCheckedChildren="关" checked={text} onChange={
             async (e) => {
-              console.log(e);
-              console.log('record', record);
               let ret = this.onSave('groupSilent', { group: record.group, value: e, password: global.adminPassword });
               if (ret) {
                 let group = Object.assign({}, this.state.group);
@@ -164,7 +160,6 @@ class Config extends Component {
       render: (text, record) =>
         this.state.activities.activities.length >= 1 ? (
           <Popconfirm title="确认要删除?" onConfirm={async () => {
-            console.log(text, record);
             let activities = Object.assign({}, this.state.activities);
             for (let i = 0; i < activities.activities.length; i++) {
               if (activities.activities[i].keyWord === record.keyWord) {
@@ -187,11 +182,29 @@ class Config extends Component {
     },
     {
       title: '开关',
-      dataIndex: 'switch',
-      key: 'switch',
-      render: (text, record) => (
+      dataIndex: 'enable',
+      key: 'enable',
+      render: (text, record, index) => (
         <span>
-          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+          <Switch checkedChildren="开" unCheckedChildren="关" checked={text} onChange={
+            async (e) => {
+              let activities = Object.assign({}, this.state.activities);
+              for (let i = 0; i < activities.activities.length; i++) {
+                if (activities.activities[i].keyWord === record.keyWord) {
+                  activities.activities[i].enable = e
+                  let ret = await apiPost('activities', activities);
+                  if (ret.data.data === true) {
+                    message.success("切换成功");
+                    this.setState({ activities });
+                    return;
+                  } else {
+                    message.error('切换失败');
+                    return;
+                  }
+                }
+              }
+            }
+          } />
         </span>
       ),
     },
@@ -210,32 +223,26 @@ class Config extends Component {
     }
 
     apiAsyncGet('count', (res) => {
-      console.log(res.data.data);
       this.setState({ count: res.data.data });
     });
 
     apiAsyncGet('group', (res) => {
-      console.log(res.data.data);
       this.setState({ group: res.data.data });
     });
 
     apiAsyncGet('supermaster', (res) => {
-      console.log(res.data.data);
       this.setState({ supermaster: res.data.data });
     });
 
     apiAsyncGet('delay', (res) => {
-      console.log(res.data.data);
       this.setState({ delay: res.data.data.DelayMs });
     });
 
     apiAsyncGet('imageMode', (res) => {
-      console.log(res.data.data);
       this.setState({ imageMode: res.data.data });
     });
 
     apiAsyncGet('textSegment', (res) => {
-      console.log(res.data.data);
       this.setState({ textSegment: res.data.data });
     });
 
@@ -243,7 +250,6 @@ class Config extends Component {
       if (res.data.data.activities == null) {
         res.data.data.activities = [];
       }
-      console.log(res.data.data);
       this.setState({ activities: res.data.data });
     });
 
@@ -264,14 +270,12 @@ class Config extends Component {
   }
 
   onSave = async (path, data) => {
-    console.log(data);
     let ret = await apiPost(path, data);
     if (ret.data.data === true) {
       message.success("保存成功");
       return true;
     }
     message.error("保存失败");
-    console.log(ret);
     return false;
   }
 
@@ -303,7 +307,6 @@ class Config extends Component {
               <div className={styles.text} style={{ marginLeft: "360px" }}>全局开关：</div>
               <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSwitch} onChange={
                 async (e) => {
-                  console.log(e);
                   let ret = await this.onSave('globalSwitch', { group: 0, value: e, password: global.adminPassword });
                   if (ret) {
                     let group = Object.assign({}, this.state.group);
@@ -315,7 +318,6 @@ class Config extends Component {
               <div className={styles.text} style={{ marginLeft: "30px" }}>全局静默：</div>
               <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSilence} onChange={
                 async (e) => {
-                  console.log(e);
                   let ret = await this.onSave('globalSilent', { group: 0, value: e, password: global.adminPassword });
                   if (ret) {
                     let group = Object.assign({}, this.state.group);
@@ -380,7 +382,6 @@ class Config extends Component {
               <div className={styles.text} style={{ marginLeft: "25px" }}>全局开关：</div>
               <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.activities.globalSwitch} onChange={
                 async (e) => {
-                  console.log(e);
                   let activities = Object.assign({}, this.state.activities);
                   activities.globalSwitch = e;
                   let ret = await this.onSave('activities', activities);

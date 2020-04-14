@@ -12,7 +12,6 @@ class About extends Component {
 
   async componentWillMount() {
     let ret = await apiGet('version');
-    console.log(ret);
     this.setState({ version: ret.data.data.Version });
   }
 

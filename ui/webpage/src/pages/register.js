@@ -39,7 +39,6 @@ class Register extends Component {
       qq: 0,
       password: this.state.password
     });
-    console.log(ret);
     message.success("密码设置成功！");
     router.push('/config');
   }
