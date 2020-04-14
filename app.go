@@ -261,6 +261,19 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 		}
 	}()
 
+	selfQQ := cqp.GetLoginQQ()
+	if !secret.TalkToMe(msg, selfQQ) {
+		found, money, exp, magic := secret.CheckActivities(msg)
+		if found {
+			b := &secret.Bot{}
+			b.Group = uint64(fromGroup)
+			b.SetMoney(uint64(fromQQ), int(money))
+			b.SetExp(uint64(fromQQ), int(exp))
+			b.SetMagic(uint64(fromQQ), int(magic))
+		}
+		return 0
+	}
+
 	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
 	if !sw.Enable {
 		return 0
@@ -268,9 +281,8 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 
 	qlog.Println("Group msg:", msg)
 	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, false)
-	selfQQ := cqp.GetLoginQQ()
 	selfInfo := cqp.GetGroupMemberInfo(fromGroup, selfQQ, false)
-	bot := secret.NewSecretBot(uint64(cqp.GetLoginQQ()), uint64(fromGroup), selfInfo.Name, false, &interact.Interact{})
+	bot := secret.NewSecretBot(uint64(selfQQ), uint64(fromGroup), selfInfo.Name, false, &interact.Interact{})
 	ret := ""
 
 	send := func() {

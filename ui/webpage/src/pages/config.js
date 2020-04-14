@@ -166,13 +166,13 @@ class Config extends Component {
           <Popconfirm title="确认要删除?" onConfirm={async () => {
             console.log(text, record);
             let activities = Object.assign({}, this.state.activities);
-            for (let i=0; i<activities.activities.length; i++) {
+            for (let i = 0; i < activities.activities.length; i++) {
               if (activities.activities[i].keyWord === record.keyWord) {
                 activities.activities.splice(i, 1);
                 let ret = await apiPost('activities', activities);
                 if (ret.data.data === true) {
                   message.success("删除成功");
-                  this.setState({activities});
+                  this.setState({ activities });
                   return;
                 } else {
                   message.error('删除失败');
@@ -304,7 +304,7 @@ class Config extends Component {
               <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSwitch} onChange={
                 async (e) => {
                   console.log(e);
-                  let ret = this.onSave('globalSwitch', { group: 0, value: e, password: global.adminPassword });
+                  let ret = await this.onSave('globalSwitch', { group: 0, value: e, password: global.adminPassword });
                   if (ret) {
                     let group = Object.assign({}, this.state.group);
                     group.globalSwitch = e;
@@ -316,7 +316,7 @@ class Config extends Component {
               <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSilence} onChange={
                 async (e) => {
                   console.log(e);
-                  let ret = this.onSave('globalSilent', { group: 0, value: e, password: global.adminPassword });
+                  let ret = await this.onSave('globalSilent', { group: 0, value: e, password: global.adminPassword });
                   if (ret) {
                     let group = Object.assign({}, this.state.group);
                     group.globalSilence = e;
@@ -337,8 +337,8 @@ class Config extends Component {
               }
               } />
               <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
-              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.imageMode.enable} onChange={e => {
-                let ret = this.onSave('imageMode', { enable: e, lines: Number(this.state.imageMode.lines) });
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.imageMode.enable} onChange={async e => {
+                let ret = await this.onSave('imageMode', { enable: e, lines: Number(this.state.imageMode.lines) });
                 if (ret) {
                   let imageMode = Object.assign({}, this.state.imageMode);
                   imageMode.enable = e;
@@ -359,8 +359,8 @@ class Config extends Component {
               }
               } />
               <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
-              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.textSegment.enable} onChange={e => {
-                let ret = this.onSave('textSegment', { enable: e, lines: Number(this.state.textSegment.lines) });
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.textSegment.enable} onChange={async e => {
+                let ret = await this.onSave('textSegment', { enable: e, lines: Number(this.state.textSegment.lines) });
                 if (ret) {
                   let textSegment = Object.assign({}, this.state.textSegment);
                   textSegment.enable = e;
@@ -378,7 +378,17 @@ class Config extends Component {
               }
               }>新增</Button>
               <div className={styles.text} style={{ marginLeft: "25px" }}>全局开关：</div>
-              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.activities.globalSwitch} />
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.activities.globalSwitch} onChange={
+                async (e) => {
+                  console.log(e);
+                  let activities = Object.assign({}, this.state.activities);
+                  activities.globalSwitch = e;
+                  let ret = await this.onSave('activities', activities);
+                  if (ret) {
+                    this.setState({ activities });
+                  }
+                }
+              } />
             </div>
             <Table columns={this.activitiesColumns} dataSource={this.state.activities.activities} size="small" />
           </Card>

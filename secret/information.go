@@ -266,6 +266,18 @@ func (b *Bot) getExp(fromQQ uint64) uint64 {
 	return person.ChatCount
 }
 
+func (b *Bot) SetMoney(fromQQ uint64, v int) {
+	b.setMoney(fromQQ, v)
+}
+
+func (b *Bot) SetExp(fromQQ uint64, v int) {
+	b.setExp(fromQQ, v)
+}
+
+func (b *Bot) SetMagic(fromQQ uint64, v int) {
+	b.setMagic(fromQQ, v)
+}
+
 func (b *Bot) setMoney(fromQQ uint64, v int) {
 	money := b.getMoneyFromDb(fromQQ, 0)
 	if v >= 0 {

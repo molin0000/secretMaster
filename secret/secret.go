@@ -597,6 +597,20 @@ func (b *Bot) talkToMe(msg string) bool {
 	return false
 }
 
+func TalkToMe(msg string, qq int64) bool {
+	if len(msg) == 0 {
+		return false
+	}
+
+	cp := fmt.Sprintf("CQ:at,qq=%d", qq)
+
+	if strings.Index(msg, cp) != -1 {
+		return true
+	}
+
+	return false
+}
+
 func (b *Bot) getVersion() string {
 	v := b.getGroupValue("Version", &Version{"", "", ""}).(*Version)
 	if v.Version == "" {

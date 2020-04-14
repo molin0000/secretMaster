@@ -23,3 +23,18 @@ func GetActivities() *ActivityState {
 func SetActivities(activites *ActivityState) {
 	SetGlobalValue("Activities", activites)
 }
+
+func CheckActivities(msg string) (found bool, money, exp, magic uint64) {
+	as := GetActivities()
+	if !as.GlobalSwitch {
+		return false, 0, 0, 0
+	}
+
+	for _, v := range as.Activities {
+		if v.Enable && msg == v.KeyWord {
+			return true, v.Money, v.Exp, v.Magic
+		}
+	}
+
+	return false, 0, 0, 0
+}
