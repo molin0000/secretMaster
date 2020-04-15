@@ -32,7 +32,6 @@ func init() {
 	rand.Seed(time.Now().Unix())
 	cqp.Enable = Enable
 	cqp.Disable = Disable
-	go ui.StartUI()
 }
 
 func addLog(p int32, logType, reason string) int32 {
@@ -41,17 +40,17 @@ func addLog(p int32, logType, reason string) int32 {
 
 func Enable() int32 {
 	qlog.HandleLog(addLog)
-
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	qlog.Println(dir, err)
-
 	qlog.Println("序列战争 Enable")
-	go backend.StartServer(GetGroupInfoList)
+	backend.StartServer(GetGroupInfoList)
+	ui.StartUI()
 	return 0
 }
 
 func Disable() int32 {
 	qlog.Println("序列战争 Disable")
+	ui.StopUI()
 	backend.StopServer()
 	return 0
 }

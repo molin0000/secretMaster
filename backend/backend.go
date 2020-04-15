@@ -60,7 +60,14 @@ func newEchoServer() *echo.Echo {
 var echoServer *echo.Echo
 var httpServer *http.Server
 
+func recoverFunc() {
+	if err := recover(); err != nil {
+		qlog.Println(err) // 这里的err其实就是panic传入的内容
+	}
+}
+
 func StartServer(getGroup func() []*GroupInfo) {
+	defer recoverFunc()
 	qlog.Println("后台服务启动...")
 	GetGroupInfoList = getGroup
 	e := newEchoServer()
@@ -74,31 +81,28 @@ func StartServer(getGroup func() []*GroupInfo) {
 	httpServer = s
 
 	go func() {
+		defer recoverFunc()
 		if err := e.StartServer(s); err != nil {
-			qlog.Printf("shutting down the server: %v", err)
-			// panic(err)
+			qlog.Printf("StartServer error: %v", err)
 		}
 	}()
 
 	qlog.Println("后台服务启动完成...")
-
-	// <-ctx.Done()
-	// if err := e.Shutdown(ctx); err != nil {
-	// 	e.Logger.Fatal(err)
-	// }
 }
 
 func StopServer() {
+	defer recoverFunc()
 	qlog.Println("后台服务准备停止")
 	ctx, stop := context.WithCancel(context.Background())
 	stop()
+	echoServer.Shutdown(ctx)
 	httpServer.Shutdown(ctx)
-	if err := echoServer.Shutdown(ctx); err != nil {
-		echoServer.Logger.Fatal(err)
-	}
-	httpServer.Close()
-	echoServer.Listener.Close()
-	echoServer.Server.Close()
-	echoServer.Close()
+	// if err := echoServer.Shutdown(ctx); err != nil {
+	// 	echoServer.Logger.Fatal(err)
+	// }
+	// httpServer.Close()
+	// echoServer.Listener.Close()
+	// echoServer.Server.Close()
+	// echoServer.Close()
 	qlog.Println("后台服务停止完毕")
 }
