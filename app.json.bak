@@ -1,0 +1,48 @@
+{
+	"ret": 1,
+	"apiver": 9,
+	"appid": "me.cqp.molin.secretmaster",
+	"name": "序列战争",
+	"version": "3.2.4",
+	"version_id": 272,
+	"author": "molin",
+	"description": "专为诡秘之主粉丝序列群开发的小游戏",
+	"event": [
+		{
+			"name": "私聊消息",
+			"function": "EVENT_ON_PRIVATE_MSG",
+			"type": 21,
+			"priority": 20000,
+			"id": 1
+		},
+		{
+			"name": "群消息",
+			"function": "EVENT_ON_GROUP_MSG",
+			"type": 2,
+			"priority": 20000,
+			"id": 2
+		},
+		{
+			"name": "私聊消息",
+			"function": "EVENT_ON_PRIVATE_MSG",
+			"type": 21,
+			"priority": 20000,
+			"id": 1
+		},
+		{
+			"name": "群消息",
+			"function": "EVENT_ON_GROUP_MSG",
+			"type": 2,
+			"priority": 20000,
+			"id": 2
+		}
+	],
+	"auth": [
+		101,
+		130,
+		132,
+		106
+	],
+	"menu": [],
+	"status": []
+}
