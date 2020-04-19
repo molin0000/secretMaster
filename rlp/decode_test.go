@@ -26,6 +26,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func TestStreamKind(t *testing.T) {
@@ -703,9 +705,9 @@ func ExampleDecode() {
 	var s example
 	err := Decode(bytes.NewReader(input), &s)
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+		qlog.Printf("Error: %v\n", err)
 	} else {
-		fmt.Printf("Decoded value: %#v\n", s)
+		qlog.Printf("Decoded value: %#v\n", s)
 	}
 	// Output:
 	// Decoded value: rlp.example{A:0xa, B:0x14, private:0x0, String:"foobar"}
@@ -723,7 +725,7 @@ func ExampleDecode_structTagNil() {
 		String *string
 	}
 	Decode(bytes.NewReader(input), &normalRules)
-	fmt.Printf("normal: String = %q\n", *normalRules.String)
+	qlog.Printf("normal: String = %q\n", *normalRules.String)
 
 	// This type uses the struct tag.
 	// The empty input string is decoded as a nil pointer.
@@ -731,7 +733,7 @@ func ExampleDecode_structTagNil() {
 		String *string `rlp:"nil"`
 	}
 	Decode(bytes.NewReader(input), &withEmptyOK)
-	fmt.Printf("with nil tag: String = %v\n", withEmptyOK.String)
+	qlog.Printf("with nil tag: String = %v\n", withEmptyOK.String)
 
 	// Output:
 	// normal: String = ""
@@ -744,22 +746,22 @@ func ExampleStream() {
 
 	// Check what kind of value lies ahead
 	kind, size, _ := s.Kind()
-	fmt.Printf("Kind: %v size:%d\n", kind, size)
+	qlog.Printf("Kind: %v size:%d\n", kind, size)
 
 	// Enter the list
 	if _, err := s.List(); err != nil {
-		fmt.Printf("List error: %v\n", err)
+		qlog.Printf("List error: %v\n", err)
 		return
 	}
 
 	// Decode elements
-	fmt.Println(s.Uint())
-	fmt.Println(s.Uint())
-	fmt.Println(s.Bytes())
+	qlog.Println(s.Uint())
+	qlog.Println(s.Uint())
+	qlog.Println(s.Bytes())
 
 	// Acknowledge end of list
 	if err := s.ListEnd(); err != nil {
-		fmt.Printf("ListEnd error: %v\n", err)
+		qlog.Printf("ListEnd error: %v\n", err)
 	}
 	// Output:
 	// Kind: List size:9

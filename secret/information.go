@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
@@ -92,7 +93,7 @@ func (b *Bot) deletePerson(fromQQ uint64) string {
 			iter.Release()
 			err := iter.Error()
 			if err != nil {
-				fmt.Println(err)
+				qlog.Println(err)
 			}
 			break
 		}
@@ -209,7 +210,7 @@ func (b *Bot) getRank(fromQQ uint64) string {
 	iter.Release()
 	err := iter.Error()
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 	}
 
 	retValue := ""
@@ -265,6 +266,18 @@ func (b *Bot) getExp(fromQQ uint64) uint64 {
 	return person.ChatCount
 }
 
+func (b *Bot) SetMoney(fromQQ uint64, v int) {
+	b.setMoney(fromQQ, v)
+}
+
+func (b *Bot) SetExp(fromQQ uint64, v int) {
+	b.setExp(fromQQ, v)
+}
+
+func (b *Bot) SetMagic(fromQQ uint64, v int) {
+	b.setMagic(fromQQ, v)
+}
+
 func (b *Bot) setMoney(fromQQ uint64, v int) {
 	money := b.getMoneyFromDb(fromQQ, 0)
 	if v >= 0 {
@@ -302,7 +315,7 @@ func (b *Bot) setLuck(fromQQ uint64, v int) {
 	e := b.getExternFromDb(fromQQ)
 	e.BaseLuck = uint64(v)
 	b.setExternToDb(fromQQ, e)
-	fmt.Printf("setLuck:%+v", *e)
+	qlog.Printf("setLuck:%+v", *e)
 }
 
 func (b *Bot) getLuck(fromQQ uint64) uint64 {
@@ -312,7 +325,7 @@ func (b *Bot) getLuck(fromQQ uint64) uint64 {
 		e.BaseLuck = 0
 		b.setExternToDb(fromQQ, e)
 	}
-	fmt.Println("baseLuck", e.BaseLuck, "addLuck", b.getAdditionLucky(fromQQ))
+	qlog.Println("baseLuck", e.BaseLuck, "addLuck", b.getAdditionLucky(fromQQ))
 	return e.BaseLuck + b.getAdditionLucky(fromQQ)
 }
 

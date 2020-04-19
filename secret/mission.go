@@ -1,11 +1,11 @@
 package secret
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/molin0000/secretMaster/mission"
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func (b *Bot) checkMission(fromQQ uint64, msg string) string {
@@ -33,7 +33,7 @@ func (b *Bot) checkMission(fromQQ uint64, msg string) string {
 		}
 	}
 
-	fmt.Println("event:", ms.Ms.Event)
+	qlog.Println("event:", ms.Ms.Event)
 	msg, finish := ms.Ms.SelectOption(int(ms.Ms.Event), selection)
 
 	if finish {

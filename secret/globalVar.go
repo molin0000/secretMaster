@@ -1,6 +1,8 @@
 package secret
 
-import "path"
+import (
+	"github.com/molin0000/secretMaster/config"
+)
 
 var secretInfo = [...]SecretInfo{
 	{SecretName: "黑夜", SecretLevelName: [10]string{"不眠者", "午夜诗人", "梦魇", "安魂师", "灵巫", "守夜人", "恐惧主教", "隐秘之仆", "厄难骑士", "黑暗"}},
@@ -282,6 +284,7 @@ var menus = Menu{
 			{83, "数值修复", "修复群内异常的幸运数值，将GM加的幸运归零。", "", nil},
 			{84, "图片模式", "使用酷QPro的可以选择回复消息行数超过多少行转为图片模式回复。格式：图片模式;行数 如果想取消，请把行数设成2000", "", nil},
 			{85, "文字分段", "可以选择回复消息行数超过多少行时拆分多条消息回复（默认5行）。格式：文字分段;行数 如果想取消，请把行数设成2000", "", nil},
+			{86, "口令", "可设置网页版聊天的登录口令，必须先设置口令才能使用网页版, 此口令多个群通用。格式：口令;345678", "", nil},
 		}},
 		{1, "资料", "回复 资料 可显示与人物信息相关的指令。", "", []Menu{
 			{11, "属性", "回复 属性 可查询当前人物的属性信息。", "", nil},
@@ -305,7 +308,7 @@ var menus = Menu{
 			{34, "加入", "回复 加入;名称 可加入现有的教会或隐秘组织。", "", nil},
 			{35, "退出", "回复 退出 可退出当前已经加入的组织。", "", nil},
 			{36, "祈祷", "回复 祈祷 可消耗1份灵力材料，得到3天的神灵庇护。(可使用教会技能，信徒每次祈祷为教主增加10点经验)", "", nil},
-			{37,"更改", "回复 更改 可更改教会入会费，格式为：更改；组织名称;组织简介;技能名称;入会费", "", nil},
+			{37, "更改", "回复 更改 可更改教会入会费，格式为：更改；组织名称;组织简介;技能名称;入会费", "", nil},
 		}},
 		{4, "商店", "回复 商店 可查看神秘黑市的商品清单。", "欢迎光临星火之潮贝克兰德分店，请在浏览商品时，戴好您的斗篷和面具（找到想要购买的商品后，只需要回复购买加商品名称即可，如：购买探险卷轴）", []Menu{
 			{41, "探险卷轴", "（50金镑）走内部渠道，可立即开始1次探险。", "", nil},
@@ -389,8 +392,8 @@ var fishList = []Fish{
 
 var careerSkills []*CareerSkill
 
-var careerSkillPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "skills.xlsx")
+var careerSkillPath = config.SkillPath
 
-var missionPath = path.Join("data", "app", "me.cqp.molin.secretMaster", "mission")
+var missionPath = config.MissionPath
 
-var version = &Version{"序列战争", "v3.2.5", "2020-04-04"}
+var version = &Version{"序列战争", "v3.3.6", "2020-04-14"}

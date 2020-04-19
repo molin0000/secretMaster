@@ -1,11 +1,11 @@
 package secret
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/molin0000/secretMaster/calculator"
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func (b *Bot) checkCalc(fromQQ uint64, msg string) string {
@@ -57,6 +57,6 @@ func (b *Bot) startCalc(fromQQ uint64, msg string) string {
 	mg := calculator.NewCalcGame()
 	info := mg.Start()
 	b.setPersonValue("Calc", fromQQ, &CalcState{true, mg})
-	fmt.Printf("%+v", *mg)
+	qlog.Printf("%+v", *mg)
 	return info
 }

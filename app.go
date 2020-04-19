@@ -3,19 +3,24 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
+	"github.com/molin0000/secretMaster/backend"
 	"github.com/molin0000/secretMaster/interact"
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/secret"
 	"github.com/molin0000/secretMaster/text2img"
+	"github.com/molin0000/secretMaster/ui"
 )
 
 //go:generate cqcfg -c .
 // cqp: 名称: 序列战争
-// cqp: 版本: 3.2.5:1
+// cqp: 版本: 3.3.6:1
 // cqp: 作者: molin
 // cqp: 简介: 专为诡秘之主粉丝序列群开发的小游戏
 func main() { /*此处应当留空*/ }
@@ -25,6 +30,29 @@ func init() {
 	cqp.PrivateMsg = onPrivateMsg
 	cqp.GroupMsg = onGroupMsg
 	rand.Seed(time.Now().Unix())
+	cqp.Enable = Enable
+	cqp.Disable = Disable
+}
+
+func addLog(p int32, logType, reason string) int32 {
+	return cqp.AddLog(cqp.Priority(p), logType, reason)
+}
+
+func Enable() int32 {
+	qlog.HandleLog(addLog)
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	qlog.Println(dir, err)
+	qlog.Println("序列战争 Enable")
+	backend.StartServer(GetGroupInfoList)
+	ui.StartUI()
+	return 0
+}
+
+func Disable() int32 {
+	qlog.Println("序列战争 Disable")
+	ui.StopUI()
+	backend.StopServer()
+	return 0
 }
 
 func normalSendPrivateMsg(qq int64, msg string) {
@@ -32,7 +60,7 @@ func normalSendPrivateMsg(qq int64, msg string) {
 	info := strings.TrimRight(msg, "\n")
 	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 	id := cqp.SendPrivateMsg(qq, info)
-	fmt.Printf("\nSend finish id:%d\n", id)
+	qlog.Printf("\nSend finish id:%d\n", id)
 }
 
 func sendSplitPrivateMsg(line int, qq int64, msg string) {
@@ -53,7 +81,7 @@ func sendSplitPrivateMsg(line int, qq int64, msg string) {
 		info = strings.TrimRight(info, "\n")
 		time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 		id := cqp.SendPrivateMsg(qq, info)
-		fmt.Printf("\nSend finish id:%d\n", id)
+		qlog.Printf("\nSend finish id:%d\n", id)
 		if cnt >= length {
 			break
 		}
@@ -71,12 +99,16 @@ func imgSendPrivateMsg(qq int64, msg string, pre, end string) {
 	filePath := text2img.DrawTextImg(info)
 	cqCode := fmt.Sprintf("[CQ:image,file=%s]", filePath)
 	id := cqp.SendPrivateMsg(qq, pre+cqCode+end)
-	fmt.Printf("\nSend finish id:%d\n", id)
+	qlog.Printf("\nSend finish id:%d\n", id)
 }
 
 func getLineCnt(msg string) int {
 	strs := strings.Split(msg, "\n")
 	return len(strs)
+}
+
+func ProcPrivateMsg(fromQQ int64, msg string) {
+	procOldPrivateMsg(fromQQ, msg)
 }
 
 func procOldPrivateMsg(fromQQ int64, msg string) int {
@@ -89,7 +121,7 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 	fromGroup := int64(value)
 	msg = strArray[0]
 
-	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, true)
+	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, false)
 	selfQQ := cqp.GetLoginQQ()
 	selfInfo := cqp.GetGroupMemberInfo(fromGroup, selfQQ, false)
 	bot := secret.NewSecretBot(uint64(cqp.GetLoginQQ()), uint64(fromGroup), selfInfo.Name, true, &interact.Interact{})
@@ -97,7 +129,7 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 
 	send := func() {
 		if len(ret) > 0 {
-			fmt.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
+			qlog.Printf("\nSend private msg:%d, %s\n", fromGroup, ret)
 			lineCnt := getLineCnt(ret)
 			img := secret.GetGlobalValue("ImgMode", &secret.ImgMode{}).(*secret.ImgMode)
 			foldLine := secret.GetGlobalValue("FoldLineMode", &secret.FoldLineMode{Enable: true, Lines: 5}).(*secret.FoldLineMode)
@@ -113,10 +145,10 @@ func procOldPrivateMsg(fromQQ int64, msg string) int {
 
 	update := func() {
 		if len(msg) > 9 {
-			fmt.Println(msg, "大于3", len(msg))
+			qlog.Println(msg, "大于3", len(msg))
 			ret = bot.Update(uint64(fromQQ), GetGroupNickName(&info))
 		} else {
-			fmt.Println(msg, "小于3", len(msg))
+			qlog.Println(msg, "小于3", len(msg))
 		}
 	}
 
@@ -131,18 +163,23 @@ func procPrivateMsg(fromQQ int64, msg string) {
 	strArray := strings.Split(msg, ";")
 	n0, _ := strconv.ParseUint(strArray[0], 10, 64)
 	n1, _ := strconv.ParseUint(strArray[1], 10, 64)
-	fmt.Println(n0, n1)
-	fmt.Println(isPersonInGroup(n0, n1))
+	qlog.Println(n0, n1)
+	qlog.Println(isPersonInGroup(n0, n1))
 }
 
 func onPrivateMsg(subType, msgID int32, fromQQ int64, msg string, font int32) int32 {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println(err) // 这里的err其实就是panic传入的内容
+			qlog.Println(err) // 这里的err其实就是panic传入的内容
 		}
 	}()
 
-	fmt.Println("Private msg:", msg, fromQQ)
+	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
+	if !sw.Enable {
+		return 0
+	}
+
+	qlog.Println("Private msg:", msg, fromQQ)
 
 	if strings.Contains(msg, "广播") {
 		broadcast(uint64(fromQQ), msg)
@@ -174,7 +211,7 @@ func normalSendGroupMsg(group int64, msg string) {
 	info := strings.TrimRight(msg, "\n")
 	time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 	id := cqp.SendGroupMsg(group, info)
-	fmt.Printf("\nSend finish id:%d\n", id)
+	qlog.Printf("\nSend finish id:%d\n", id)
 }
 
 func sendSplitGroupMsg(line int, group int64, msg string) {
@@ -195,7 +232,7 @@ func sendSplitGroupMsg(line int, group int64, msg string) {
 		info = strings.TrimRight(info, "\n")
 		time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 		id := cqp.SendGroupMsg(group, info)
-		fmt.Printf("\nSend finish id:%d\n", id)
+		qlog.Printf("\nSend finish id:%d\n", id)
 		if cnt >= length {
 			break
 		}
@@ -213,26 +250,44 @@ func imgSendGroupMsg(group int64, msg string, pre, end string) {
 	filePath := text2img.DrawTextImg(info)
 	cqCode := fmt.Sprintf("[CQ:image,file=%s]", filePath)
 	id := cqp.SendGroupMsg(group, cqCode)
-	fmt.Printf("\nSend finish id:%d\n", id)
+	qlog.Printf("\nSend finish id:%d\n", id)
 }
 
 func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg string, font int32) int32 {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println(err) // 这里的err其实就是panic传入的内容
+			qlog.Println(err) // 这里的err其实就是panic传入的内容
 		}
 	}()
 
-	fmt.Println("Group msg:", msg)
-	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, true)
+	sw := secret.GetGlobalValue("GlobalSwitch", &secret.GlobalSwitch{Enable: true}).(*secret.GlobalSwitch)
+	if !sw.Enable {
+		return 0
+	}
+
 	selfQQ := cqp.GetLoginQQ()
+
+	qlog.Println("Group msg:", msg)
+	info := cqp.GetGroupMemberInfo(fromGroup, fromQQ, false)
 	selfInfo := cqp.GetGroupMemberInfo(fromGroup, selfQQ, false)
-	bot := secret.NewSecretBot(uint64(cqp.GetLoginQQ()), uint64(fromGroup), selfInfo.Name, false, &interact.Interact{})
+	bot := secret.NewSecretBot(uint64(selfQQ), uint64(fromGroup), selfInfo.Name, false, &interact.Interact{})
 	ret := ""
+
+	found, money, exp, magic, reply := secret.CheckActivities(msg, fromQQ, fromGroup)
+	qlog.Println(found, money, exp, magic, reply)
+
+	if found {
+		b := bot
+		b.Group = uint64(fromGroup)
+		b.SetMoney(uint64(fromQQ), int(money))
+		b.SetExp(uint64(fromQQ), int(exp))
+		b.SetMagic(uint64(fromQQ), int(magic))
+		normalSendGroupMsg(fromGroup, reply)
+	}
 
 	send := func() {
 		if len(ret) > 0 {
-			fmt.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
+			qlog.Printf("\nSend group msg:%d, %s\n", fromGroup, ret)
 			if !bot.IsSilent() {
 				lineCnt := getLineCnt(ret)
 				img := secret.GetGlobalValue("ImgMode", &secret.ImgMode{}).(*secret.ImgMode)
@@ -245,17 +300,17 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 					normalSendGroupMsg(fromGroup, "To: "+GetGroupNickName(&info)+"\n"+ret+"\n"+time.Now().Format("2006/1/2 15:04:05"))
 				}
 			} else {
-				fmt.Println("It's silent time.")
+				qlog.Println("It's silent time.")
 			}
 		}
 	}
 
 	update := func() {
 		if len(msg) > 9 {
-			fmt.Println(msg, "大于3", len(msg))
+			qlog.Println(msg, "大于3", len(msg))
 			ret = bot.Update(uint64(fromQQ), GetGroupNickName(&info))
 		} else {
-			fmt.Println(msg, "小于3", len(msg))
+			qlog.Println(msg, "小于3", len(msg))
 		}
 		secret.UpdateGroup(uint64(fromGroup))
 	}
@@ -279,11 +334,11 @@ func GetGroupNickName(info *cqp.GroupMember) string {
 func broadcast(fromQQ uint64, msg string) {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println(err) // 这里的err其实就是panic传入的内容
+			qlog.Println(err) // 这里的err其实就是panic传入的内容
 		}
 	}()
 
-	fmt.Println("broadcast", msg)
+	qlog.Println("broadcast", msg)
 
 	if fromQQ != 67939461 {
 		return
@@ -296,10 +351,10 @@ func broadcast(fromQQ uint64, msg string) {
 
 	groups := secret.GetGroups()
 	for _, v := range groups {
-		fmt.Println("Ready to send:", v, strs[1])
+		qlog.Println("Ready to send:", v, strs[1])
 		gp := secret.GetGlobalValue("ReplyDelay", &secret.ReplyDelay{DelayMs: 300}).(*secret.ReplyDelay)
 		time.Sleep(time.Millisecond * time.Duration(gp.DelayMs))
 		cqp.SendGroupMsg(int64(v), strs[1])
-		fmt.Println("Send finish:", v)
+		qlog.Println("Send finish:", v)
 	}
 }

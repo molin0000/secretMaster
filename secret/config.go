@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
@@ -58,6 +59,11 @@ func (b *Bot) setSuperMaster(fromQQ uint64, msg string) string {
 	}
 	SetGlobalValue("Supermaster", cfg)
 	return fmt.Sprintf("成功设置%d为插件supermaster", masterQQ)
+}
+
+func (b *Bot) GetMaster() uint64 {
+	cfg := b.getGroupValue("Config", &Config{}).(*Config)
+	return cfg.MasterQQ
 }
 
 func (b *Bot) isMaster(fromQQ uint64) bool {
@@ -186,9 +192,20 @@ func (b *Bot) gmCmd(fromQQ uint64, msg string) string {
 		}
 		b.setPersonValue("Bank", n2, p)
 		return fmt.Sprintf("%d bank date to: %d, %+v", n2, n1, p)
+	case "clearpassword":
+		SetPassword(0, "口令;")
+		return "管理密码清除成功"
 	default:
 		return "参数解析错误"
 	}
+}
+
+func (b *Bot) GetSwitch() bool {
+	return b.getSwitch()
+}
+
+func (b *Bot) SetSwitch(enable bool) {
+	b.setSwitch(enable)
 }
 
 func (b *Bot) botSwitch(fromQQ uint64, enable bool) string {
@@ -205,6 +222,11 @@ func (b *Bot) botSwitch(fromQQ uint64, enable bool) string {
 }
 
 func (b *Bot) IsSilent() bool {
+	gs := GetGlobalValue("GlobalSilence", &GlobalSilence{}).(*GlobalSilence)
+	if gs.Enable {
+		return true
+	}
+
 	s := b.getGroupValue("Silence", &SilenceState{}).(*SilenceState)
 	if !s.IsSilence {
 		return false
@@ -231,7 +253,7 @@ func (b *Bot) IsSilent() bool {
 	startMinute := t1Hour*60 + t1Minute
 	endMinute := t2Hour*60 + t2Minute
 
-	fmt.Println("Slient check:", dayMinute, startMinute, endMinute)
+	qlog.Println("Slient check:", dayMinute, startMinute, endMinute)
 
 	if dayMinute >= startMinute && dayMinute <= endMinute {
 		return false
@@ -328,7 +350,7 @@ func (b *Bot) fixNumber(fromQQ uint64) string {
 	iter.Release()
 	err := iter.Error()
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 	}
 	return "数值修复完成，GM附加幸运全部归零了。"
 }
@@ -380,4 +402,38 @@ func (b *Bot) foldLineMode(fromQQ uint64, msg string) string {
 	SetGlobalValue("FoldLineMode", fold)
 
 	return "文字分段修改完成" + fmt.Sprintf("当前参数：%+v", *fold)
+}
+
+func GetVersion() *Version {
+	return version
+}
+
+func GetSuperMaster() uint64 {
+	cfgSuper := GetGlobalValue("Supermaster", &Config{}).(*Config)
+	return cfgSuper.MasterQQ
+}
+
+func GetMoneyMap(group uint64) *MoneyBind {
+	b := &Bot{}
+	b.Group = group
+	bind := b.getMoneyBind()
+	return bind
+}
+
+func SetMoneyMap(group uint64, bind *MoneyBind) {
+	b := &Bot{}
+	b.Group = group
+	b.setMoneyBind(bind)
+}
+
+func SetPassword(fromQQ uint64, msg string) string {
+	pwd := GetGlobalPersonValue("Password", fromQQ, &Password{QQ: fromQQ, Password: ""}).(*Password)
+	strs := strings.Split(msg, ";")
+	if len(strs) != 2 {
+		return "当前口令是：" + pwd.Password
+	}
+
+	pwd.Password = strs[1]
+	SetGlobalPersonValue("Password", fromQQ, pwd)
+	return "成功设置口令：" + pwd.Password
 }

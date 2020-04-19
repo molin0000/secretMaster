@@ -1,4 +1,14 @@
 #!/bin/bash
+
+# Build Web
+
+# cd ui/webpage
+# umi build
+# cd ..
+# rm rice-box.go
+# rice embed-go
+# cd ..
+
 docker start -a build-gocqplg
 ./cqcfg -c .
 rm -rf ~/coolq/dev/me.cqp.molin.secretmaster

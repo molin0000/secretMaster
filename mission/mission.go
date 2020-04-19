@@ -9,6 +9,9 @@ import (
 	"path"
 	"strconv"
 	"strings"
+
+	"github.com/molin0000/secretMaster/config"
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 type Result struct {
@@ -50,7 +53,7 @@ var missionList = []*Mission{}
 func loadMissions(jsonPath string) {
 	files, _ := ioutil.ReadDir(jsonPath)
 	for _, f := range files {
-		fmt.Println(f.Name())
+		qlog.Println(f.Name())
 		if !strings.Contains(f.Name(), ".json") {
 			continue
 		}
@@ -58,11 +61,18 @@ func loadMissions(jsonPath string) {
 		var ms Mission
 		err := json.Unmarshal([]byte(str), &ms)
 		if err != nil {
-			fmt.Println(err)
+			qlog.Println(err)
 			continue
 		}
 		missionList = append(missionList, &ms)
 	}
+}
+
+func GetMissionCount() int {
+	if len(missionList) == 0 {
+		loadMissions(config.MissionPath)
+	}
+	return len(missionList)
 }
 
 func readJSONFile(path string) string {
@@ -185,7 +195,7 @@ func (mg *MissionGame) SelectOption(event int, selection int) (msg string, finis
 					return msg, true
 				}
 				mg.Event = uint64(n)
-				fmt.Println("ra成功", mg.Event)
+				qlog.Println("ra成功", mg.Event)
 				msg += mg.ShowEvent(int(mg.Event))
 				return msg, false
 			}

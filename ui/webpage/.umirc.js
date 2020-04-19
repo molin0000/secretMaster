@@ -23,6 +23,18 @@ export default {
           component: './register',
         },
         {
+          path: '/about',
+          component: './about',
+        },
+        {
+          path: '/qqlogin',
+          component: './qqlogin',
+        },
+        {
+          path: '/newAct',
+          component: './newAct',
+        },
+        {
           path: '/',
           component: '../pages/index',
         },

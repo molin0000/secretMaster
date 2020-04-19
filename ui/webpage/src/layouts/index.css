@@ -1,24 +1,25 @@
 .normal {
   /* font-family     : Georgia, sans-serif; */
   text-align         : center;
-  background-color   : #ff99cc;
-  height             : 100vh;
+  background-color   : #AE8AFF;
+  min-height             : 100vh;
+  color:white;
 }
 
 .headerRow {
   display         : flex;
   justify-self    : start;
-  background-color: #660066;
+  background-color: #2E1671;
   height          : 60px;
 }
 
 .menuItemActive {
-  background-color: #ff00ff !important;
+  background-color: #5E04E6 !important;
 }
 
 .menuItem {
   color           : white;
-  background-color: #990099;
+  background-color: #2E1671;
   padding         : 18px;
   width           : 150px;
   font-weight     : bold;
@@ -27,7 +28,7 @@
 }
 
 .menuItem:hover {
-  background-color: #ff00ff !important;
+  background-color: #5E04E6 !important;
 }
 
 .title {

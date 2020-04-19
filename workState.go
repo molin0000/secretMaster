@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
+	"github.com/molin0000/secretMaster/backend"
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/secret"
 )
 
@@ -18,7 +20,7 @@ type PersonState struct {
 func getGroupInfo(group int64, noCach bool) (detail *cqp.GroupDetail) {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println("获取群信息失败", group)
+			qlog.Println("获取群信息失败", group)
 			detail = nil
 		}
 	}()
@@ -29,23 +31,54 @@ func getGroupInfo(group int64, noCach bool) (detail *cqp.GroupDetail) {
 func getGroupList() (ret string) {
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println("getGroupList panic")
+			qlog.Println("getGroupList panic")
 		}
 	}()
 	groups := secret.GetGroups()
-	fmt.Println("getGroupList", groups)
+	qlog.Println("getGroupList", groups)
 	ret = "\n"
 	for i, v := range groups {
 		detail := getGroupInfo(int64(v), false)
 		if detail != nil {
-			fmt.Printf("%+v", detail)
+			qlog.Printf("%+v", detail)
 			ret += fmt.Sprintf("%d) %s [%d] (%d/%d);\n", i, detail.Name, v, detail.MembersNum, detail.MaxMemberNum)
-			fmt.Println(ret)
+			qlog.Println(ret)
 		} else {
 			secret.RemoveGroup(uint64(i))
 		}
 	}
 	return ret
+}
+
+func GetGroupInfoList() []*backend.GroupInfo {
+	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
+		if err := recover(); err != nil {
+			qlog.Println("getGroupList panic")
+		}
+	}()
+	groups := secret.GetGroups()
+	qlog.Println("getGroupList", groups)
+	gps := make([]*backend.GroupInfo, 0)
+	key := uint64(0)
+	for i, v := range groups {
+		detail := getGroupInfo(int64(v), false)
+		if detail != nil {
+			gi := &backend.GroupInfo{}
+			gi.Key = key
+			key++
+			gi.Group = v
+			gi.Member = fmt.Sprintf("%d/%d", detail.MembersNum, detail.MaxMemberNum)
+			b := &secret.Bot{}
+			b.Group = v
+			gi.Master = b.GetMaster()
+			gi.Silence = b.IsSilent()
+			gi.Switch = b.GetSwitch()
+			gps = append(gps, gi)
+		} else {
+			secret.RemoveGroup(uint64(i))
+		}
+	}
+	return gps
 }
 
 func switchState(fromQQ int64, msg string) {
@@ -54,7 +87,7 @@ func switchState(fromQQ int64, msg string) {
 		return
 	}
 
-	fmt.Printf("switchState:%+v", state)
+	qlog.Printf("switchState:%+v", state)
 
 	if msg == "关闭私聊" {
 		state.Switch = false
@@ -85,7 +118,7 @@ func switchState(fromQQ int64, msg string) {
 		groupInfo := getGroupList()
 		cqp.SendPrivateMsg(fromQQ,
 			"首先请在下面列表中选择你的默认QQ群（回复序号选择）：")
-		fmt.Println("groupInfo", groupInfo)
+		qlog.Println("groupInfo", groupInfo)
 		cqp.SendPrivateMsg(fromQQ, groupInfo)
 		state.State = 1
 		state.Switch = true
@@ -127,6 +160,6 @@ func isPersonInGroup(group, qq uint64) (exist bool) {
 			exist = false
 		}
 	}()
-	cqp.GetGroupMemberInfo(int64(group), int64(qq), true)
+	cqp.GetGroupMemberInfo(int64(group), int64(qq), false)
 	return true
 }

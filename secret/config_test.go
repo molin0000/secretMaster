@@ -1,12 +1,13 @@
 package secret
 
 import (
-	"fmt"
 	"testing"
 	"time"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func TestTime(t *testing.T) {
 	tm := time.Now()
-	fmt.Println(tm.Hour(), tm.Minute())
+	qlog.Println(tm.Hour(), tm.Minute())
 }

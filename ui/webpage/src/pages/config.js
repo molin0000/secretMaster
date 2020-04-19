@@ -1,242 +1,402 @@
-import { Divider, Button, Switch, Table, Select, Input } from 'antd';
+import { Divider, Button, Switch, Table, message, Card, Popconfirm } from 'antd';
 import styles from './config.css';
+import { Component } from 'react';
+import { apiGet, apiAsyncGet, apiPost } from './utils/utils.js';
+import router from 'umi/router'
 
-const { Option } = Select;
-const { TextArea } = Input;
+class Config extends Component {
+  constructor(props) {
+    super(props);
 
-const groupColumns = [
-  {
-    title: '序号',
-    dataIndex: 'key',
-    key: 'key',
-    width: 50,
-  },
-  {
-    title: '群号',
-    dataIndex: 'group',
-    key: 'group',
-  },
-  {
-    title: '人数',
-    dataIndex: 'amount',
-    key: 'amount',
-  },
-  {
-    title: '管理员',
-    dataIndex: 'master',
-    key: 'master',
-  },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    key: 'operation',
-    render: (text, record) => (
-      <span>
-        <a>退群</a>
-      </span>
-    ),
-  },
-  {
-    title: '开关',
-    dataIndex: 'switch',
-    key: 'switch',
-    render: (text, record) => (
-      <span>
-        <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-      </span>
-    ),
-  },
-]
-
-const groupData = [
-  {
-    key: '1',
-    group: '132423442',
-    amount: '132/200',
-    master: '234234234',
-  },
-  {
-    key: '2',
-    group: '132423442',
-    amount: '132/200',
-    master: '234234234',
-  },
-  {
-    key: '3',
-    group: '132423442',
-    amount: '132/200',
-    master: '234234234',
+    this.state = {
+      supermaster: 0,
+      delay: 300,
+      count: {
+        "MissionCnt": 0,
+        "QuestionCnt": 0,
+        "RealPetCnt": 0,
+        "SpiritPetCnt": 0,
+        "PetFoodCnt": 0,
+      },
+      imageMode: {
+        "enable": false,
+        "lines": 0
+      },
+      textSegment: {
+        "enable": false,
+        "lines": 0
+      },
+      group: {
+        globalSwitch: true,
+        globalSilence: false,
+        groups: [],
+      },
+      activities: {
+        globalSwitch: true,
+        activites: [],
+      },
+      logs: '',
+    }
   }
-]
 
-const activitiesColumns = [
-  {
-    title: '序号',
-    dataIndex: 'key',
-    key: 'key',
-    width: 50,
-  },
-  {
-    title: '关键字',
-    dataIndex: 'word',
-    key: 'word',
-    ellipsis: true,
-  },
-  {
-    title: '回复信息',
-    dataIndex: 'reply',
-    key: 'reply',
-    ellipsis: true,
-  },
-  {
-    title: '类型',
-    dataIndex: 'type',
-    key: 'type',
-  },
-  {
-    title: '经验',
-    dataIndex: 'exp',
-    key: 'exp',
-    width: 70,
-  },
-  {
-    title: '金镑',
-    dataIndex: 'money',
-    key: 'money',
-    width: 70,
-  },
-  {
-    title: '灵力',
-    dataIndex: 'magic',
-    key: 'magic',
-    width: 70,
-  },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    key: 'operation',
-    render: (text, record) => (
-      <span>
-        <a>删除</a>
-      </span>
-    ),
-  },
-  {
-    title: '开关',
-    dataIndex: 'switch',
-    key: 'switch',
-    render: (text, record) => (
-      <span>
-        <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-      </span>
-    ),
-  },
-]
+  groupColumns = [
+    {
+      title: '序号',
+      dataIndex: 'key',
+      key: 'key',
+      width: 50,
+    },
+    {
+      title: '群号',
+      dataIndex: 'group',
+      key: 'group',
+    },
+    {
+      title: '人数',
+      dataIndex: 'member',
+      key: 'member',
+    },
+    {
+      title: '管理员',
+      dataIndex: 'master',
+      key: 'master',
+    },
+    {
+      title: '开关',
+      dataIndex: 'switch',
+      key: 'switch',
+      render: (text, record, index) => (
+        <span>
+          <Switch checkedChildren="开" unCheckedChildren="关" checked={text} onChange={
+            async (e) => {
+              let ret = this.onSave('groupSwitch', { group: record.group, value: e, password: global.adminPassword });
+              if (ret) {
+                let group = Object.assign({}, this.state.group);
+                for (let i = 0; i < group.groups.length; i++) {
+                  if (group.groups[i].group === record.group) {
+                    group.groups[i].switch = e;
+                    break;
+                  }
+                }
+                this.setState({ group });
+              }
+            }
+          } />
+        </span>
+      ),
+    },
+    {
+      title: '静默',
+      dataIndex: 'silence',
+      key: 'silence',
+      render: (text, record, index) => (
+        <span>
+          <Switch checkedChildren="开" unCheckedChildren="关" checked={text} onChange={
+            async (e) => {
+              let ret = this.onSave('groupSilent', { group: record.group, value: e, password: global.adminPassword });
+              if (ret) {
+                let group = Object.assign({}, this.state.group);
+                for (let i = 0; i < group.groups.length; i++) {
+                  if (group.groups[i].group === record.group) {
+                    group.groups[i].silence = e;
+                    break;
+                  }
+                }
+                this.setState({ group });
+              }
+            }
+          } />
+        </span>
+      ),
+    },
+  ]
 
-const activitiesData = [
-  {
-    key: 1,
-    word: "新年快乐",
-    reply: "亚米收到你的祝福啦~红包给你！",
-    type: "每年",
-    exp: 0,
-    money: 100,
-    magic: 0,
-  },
-  {
-    key: 1,
-    word: "签到",
-    reply: "签到成功！",
-    type: "每天",
-    exp: 6,
-    money: 6,
-    magic: 6,
-  },
-]
+  activitiesColumns = [
+    {
+      title: '序号',
+      dataIndex: 'key',
+      key: 'key',
+      width: 50,
+    },
+    {
+      title: '关键字',
+      dataIndex: 'keyWord',
+      key: 'keyWord',
+      ellipsis: true,
+    },
+    {
+      title: '回复信息',
+      dataIndex: 'reply',
+      key: 'reply',
+      ellipsis: true,
+    },
+    {
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
+      title: '经验',
+      dataIndex: 'exp',
+      key: 'exp',
+      width: 70,
+    },
+    {
+      title: '金镑',
+      dataIndex: 'money',
+      key: 'money',
+      width: 70,
+    },
+    {
+      title: '灵力',
+      dataIndex: 'magic',
+      key: 'magic',
+      width: 70,
+    },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      key: 'operation',
+      render: (text, record) =>
+        this.state.activities.activities.length >= 1 ? (
+          <Popconfirm title="确认要删除?" onConfirm={async () => {
+            let activities = Object.assign({}, this.state.activities);
+            for (let i = 0; i < activities.activities.length; i++) {
+              if (activities.activities[i].keyWord === record.keyWord) {
+                activities.activities.splice(i, 1);
+                let ret = await apiPost('activities', activities);
+                if (ret.data.data === true) {
+                  message.success("删除成功");
+                  this.setState({ activities });
+                  return;
+                } else {
+                  message.error('删除失败');
+                  return;
+                }
+              }
+            }
+          }}>
+            <a href="# ">删除</a>
+          </Popconfirm>
+        ) : null,
+    },
+    {
+      title: '开关',
+      dataIndex: 'enable',
+      key: 'enable',
+      render: (text, record, index) => (
+        <span>
+          <Switch checkedChildren="开" unCheckedChildren="关" checked={text} onChange={
+            async (e) => {
+              let activities = Object.assign({}, this.state.activities);
+              for (let i = 0; i < activities.activities.length; i++) {
+                if (activities.activities[i].keyWord === record.keyWord) {
+                  activities.activities[i].enable = e
+                  let ret = await apiPost('activities', activities);
+                  if (ret.data.data === true) {
+                    message.success("切换成功");
+                    this.setState({ activities });
+                    return;
+                  } else {
+                    message.error('切换失败');
+                    return;
+                  }
+                }
+              }
+            }
+          } />
+        </span>
+      ),
+    },
+  ]
 
-export default function () {
-  return (
-    <div className={styles.normal}>
-      <div className={styles.body}>
-        <div className={styles.msg}>更多设置选项，请查看使用手册，或私聊机器人发送“设置”查询和使用。</div>
-        <div className={styles.inline}>
-          <div className={styles.title}>插件主人（超级管理员）QQ：</div>
-          <input className={styles.input} />
-          <Button type="primary" style={{marginLeft:"40px"}}>保存</Button>
-        </div>
-        <Divider className={styles.divide} />
-        <div className={styles.inline}>
-          <div className={styles.title}>消息回复延迟（毫秒）：</div>
-          <input className={styles.input} style={{ marginLeft: "35px" }} />
-          <Button type="primary" style={{marginLeft:"40px"}}>保存</Button>
-        </div>
-        <Divider className={styles.divide} />
-        <div className={styles.inline}>
-          <div className={styles.title}>附件扫描：</div>
-          <div className={styles.title} style={{ marginLeft: "90px" }}>副本：16 个， 学识：173 个，宠物：120 个，宠物投食：220 个</div>
-        </div>
-        <Divider className={styles.divide} />
-        <div className={styles.inline}>
-          <div className={styles.title}>分群管理：</div>
-          <div className={styles.text} style={{marginLeft:"520px"}}>全局开关：</div>
-          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-        </div>
-        <Table columns={groupColumns} dataSource={groupData} size="small" />
-        <Divider className={styles.divide} />
-        <div className={styles.inline}>
-          <div className={styles.title}>货币映射：</div>
-          <div className={styles.text}  style={{marginLeft:"545px"}}>启用：</div>
-          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-        </div>
-        <div className={styles.inline}>
-          <div className={styles.text2}>ini文件路径：</div>
-          <input className={styles.input} style={{ margin: "4px 0px 4px 84px", width:"520px", textAlign:"left", paddingLeft:"10px" }} />
-        </div>
-        <div className={styles.inline}>
-          <div className={styles.text2}>节点为QQ号，关键字：</div>
-          <input className={styles.input} style={{ margin: "6px 0px 6px 20px", width: "100px" }} />
-          <div className={styles.text2} style={{ marginLeft: "40px" }}>编码：</div>
-          <Select defaultValue="GB2312" style={{ width: 124, margin: "4px 0" }}>
-            <Option value="GB2312">GB2312</Option>
-            <Option value="UTF8">UTF8</Option>
-          </Select>
-        </div>
-        <div className={styles.inline}>
-          
-        </div>
-        <Divider className={styles.divide} />
-        <div className={styles.inline}>
-          <div className={styles.title}>图片模式：</div>
-          <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
-          <input className={styles.input} style={{ width: "200px" }} />
-          <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
-          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-        </div>
+  async componentWillMount(props) {
+    let locked = await apiGet('locked');
+    if (!locked.data.data) {
+      router.push("/register");
+      return;
+    }
 
-        <Divider className={styles.divide} />
-        <div className={styles.inline}>
-          <div className={styles.title}>文字分段：</div>
-          <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
-          <input className={styles.input} style={{ width: "200px" }} />
-          <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
-          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-        </div>
-        <Divider className={styles.divide} />
-        <div className={styles.inline}>
-          <div className={styles.title}>活动管理：</div>
-          <Button type="primary"  style={{marginLeft:"390px"}}>新增</Button>
-          <div className={styles.text} style={{marginLeft:"25px"}}>全局开关：</div>
-          <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
-        </div>
-        <Table columns={activitiesColumns} dataSource={activitiesData} size="small" />
-        <Divider className={styles.divide} />
-        <div className={styles.inline}>
-          <div className={styles.title}>操作日志：</div>
-        </div>
-        <div style={{margin:"10px 40px 40px 40px"}}>
-          <TextArea rows={6}/>
+    if (!global.unlocked) {
+      router.push("/login");
+      return;
+    }
+
+    apiAsyncGet('count', (res) => {
+      this.setState({ count: res.data.data });
+    });
+
+    apiAsyncGet('group', (res) => {
+      this.setState({ group: res.data.data });
+    });
+
+    apiAsyncGet('supermaster', (res) => {
+      this.setState({ supermaster: res.data.data });
+    });
+
+    apiAsyncGet('delay', (res) => {
+      this.setState({ delay: res.data.data.DelayMs });
+    });
+
+    apiAsyncGet('imageMode', (res) => {
+      this.setState({ imageMode: res.data.data });
+    });
+
+    apiAsyncGet('textSegment', (res) => {
+      this.setState({ textSegment: res.data.data });
+    });
+
+    apiAsyncGet('activities', (res) => {
+      if (res.data.data.activities == null) {
+        res.data.data.activities = [];
+      }
+      this.setState({ activities: res.data.data });
+    });
+
+  }
+
+  appendLog = (msg) => {
+    let log = this.state.logs;
+    log += "\n" + (new Date()).toString() + "\n" + msg;
+    this.setState({ logs: log });
+  }
+
+  onSaveSuperMaster = () => {
+    this.onSave('supermaster', { qq: Number(this.state.supermaster), password: global.adminPassword });
+  }
+
+  onSaveDelay = async () => {
+    this.onSave('supermaster', { delay: Number(this.state.delay), password: global.adminPassword });
+  }
+
+  onSave = async (path, data) => {
+    let ret = await apiPost(path, data);
+    if (ret.data.data === true) {
+      message.success("保存成功");
+      return true;
+    }
+    message.error("保存失败");
+    return false;
+  }
+
+  render() {
+    return (
+      <div className={styles.normal}>
+        <div className={styles.body}>
+          <Card style={{ width: "840px" }}>
+            <div className={styles.msg}>更多设置选项，请查看使用手册，或私聊机器人发送“设置”查询和使用。</div>
+            <div className={styles.inline}>
+              <div className={styles.title}>插件主人（超级管理员）QQ：</div>
+              <input className={styles.input} value={this.state.supermaster} onChange={e => this.setState({ supermaster: e.target.value })} />
+              <Button type="primary" style={{ marginLeft: "40px" }} onClick={this.onSaveSuperMaster}>保存</Button>
+            </div>
+            <Divider className={styles.divide} />
+            <div className={styles.inline}>
+              <div className={styles.title}>消息回复延迟（毫秒）：</div>
+              <input className={styles.input} style={{ marginLeft: "35px" }} value={this.state.delay} onChange={e => this.setState({ delay: e.target.value })} />
+              <Button type="primary" style={{ marginLeft: "40px" }} onClick={this.onSaveDelay}>保存</Button>
+            </div>
+            <Divider className={styles.divide} />
+            <div className={styles.inline}>
+              <div className={styles.title}>附件扫描：</div>
+              <div className={styles.title} style={{ marginLeft: "20px" }}>副本：{this.state.count.MissionCnt} 个， 学识：{this.state.count.QuestionCnt} 个，现世宠物：{this.state.count.RealPetCnt} 个，灵界宠物：{this.state.count.SpiritPetCnt} 个，宠物投食：{this.state.count.PetFoodCnt} 个</div>
+            </div>
+            <Divider className={styles.divide} />
+            <div className={styles.inline}>
+              <div className={styles.title}>分群管理：</div>
+              <div className={styles.text} style={{ marginLeft: "360px" }}>全局开关：</div>
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSwitch} onChange={
+                async (e) => {
+                  let ret = await this.onSave('globalSwitch', { group: 0, value: e, password: global.adminPassword });
+                  if (ret) {
+                    let group = Object.assign({}, this.state.group);
+                    group.globalSwitch = e;
+                    this.setState({ group });
+                  }
+                }
+              } />
+              <div className={styles.text} style={{ marginLeft: "30px" }}>全局静默：</div>
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.group.globalSilence} onChange={
+                async (e) => {
+                  let ret = await this.onSave('globalSilent', { group: 0, value: e, password: global.adminPassword });
+                  if (ret) {
+                    let group = Object.assign({}, this.state.group);
+                    group.globalSilence = e;
+                    this.setState({ group });
+                  }
+                }
+              } />
+            </div>
+            <Table columns={this.groupColumns} dataSource={this.state.group.groups} size="small" />
+            <Divider className={styles.divide} />
+            <div className={styles.inline}>
+              <div className={styles.title}>图片模式：</div>
+              <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
+              <input className={styles.input} style={{ width: "200px" }} value={this.state.imageMode.lines} onChange={e => {
+                let imageMode = Object.assign({}, this.state.imageMode);
+                imageMode.lines = e.target.value;
+                this.setState({ imageMode });
+              }
+              } />
+              <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.imageMode.enable} onChange={async e => {
+                let ret = await this.onSave('imageMode', { enable: e, lines: Number(this.state.imageMode.lines) });
+                if (ret) {
+                  let imageMode = Object.assign({}, this.state.imageMode);
+                  imageMode.enable = e;
+                  this.setState({ imageMode });
+                }
+              }
+              } />
+            </div>
+
+            <Divider className={styles.divide} />
+            <div className={styles.inline}>
+              <div className={styles.title}>文字分段：</div>
+              <div className={styles.text} style={{ marginLeft: "40px" }}>触发行数：</div>
+              <input className={styles.input} style={{ width: "200px" }} value={this.state.textSegment.lines} onChange={e => {
+                let textSegment = Object.assign({}, this.state.textSegment);
+                textSegment.lines = e.target.value;
+                this.setState({ textSegment });
+              }
+              } />
+              <div className={styles.text} style={{ marginLeft: "210px" }}>启用：</div>
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.textSegment.enable} onChange={async e => {
+                let ret = await this.onSave('textSegment', { enable: e, lines: Number(this.state.textSegment.lines) });
+                if (ret) {
+                  let textSegment = Object.assign({}, this.state.textSegment);
+                  textSegment.enable = e;
+                  this.setState({ textSegment });
+                }
+              }
+              } />
+            </div>
+            <Divider className={styles.divide} />
+            <div className={styles.inline}>
+              <div className={styles.title}>活动管理：</div>
+              <Button type="primary" style={{ marginLeft: "390px" }} onClick={() => {
+                global.activities = Object.assign({}, this.state.activities);
+                router.push("/newAct");
+              }
+              }>新增</Button>
+              <div className={styles.text} style={{ marginLeft: "25px" }}>全局开关：</div>
+              <Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.activities.globalSwitch} onChange={
+                async (e) => {
+                  let activities = Object.assign({}, this.state.activities);
+                  activities.globalSwitch = e;
+                  let ret = await this.onSave('activities', activities);
+                  if (ret) {
+                    this.setState({ activities });
+                  }
+                }
+              } />
+            </div>
+            <Table columns={this.activitiesColumns} dataSource={this.state.activities.activities} size="small" />
+          </Card>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
+
+export default Config

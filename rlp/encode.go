@@ -183,7 +183,7 @@ func (w *encbuf) Write(b []byte) (int, error) {
 
 func (w *encbuf) encode(val interface{}) error {
 	rval := reflect.ValueOf(val)
-	// fmt.Println(rval.Type())
+	// qlog.Println(rval.Type())
 	ti, err := cachedTypeInfo(rval.Type(), tags{})
 	if err != nil {
 		return err
@@ -270,7 +270,7 @@ func (w *encbuf) toWriter(out io.Writer) (err error) {
 		// write string data after the last list header
 		_, err = out.Write(w.str[strpos:])
 	}
-	// fmt.Printf(hexutil.Encode(w.str))
+	// qlog.Printf(hexutil.Encode(w.str))
 
 	return err
 }

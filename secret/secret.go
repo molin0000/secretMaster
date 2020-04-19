@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -14,21 +15,21 @@ import (
 var botMap map[uint64]*Bot
 
 func init() {
-	fmt.Println("加载技能表格...")
+	qlog.Println("加载技能表格...")
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println("加载技能表格...失败")
-			fmt.Println(err)
+			qlog.Println("加载技能表格...失败")
+			qlog.Println(err)
 		}
 	}()
 
 	if !fileExists(careerSkillPath) {
-		fmt.Println("文件不存在")
+		qlog.Println("文件不存在")
 	}
 
 	f, err := excelize.OpenFile(careerSkillPath)
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 		return
 	}
 	// Get all the rows in the Sheet1.
@@ -48,7 +49,7 @@ func init() {
 		careerSkills = append(careerSkills, cs)
 	}
 
-	fmt.Printf("共加载技能：%d\n", len(careerSkills))
+	qlog.Printf("共加载技能：%d\n", len(careerSkills))
 }
 
 func atoi(msg string) uint64 {
@@ -137,10 +138,10 @@ func (b *Bot) UpdateFromOldVersion(fromQQ uint64) string {
 	}
 	info := ""
 	if dirExists("secret.db") {
-		fmt.Println("老版本数据库已找到，准备升级", fromQQ)
+		qlog.Println("老版本数据库已找到，准备升级", fromQQ)
 		_db, err := leveldb.OpenFile("secret.db", nil)
 		if err != nil {
-			fmt.Printf("open db error: %+v", err)
+			qlog.Printf("open db error: %+v", err)
 			return ""
 		}
 		defer _db.Close()
@@ -155,14 +156,14 @@ func (b *Bot) UpdateFromOldVersion(fromQQ uint64) string {
 		var money Money
 		rlp.DecodeBytes(m, &money)
 		b.setMoney(fromQQ, int(money.Money))
-		fmt.Println("继承经验:", p.ChatCount, "继承金钱:", money.Money)
+		qlog.Println("继承经验:", p.ChatCount, "继承金钱:", money.Money)
 		// info += fmt.Sprintf("\n继承经验:%d, 继承金钱:%d\n", p.ChatCount, money.Money)
 	} else {
-		fmt.Println("老版本数据库不存在")
+		qlog.Println("老版本数据库不存在")
 	}
 	up.HasUpdate = true
 	b.setPersonValue("Update", fromQQ, up)
-	fmt.Println("升级完成")
+	qlog.Println("升级完成")
 	return info
 }
 
@@ -178,12 +179,12 @@ func (b *Bot) Update(fromQQ uint64, nick string) string {
 
 	key := b.personKey("Person", fromQQ)
 	value, err := getDb().Get(key, nil)
-	fmt.Println("value:", value)
-	fmt.Println("err:", err)
+	qlog.Println("value:", value)
+	qlog.Println("err:", err)
 	ret := ""
 	if err != nil {
 		if err.Error() == "leveldb: not found" {
-			fmt.Println("a new man.")
+			qlog.Println("a new man.")
 			p := &Person{
 				Group:       b.Group,
 				QQ:          fromQQ,
@@ -285,7 +286,7 @@ func (b *Bot) searchMenu(msg string, fromQQ uint64, menu *Menu) string {
 }
 
 func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
-	fmt.Println("发现指令触发")
+	qlog.Println("发现指令触发")
 
 	msg = strings.ReplaceAll(msg, "；", ";")
 
@@ -315,7 +316,7 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 
 	if strings.Contains(msg, "查询") {
 		rankStr := msg[strings.Index(msg, "查询")+len("查询"):]
-		fmt.Println("查询排名：", rankStr)
+		qlog.Println("查询排名：", rankStr)
 		rank, err := strconv.Atoi(rankStr)
 		if err != nil {
 			return "是找我吗？查询排名要查询加数字哦。如果不是，请不要艾特我。"
@@ -495,7 +496,7 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 	}
 
 	if strings.Contains(msg, "阵营") {
-		fmt.Println("阵营触发")
+		qlog.Println("阵营触发")
 		return b.getBattleField()
 	}
 
@@ -575,6 +576,10 @@ func (b *Bot) cmdRun(msg string, fromQQ uint64) string {
 		return b.foldLineMode(fromQQ, msg)
 	}
 
+	if strings.Contains(msg, "口令") {
+		return SetPassword(fromQQ, msg)
+	}
+
 	return ""
 }
 
@@ -584,6 +589,20 @@ func (b *Bot) talkToMe(msg string) bool {
 	}
 
 	cp := fmt.Sprintf("CQ:at,qq=%d", b.QQ)
+
+	if strings.Index(msg, cp) != -1 {
+		return true
+	}
+
+	return false
+}
+
+func TalkToMe(msg string, qq int64) bool {
+	if len(msg) == 0 {
+		return false
+	}
+
+	cp := fmt.Sprintf("CQ:at,qq=%d", qq)
 
 	if strings.Index(msg, cp) != -1 {
 		return true

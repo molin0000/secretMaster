@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 type PetStore struct {
@@ -74,17 +75,17 @@ func atoi(msg string) uint64 {
 }
 
 func LoadPets(path string) {
-	fmt.Println("加载宠物表格...")
+	qlog.Println("加载宠物表格...")
 	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
 		if err := recover(); err != nil {
-			fmt.Println("加载宠物表格...失败")
-			fmt.Println(err)
+			qlog.Println("加载宠物表格...失败")
+			qlog.Println(err)
 		}
 	}()
 
 	f, err := excelize.OpenFile(path)
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 		return
 	}
 	// Get all the rows in the Sheet1.
@@ -169,11 +170,23 @@ func LoadPets(path string) {
 
 		foodList = append(foodList, food)
 	}
-	fmt.Printf("已加载:%d现世宠物，%d灵界宠物，%d宠物投食\n", len(realPets), len(spiritPets), len(foodList))
+	qlog.Printf("已加载:%d现世宠物，%d灵界宠物，%d宠物投食\n", len(realPets), len(spiritPets), len(foodList))
+}
+
+func GetRealPetCount() int {
+	return len(_realPets)
+}
+
+func GetSpiritPetCount() int {
+	return len(_spiritPets)
+}
+
+func GetFoodCount() int {
+	return len(foodList)
 }
 
 func (ps *PetStore) GetStorePets() string {
-	fmt.Println("GetStorePets", len(ps.RealPets), len(ps.SpiritPets))
+	qlog.Println("GetStorePets", len(ps.RealPets), len(ps.SpiritPets))
 	if len(ps.RealPets) == 0 {
 		if len(_realPets) == 0 {
 			LoadPets(PetFilePath)
@@ -199,7 +212,7 @@ func (ps *PetStore) GetStorePets() string {
 
 	if needFresh {
 		ps.StorePets = make([]*Pet, 0)
-		fmt.Println("GetStorePets2", len(ps.RealPets), len(ps.SpiritPets))
+		qlog.Println("GetStorePets2", len(ps.RealPets), len(ps.SpiritPets))
 
 		for i := 0; i < petCnt; i++ {
 			n := rand.Intn(len(ps.RealPets))
@@ -336,14 +349,14 @@ func (ps *PetStore) Summon() (*Pet, string) {
 	for i, p := range ps.SpiritPets {
 		totalNum += uint64(float64(baseNum) / float64(p.Price))
 		if p.HP == 0 || p.Attack == 0 {
-			fmt.Println("err", i)
+			qlog.Println("err", i)
 		}
 	}
 
-	fmt.Println(totalNum)
+	qlog.Println(totalNum)
 	scope := totalNum * 5
 	r := uint64(rand.Intn(int(scope)))
-	fmt.Println("R:", r)
+	qlog.Println("R:", r)
 
 	if r > totalNum {
 		return nil, "你没找到宠物，还在灵界迷路，历尽千辛万苦，终于找到归途。"

@@ -1,25 +1,118 @@
 import styles from './index.css';
 import { Component } from 'react';
+import { Button, Statistic, Row, Col, Input, Divider, Card } from 'antd';
+import router from 'umi/router'
+import { apiAsyncPost } from './utils/utils.js';
+
+const { TextArea } = Input;
 
 class Home extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      qq: 0,
+      password: "",
+      msg: "",
+      reply: "",
+    }
+  }
+
+  formatNumber = n => {
+    n = n.toString()
+    return n[1] ? n : '0' + n
+  }
+  // 时间格式化
+  formatTime = date => {
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hour = date.getHours()
+    const minute = date.getMinutes()
+    const second = date.getSeconds()
+
+    return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':')
+  }
+
+  componentWillMount(props) {
+    if (!global.qq) {
+      router.push('/qqlogin');
+      return;
+    }
+
+    this.setState({ qq: global.qq, password: global.password });
+  }
+
+  sendMsg = (msg) => {
+    let data = {
+      qq: Number(this.state.qq),
+      password: this.state.password,
+      msg
+    }
+    apiAsyncPost('chat', data, (res) => {
+      let info = this.state.reply;
+      this.setState({ reply: info + "\n------" + this.formatTime(new Date()) + "-------\n" + res.data.data.Msg });
+      var ta = document.getElementById('textArea');
+      ta.scrollTop = ta.scrollHeight;
+    });
+  }
+
   render() {
     return (
       <div className={styles.body}>
-        <h2 style={{marginLeft:'15px'}}>当前版本：{'v3.2.4'}</h2>
-        <div className={styles.text}>欢迎使用序列战争插件~O(∩_∩)O~</div>
-        <div className={styles.text}>这是一款《诡秘之主》背景的QQ群游戏</div>
-        <div className={styles.text}>在群友们的共同努力下，现已经开发出了许多独具魅力的功能系统</div>
-        <div className={styles.text}>有问题欢迎到酷Q论坛提问：<a href='https://cqp.cc/t/46674' rel="noopener noreferrer" target="_blank">https://cqp.cc/t/46674</a></div>
-        <div className={styles.text}>有好的想法也欢迎来策划QQ群：1028799086</div>
-        <div className={styles.text}>想直接游玩可以来游戏QQ群：1030551041 </div>
-        <div className={styles.text}>以及《诡秘之主》粉丝序列群:731419992</div>
-        <div className={styles.text}>支持自定义文字副本，副本编辑器地址：<a href='https://mission-editor.now.sh/' rel="noopener noreferrer" target="_blank">https://mission-editor.now.sh</a></div>
-        <div className={styles.text}>本插件基于Coolq Go SDK开发，代码完全开源，欢迎共同学习和交流</div>
-        <div className={styles.text}>开源地址：<a href='https://github.com/molin0000/secretMaster' rel="noopener noreferrer" target="_blank">https://github.com/molin0000/secretMaster</a></div>
-        <div className={styles.text}>如果喜欢，请给我发电：<a href='https://afdian.net/@molin' rel="noopener noreferrer" target="_blank">https://afdian.net/@molin</a></div>
-        <div className={styles.text}>
-          <span role="img" aria-label="heart">❤️</span>O(∩_∩)O<span role="img" aria-label="heart">❤️</span>空想之喵<span role="img" aria-label="heart">❤️</span>
-        </div>
+        <Card style={{ maxWidth: "600px" }}>
+          <Row gutter={16}>
+            <Row>
+              <Col span={8}>
+                <Button type='primary' style={{ width: '20vw', marginTop: '10px', maxWidth: "100px" }}
+                  onClick={() => { router.push('/qqlogin'); }}>QQ登录</Button>
+              </Col>
+              <Col span={16}>
+                {/* <Statistic title="当前QQ号码" value={this.state.qq} groupSeparator={""} /> */}
+                <Row style={{color:"white", padding:"15px"}}>
+                  <Col span={12}>当前QQ号码:</Col>
+                  <Col span={12}>{this.state.qq}</Col>
+                </Row>
+
+              </Col>
+              {/* <Col span={9}>
+              <Statistic title="昵称" value={"空想之喵"} />
+            </Col> */}
+            </Row>
+            <Row>
+              <Col span={1}></Col>
+              <Col span={22}>
+                <TextArea id="textArea" rows={14} style={{ marginTop: "10px", marginBottom: "10px", background: "#AE8AFF", borderRadius: "20px", color: "white", fontSize:"12px" }} readOnly={true} value={this.state.reply} />
+              </Col>
+              <Col span={1}></Col>
+            </Row>
+            <Row>
+              <Row gutter={16}>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('探险') }}>探险</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('钓鱼') }}>钓鱼</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('副本') }}>副本</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('许愿') }}>许愿</Button></Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('速算') }}>速算</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('学识') }}>学识</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('阵营') }}>阵营</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('道具') }}>道具</Button></Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('祈祷') }}>祈祷</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('购买探险卷轴') }}>卷轴</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('属性') }}>属性</Button></Col>
+                <Col span={6}><Button type='primary' style={{ marginBottom: "10px", width: "20vw", maxWidth: "100px" }} onClick={() => { this.sendMsg('排行') }}>排行</Button></Col>
+              </Row>
+            </Row>
+            <Divider style={{ width: "80%" }} />
+            <Row>
+              <Col span={2}></Col>
+              <Col span={16}><Input value={this.state.msg} onChange={(e) => { this.setState({ msg: e.target.value }) }} onKeyDown={e => { if (e.keyCode === 13) { this.sendMsg(this.state.msg); this.setState({ msg: "" }) } }} /></Col>
+              <Col span={4}><Button type='primary' style={{ width: "20vw", marginLeft: "10px", maxWidth: "100px" }} onClick={() => { this.sendMsg(this.state.msg); this.setState({ msg: "" }) }}>发送</Button></Col>
+            </Row>
+          </Row>
+        </Card>
       </div>
     );
   }

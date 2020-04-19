@@ -1,13 +1,14 @@
 package secret
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 func TestGetProperty(t *testing.T) {
 	fromQQ := uint64(121)
 	b := NewSecretBot(1234, 4567, "aa", false, &debugInteract{})
 
-	fmt.Println(b.getProperty(fromQQ))
+	qlog.Println(b.getProperty(fromQQ))
 }

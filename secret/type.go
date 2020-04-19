@@ -118,11 +118,11 @@ type BotSwitch struct {
 }
 
 type MoneyBind struct {
-	IniPath    string
-	IniSection string
-	IniKey     string
-	HasUpdate  bool
-	Encode     string
+	IniPath    string `json:"iniPath" xml:"iniPath" form:"iniPath" query:"iniPath"`
+	IniSection string `json:"iniSection" xml:"iniSection" form:"iniSection" query:"iniSection"`
+	IniKey     string `json:"iniKey" xml:"iniKey" form:"iniKey" query:"iniKey"`
+	HasUpdate  bool   `json:"hasUpdate" xml:"hasUpdate" form:"hasUpdate" query:"hasUpdate"`
+	Encode     string `json:"encode" xml:"encode" form:"encode" query:"encode"`
 }
 
 type Config struct {
@@ -290,11 +290,24 @@ type CareerSkill struct {
 }
 
 type ImgMode struct {
-	Enable bool
-	Lines  uint64
+	Enable bool   `json:"enable" xml:"enable" form:"enable" query:"enable"`
+	Lines  uint64 `json:"lines" xml:"lines" form:"lines" query:"lines"`
 }
 
 type FoldLineMode struct {
+	Enable bool   `json:"enable" xml:"enable" form:"enable" query:"enable"`
+	Lines  uint64 `json:"lines" xml:"lines" form:"lines" query:"lines"`
+}
+
+type GlobalSwitch struct {
 	Enable bool
-	Lines  uint64
+}
+
+type GlobalSilence struct {
+	Enable bool
+}
+
+type Password struct {
+	QQ       uint64 `json:"qq" xml:"qq" form:"qq" query:"qq"`
+	Password string `json:"password" xml:"password" form:"password" query:"password"`
 }

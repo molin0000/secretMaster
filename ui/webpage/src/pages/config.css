@@ -1,20 +1,21 @@
 .normal {
-  background     : #ff9acc;
   text-align     : center;
   display        : flex;
   justify-content: center;
+  /* width      : 900px; */
 }
 
 .body {
-  background-color: #ffccff;
   margin          : 20px;
   border-radius   : 20px;
-  width           : 800px;
+  display        : flex;
+  justify-content: center;
+  /* width           : 800px; */
 }
 
 .divide {
   /* border: 0.5px solid #ff66b3; */
-  border: 0.5px solid #ff9acc;
+  border   : 0.5px solid #AE8AFF;
 }
 
 .msg {

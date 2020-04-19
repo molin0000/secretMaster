@@ -1,8 +1,9 @@
 package secret
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 type debugInteract struct{}
@@ -23,12 +24,12 @@ func TestBuyItem(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		b.setMoney(fromQQ, 1000)
 		b.buyMagicItem(fromQQ)
-		fmt.Println(b.getItems(fromQQ))
+		qlog.Println(b.getItems(fromQQ))
 	}
 
 	for i := 0; i < 10; i++ {
 		b.setMoney(fromQQ, 1000)
 		b.buyMace(fromQQ)
-		fmt.Println(b.getItems(fromQQ))
+		qlog.Println(b.getItems(fromQQ))
 	}
 }

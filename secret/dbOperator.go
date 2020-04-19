@@ -1,12 +1,13 @@
 package secret
 
 import (
-	"fmt"
 	"os"
 	"path"
 	"strconv"
 	"time"
 
+	"github.com/molin0000/secretMaster/config"
+	"github.com/molin0000/secretMaster/qlog"
 	"github.com/molin0000/secretMaster/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 	sc "golang.org/x/text/encoding/simplifiedchinese"
@@ -17,9 +18,10 @@ var db *leveldb.DB
 
 func getDb() *leveldb.DB {
 	if db == nil {
-		_db, err := leveldb.OpenFile(path.Join("data", "app", "me.cqp.molin.secretMaster", "UserData.db"), nil)
+		_db, err := leveldb.OpenFile(path.Join(config.GetCoolqPath(), "data", "app", "me.cqp.molin.secretMaster", "UserData.db"), nil)
 		if err != nil {
-			fmt.Printf("open db error: %+v", err)
+			qlog.Println(path.Join(config.GetCoolqPath(), "data", "app", "me.cqp.molin.secretMaster", "UserData.db"))
+			qlog.Printf("open db error: %+v", err)
 			panic(err)
 		}
 		db = _db
@@ -94,7 +96,7 @@ func (b *Bot) setPersonToDb(fromQQ uint64, p *Person) {
 func (b *Bot) getMoneyFromDb(fromQQ uint64, chatCnt uint64) *Money {
 	bind := b.getMoneyBind()
 	if bind.HasUpdate && fileExists(bind.IniPath) {
-		fmt.Println("get from ini.")
+		qlog.Println("get from ini.")
 		return b.getMoneyFromIni(fromQQ)
 	}
 
@@ -104,7 +106,7 @@ func (b *Bot) getMoneyFromDb(fromQQ uint64, chatCnt uint64) *Money {
 func (b *Bot) setMoneyToDb(fromQQ uint64, m *Money) {
 	bind := b.getMoneyBind()
 	if bind.HasUpdate {
-		fmt.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
+		qlog.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
 		b.setMoneyToIni(fromQQ, m)
 		return
 	}
@@ -125,20 +127,20 @@ func (b *Bot) getMoneyFromIni(fromQQ uint64) *Money {
 	bind := b.getMoneyBind()
 	cfg, err := ini.Load(bind.IniPath)
 	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
+		qlog.Printf("Fail to read file: %v", err)
 		return &Money{Group: b.Group, QQ: fromQQ, Money: 0}
 	}
 	var amount uint64
 	if bind.Encode != "UTF8" {
-		fmt.Println("Data Path:", cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).String())
+		qlog.Println("Data Path:", cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).String())
 		amount, err = cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).Uint64()
 	} else {
-		fmt.Println("Data Path:", cfg.Section(cString(strconv.FormatUint(fromQQ, 10))).Key(cString(bind.IniKey)).String())
+		qlog.Println("Data Path:", cfg.Section(cString(strconv.FormatUint(fromQQ, 10))).Key(cString(bind.IniKey)).String())
 		amount, err = cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(cString(bind.IniKey)).Uint64()
 	}
 
 	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
+		qlog.Printf("Fail to read file: %v", err)
 		return &Money{Group: b.Group, QQ: fromQQ, Money: 0}
 	}
 
@@ -149,10 +151,10 @@ func (b *Bot) setMoneyToIni(fromQQ uint64, m *Money) {
 	bind := b.getMoneyBind()
 	cfg, err := ini.Load(bind.IniPath)
 	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
+		qlog.Printf("Fail to read file: %v", err)
 		return
 	}
-	fmt.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
+	qlog.Printf("QQ:%d, Money:%d", m.QQ, m.Money)
 	if bind.Encode != "UTF8" {
 		cfg.Section(strconv.FormatUint(fromQQ, 10)).Key(bind.IniKey).SetValue(strconv.FormatUint(m.Money, 10))
 		cfg.SaveTo(bind.IniPath)
@@ -265,6 +267,14 @@ func (b *Bot) groupKey(keyPrefix string) []byte {
 	return []byte(keyPrefix + "_" + strconv.FormatInt(int64(b.Group), 10))
 }
 
+func (b *Bot) SetGroupValue(keyPrefix string, p interface{}) {
+	b.setGroupValue(keyPrefix, p)
+}
+
+func (b *Bot) GetGroupValue(keyPrefix string, defaultValue interface{}) interface{} {
+	return b.getGroupValue(keyPrefix, defaultValue)
+}
+
 func (b *Bot) setGroupValue(keyPrefix string, p interface{}) {
 	buf, _ := rlp.EncodeToBytes(p)
 	getDb().Put(b.groupKey(keyPrefix), buf, nil)
@@ -284,18 +294,26 @@ func (b *Bot) personKey(keyPrefix string, fromQQ uint64) []byte {
 	return []byte(keyPrefix + "_" + strconv.FormatInt(int64(b.Group), 10) + "_" + strconv.FormatInt(int64(fromQQ), 10))
 }
 
+func (b *Bot) SetPersonValue(keyPrefix string, fromQQ uint64, p interface{}) {
+	b.setPersonValue(keyPrefix, fromQQ, p)
+}
+
 func (b *Bot) setPersonValue(keyPrefix string, fromQQ uint64, p interface{}) {
 	buf, err := rlp.EncodeToBytes(p)
 	if err != nil {
-		fmt.Println(err)
+		qlog.Println(err)
 	}
 	getDb().Put(b.personKey(keyPrefix, fromQQ), buf, nil)
+}
+
+func (b *Bot) GetPersonValue(keyPrefix string, fromQQ uint64, defaultValue interface{}) interface{} {
+	return b.getPersonValue(keyPrefix, fromQQ, defaultValue)
 }
 
 func (b *Bot) getPersonValue(keyPrefix string, fromQQ uint64, defaultValue interface{}) interface{} {
 	data, err := getDb().Get(b.personKey(keyPrefix, fromQQ), nil)
 	if err != nil {
-		fmt.Println("getPersonValue nil:", keyPrefix, b.Group, fromQQ)
+		qlog.Println("getPersonValue nil:", keyPrefix, b.Group, fromQQ)
 		return defaultValue
 	}
 
@@ -314,7 +332,7 @@ func globalPersonKey(keyPrefix string, fromQQ uint64) []byte {
 func GetGlobalPersonValue(keyPrefix string, fromQQ uint64, defaultValue interface{}) interface{} {
 	data, err := getDb().Get(globalPersonKey(keyPrefix, fromQQ), nil)
 	if err != nil {
-		fmt.Println("GetGlobalPersonValue nil:", keyPrefix, fromQQ)
+		qlog.Println("GetGlobalPersonValue nil:", keyPrefix, fromQQ)
 		return defaultValue
 	}
 
@@ -338,7 +356,7 @@ func globalKey(keyPrefix string) []byte {
 func GetGlobalValue(keyPrefix string, defaultValue interface{}) interface{} {
 	data, err := getDb().Get(globalKey(keyPrefix), nil)
 	if err != nil {
-		fmt.Println("GetGlobalValue nil:", keyPrefix)
+		qlog.Println("GetGlobalValue nil:", keyPrefix)
 		return defaultValue
 	}
 

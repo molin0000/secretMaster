@@ -17,8 +17,9 @@
 package rlp
 
 import (
-	"fmt"
 	"io"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 type MyCoolType struct {
@@ -42,11 +43,11 @@ func (x *MyCoolType) EncodeRLP(w io.Writer) (err error) {
 func ExampleEncoder() {
 	var t *MyCoolType // t is nil pointer to MyCoolType
 	bytes, _ := EncodeToBytes(t)
-	fmt.Printf("%v → %X\n", t, bytes)
+	qlog.Printf("%v → %X\n", t, bytes)
 
 	t = &MyCoolType{Name: "foobar", a: 5, b: 6}
 	bytes, _ = EncodeToBytes(t)
-	fmt.Printf("%v → %X\n", t, bytes)
+	qlog.Printf("%v → %X\n", t, bytes)
 
 	// Output:
 	// <nil> → C28080

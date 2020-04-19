@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/molin0000/secretMaster/qlog"
 )
 
 type CalcGame struct {
@@ -42,7 +44,7 @@ func (c *CalcGame) GiveResult(result uint64) (msg string, finish bool) {
 	info := ""
 	c.Speed = uint64(timeNow - int64(c.StartTime))
 	if timeNow-int64(c.StartTime) > 20 {
-		fmt.Println(timeNow, c.StartTime)
+		qlog.Println(timeNow, c.StartTime)
 		return info + "很遗憾，你超时了。没有通过考试。你朋友对你的表现十分失望。", true
 	}
 	if ret {

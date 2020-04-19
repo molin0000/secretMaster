@@ -9,8 +9,11 @@ require (
 	github.com/GeertJohan/go.rice v1.0.0
 	github.com/Tnze/CoolQ-Golang-SDK/v2 v2.0.1 // indirect
 	github.com/bregydoc/gtranslate v0.0.0-20191225024717-45b28d4fda86
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
+	github.com/labstack/echo v3.3.10+incompatible
+	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/robertkrimen/otto v0.0.0-20191219234010-c382bd3c16ff // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/syndtr/goleveldb v1.0.0
