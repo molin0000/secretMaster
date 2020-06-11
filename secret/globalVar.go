@@ -396,4 +396,4 @@ var careerSkillPath = config.SkillPath
 
 var missionPath = config.MissionPath
 
-var version = &Version{"序列战争", "v3.3.6", "2020-04-14"}
+var version = &Version{"序列战争", "v3.3.7", "2020-06-11"}
